@@ -1,0 +1,37 @@
+#app {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.el-dialog {
+  margin: 0 !important;
+}
+
+.el-dialog__body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.el-overlay-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content-container {
+  margin: 8px;
+  padding: 8px;
+  min-height: calc(100vh - 16px);
+  width: calc(100% - 16px);
+  box-sizing: border-box;
+  background: white;
+  border-radius: 8px;
+}

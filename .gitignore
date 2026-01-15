@@ -23,6 +23,8 @@
 hs_err_pid*
 replay_pid*
 
+.idea
 .gradle
+gradle
 build
-*/node_modules
+node_modules
