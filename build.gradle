@@ -1,0 +1,55 @@
+// 1. 声明构建脚本依赖（插件本身）
+buildscript{
+    repositories{
+        maven {
+            url "${mavenUrl}"
+            allowInsecureProtocol = true
+        }
+        mavenCentral()
+    }
+    dependencies {
+        // 声明 Spring Boot 插件，但不在此处应用
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+// 2. 所有项目通用配置
+allprojects {
+    group = 'saber71'
+    version = '1.0.0'
+    repositories {
+        maven {
+            url "${mavenUrl}"
+            allowInsecureProtocol = true
+        }
+        mavenCentral()
+    }
+}
+
+// 3. 子模块通用配置 (核心逻辑)
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library' // 支持 implementation/api 区别
+
+    // --- Java 版本配置 ---
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+    }
+
+    // --- 依赖配置 ---
+    dependencies {
+        // 👇 在这里统一引入 Lombok (所有子模块生效)
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+        // 测试依赖
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    }
+
+    // --- 测试配置 ---
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}

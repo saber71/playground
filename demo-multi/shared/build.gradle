@@ -1,0 +1,8 @@
+// 👉 核心模块不需要 'org.springframework.boot' 插件，只需要依赖
+dependencies {
+    // --- 依赖 Spring Boot 基础包 (IOC 容器支持) ---
+    implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
+
+    // 如果有数据库操作
+    // implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+}

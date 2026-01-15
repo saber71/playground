@@ -1,0 +1,8 @@
+rootProject.name = "playground"
+
+include ':demo-multi-app'
+include ':demo-multi-shared'
+
+// 如果模块目录结构特殊，可以指定路径
+ project(':demo-multi-app').projectDir = new File(settingsDir, 'demo-multi/app')
+ project(':demo-multi-shared').projectDir = new File(settingsDir, 'demo-multi/shared')
