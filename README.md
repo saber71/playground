@@ -5,7 +5,10 @@
 # 目录说明
 
 ```text
-/
+playground/
+│
+├── vue-frontend/       # 前端 vite + vue 项目
+│
 ├── demo-multi/         # Gradle，多项目构建demo
 │   └── app             # Gradle，多项目构建demo下的app模块，SpringBoot项目启动点  
 │   └── shared          # Gradle，多项目构建demo下的shared模块，包含工具类
