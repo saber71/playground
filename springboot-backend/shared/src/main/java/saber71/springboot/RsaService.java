@@ -14,6 +14,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import saber71.springboot.properties.RsaProperties;
 
+/** RSA加密解密服务类 提供基于RSA算法的加密、解密功能 */
 @Service
 public class RsaService {
 
@@ -23,8 +24,14 @@ public class RsaService {
   private final PrivateKey privateKey;
   private final RsaProperties rsaProperties;
 
+  /**
+   * 构造函数，初始化RSA密钥对
+   *
+   * @param rsaProperties RSA配置属性对象，包含公钥和私钥信息
+   */
   public RsaService(RsaProperties rsaProperties) {
     this.rsaProperties = rsaProperties;
+    // 解码并生成RSA公钥和私钥
     try {
       publicKey =
           KeyFactory.getInstance("RSA")
@@ -39,10 +46,21 @@ public class RsaService {
     }
   }
 
+  /**
+   * 获取公钥字符串
+   *
+   * @return 返回Base64编码的公钥字符串
+   */
   public String getPublicKey() {
     return rsaProperties.getPublicKey();
   }
 
+  /**
+   * 使用RSA公钥加密明文数据
+   *
+   * @param plain 待加密的明文字符串，不能为空
+   * @return 返回Base64编码的加密后密文字符串
+   */
   public String encrypt(@NonNull String plain) {
     try {
       var cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
@@ -58,6 +76,12 @@ public class RsaService {
     }
   }
 
+  /**
+   * 使用RSA私钥解密密文数据
+   *
+   * @param encrypted Base64编码的待解密密文字符串
+   * @return 返回解密后的明文字符串
+   */
   public String decrypt(String encrypted) {
     try {
       var cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");

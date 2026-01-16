@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import saber71.springboot.properties.InterceptorProperties;
 import saber71.springboot.properties.WebConfigProperties;
 
+/** Web MVC配置类，用于配置路径匹配规则和拦截器 实现WebMvcConfigurer接口来自定义Spring MVC配置 */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
   private final WebConfigProperties webConfigProperties;
@@ -16,7 +17,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
   private final AuthInterceptor authInterceptor;
 
   public WebMvcConfig(
-      WebConfigProperties webConfigProperties, InterceptorProperties interceptorProperties, AuthInterceptor authInterceptor) {
+      WebConfigProperties webConfigProperties,
+      InterceptorProperties interceptorProperties,
+      AuthInterceptor authInterceptor) {
     this.webConfigProperties = webConfigProperties;
     this.interceptorProperties = interceptorProperties;
     this.authInterceptor = authInterceptor;
@@ -35,17 +38,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
   }
 
   /**
-   * 添加拦截器配置
-   * 该方法用于注册认证拦截器，并配置其应用路径和排除路径
+   * 添加拦截器配置 该方法用于注册认证拦截器，并配置其应用路径和排除路径
    *
    * @param registry 拦截器注册表，用于注册和配置拦截器
    */
   @Override
   public void addInterceptors(@NonNull InterceptorRegistry registry) {
-      // 注册认证拦截器并配置路径模式
-      registry
-          .addInterceptor(authInterceptor)
-          .addPathPatterns(interceptorProperties.getIncludePaths())
-          .excludePathPatterns(interceptorProperties.getExcludePaths());
+    // 注册认证拦截器并配置路径模式
+    registry
+        .addInterceptor(authInterceptor)
+        .addPathPatterns(interceptorProperties.getIncludePaths())
+        .excludePathPatterns(interceptorProperties.getExcludePaths());
   }
 }

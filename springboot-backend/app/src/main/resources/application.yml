@@ -7,6 +7,18 @@ spring:
       port: 6380
       password: 123456
       database: 0
+  datasource:
+    url: jdbc:postgresql://192.168.0.2:5469/postgres
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        default_schema: springboot_backend
 jwt:
   secret: SpringBootBackend
   expire: 86400000
