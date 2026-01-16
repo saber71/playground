@@ -8,6 +8,7 @@ dependencies {
     implementation project(':springboot-backend:authService')
     implementation "org.springframework.boot:spring-boot-starter-webmvc:${springBootVersion}"
     developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
 }
 
 // 👉 打包配置 (可选)

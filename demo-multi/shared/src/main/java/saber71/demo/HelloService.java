@@ -1,4 +1,4 @@
-package saber71.shared;
+package saber71.demo;
 
 import org.springframework.stereotype.Service;
 
