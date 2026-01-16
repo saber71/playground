@@ -4,14 +4,10 @@ apply plugin: 'io.spring.dependency-management' // 自动匹配 BOM 版本
 
 // 👉 依赖配置
 dependencies {
-    // --- 模块间依赖 ---
-    implementation project(':demo-multi:shared')
-
-    // --- Spring Boot Starter (不需要写版本号) ---
+    implementation project(':springboot-backend:shared')
+    implementation project(':springboot-backend:authService')
     implementation "org.springframework.boot:spring-boot-starter-webmvc:${springBootVersion}"
-
-    // 如果需要热部署
-    // developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
 }
 
 // 👉 打包配置 (可选)

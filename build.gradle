@@ -43,7 +43,7 @@ subprojects {
         // 👇 在这里统一引入 Lombok (所有子模块生效)
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-
+        implementation "org.jetbrains:annotations:26.0.2-1"
         // 测试依赖
         testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
     }
