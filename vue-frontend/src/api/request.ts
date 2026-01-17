@@ -25,7 +25,7 @@ export const request = new Axios({
 
 request.interceptors.request.use((req) => {
   const useToken = useTokenStore();
-  if (useToken.token) req.headers["Authorization"] = "Bearer " + useToken.token;
+  if (useToken.token) req.headers["Authorization"] = useToken.token;
   return req;
 });
 
