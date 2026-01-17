@@ -19,7 +19,7 @@ public class BaseEntity {
   @Column(nullable = false)
   private LocalDateTime updateAt;
 
-  @Column(insertable = false)
+  @Column
   private Boolean deleted = false;
 
   @Column(insertable = false)

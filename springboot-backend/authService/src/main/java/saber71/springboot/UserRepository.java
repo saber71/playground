@@ -12,11 +12,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query(
       """
-    select distinct u from User u
-    where :name is null
-        or lower(u.name) like lower(concat('%', :name, '%') )
-        or lower(u.displayName) like lower(concat('%', :name, '%') )
-    """)
+          select distinct u from User u
+          where (:name is null
+              or lower(u.name) like lower(concat('%', :name, '%') )
+              or lower(u.displayName) like lower(concat('%', :name, '%') ))
+              and u.deleted<>true
+          """)
   Page<User> search(@Nullable @Param("name") String name, Pageable pageable);
 
   Optional<User> findUserByName(String name);

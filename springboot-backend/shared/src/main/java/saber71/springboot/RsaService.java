@@ -93,7 +93,7 @@ public class RsaService {
         | InvalidKeyException
         | IllegalBlockSizeException
         | BadPaddingException e) {
-      throw new RuntimeException(e);
+      return "";
     }
   }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /** 用户服务类，提供用户相关的业务操作 */
+@Slf4j
 @Service
 public class UserService {
 
@@ -38,12 +40,14 @@ public class UserService {
     // 根据ID查找现有用户，如果不存在则创建新用户
     var user = RepositoryHelper.findById(userRepository, dto.getId()).orElse(new User());
     ObjectHelper.assign(user, dto);
-    // 获取密码，如果为空则默认使用"123456"并加密
-    var password = Optional.ofNullable(dto.getPassword()).orElse(rsaService.encrypt("123456"));
-    // 解密获取明文密码
-    var plain = rsaService.decrypt(password);
-    // 使用BCrypt对明文密码进行加密后设置到用户对象
-    user.setPassword(new BCryptPasswordEncoder().encode(plain));
+    if (user.getId() == null) {
+      // 获取密码，如果为空则默认使用"123456"并加密
+      var password = Optional.ofNullable(dto.getPassword()).orElse(rsaService.encrypt("123456"));
+      // 解密获取明文密码
+      var plain = rsaService.decrypt(password);
+      // 使用BCrypt对明文密码进行加密后设置到用户对象
+      user.setPassword(new BCryptPasswordEncoder().encode(plain));
+    }
     return userRepository.save(user);
   }
 
@@ -60,7 +64,9 @@ public class UserService {
         .findUserByName(name)
         .map(
             user -> {
-              if (encryptedPassword == null) return user;
+              if (encryptedPassword == null || encryptedPassword.isEmpty()) return user;
+              log.info("user {}",user.getDeleted());
+              if (user.getDeleted()) return null;
               // 解密密码并验证
               var password = rsaService.decrypt(encryptedPassword);
               if (new BCryptPasswordEncoder().matches(password, user.getPassword())) return user;

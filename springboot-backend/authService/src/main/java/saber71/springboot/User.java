@@ -21,16 +21,16 @@ public class User extends BaseEntity {
 
   @Column @JsonIgnore private String password;
 
+  @Column private Boolean builtin = false;
+
   @Data
   public static class CreateDTO {
-    @Nullable
-    private Long id;
+    @Nullable private Long id;
 
     private String name;
 
     private String displayName;
 
-    @Nullable
-    private String password;
+    @Nullable private String password;
   }
 }

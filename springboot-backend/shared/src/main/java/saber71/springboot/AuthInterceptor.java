@@ -29,7 +29,7 @@ public class AuthInterceptor implements HandlerInterceptor {
       throws Exception {
     var enableAuth = request.getHeader("enable-auth");
     if (enableAuth == null || enableAuth.isEmpty() || enableAuth.equalsIgnoreCase("false")) {
-      UserContext.setUID(0L);
+      UserContext.setUID(1L);
       return true;
     }
 

@@ -6,8 +6,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
 /** Spring上下文工具类，实现ApplicationContextAware接口以获取Spring应用上下文 提供静态方法访问Spring容器中的Bean */
+@Component
 public class SpringContext implements ApplicationContextAware {
   /** Spring应用上下文静态实例 */
   private static ApplicationContext context;
@@ -41,7 +43,7 @@ public class SpringContext implements ApplicationContextAware {
    * @return RedisTemplate实例，键类型为String，值类型为Object
    */
   public static RedisTemplate<String, Object> getRedisTemplate() {
-    return getBean(RedisTemplate.class);
+    return context.getBean("redisTemplate", RedisTemplate.class);
   }
 
   /**

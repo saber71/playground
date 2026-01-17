@@ -1,5 +1,6 @@
 package saber71.springboot;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,7 @@ import saber71.springboot.properties.InterceptorProperties;
 import saber71.springboot.properties.WebConfigProperties;
 
 /** Web MVC配置类，用于配置路径匹配规则和拦截器 实现WebMvcConfigurer接口来自定义Spring MVC配置 */
+@Slf4j
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
   private final WebConfigProperties webConfigProperties;
