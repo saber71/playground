@@ -1,0 +1,6 @@
+FROM，指定基础镜像，是Dockerfile的第一个指令
+RUN，在镜像过程中执行命令，通常安装依赖包或者进行配置
+COPY，将宿主机中的文件/目录复制到镜像中
+CMD，提供容器启动时默认要执行的命令和参数。一个Dockerfile只能有一个CMD生效。可以被docker run参数覆盖
+ENTRYPOINT，其定义的命令不会被docker run替换，会将CMD或命令行参数作为其附加参数
+CMD和ENTRYPOINT通常配合使用，ENTRYPOINT设定“做什么”，CMD提供默认参数，两者都建议使用JSON数组形式
