@@ -24,13 +24,13 @@ export class TableRenderService {
     });
   }
 
-  renderObjectList<T extends Record<string, any>>(
+  async renderObjectList<T extends Record<string, any>>(
     items: T[],
     columns?: Array<keyof T>,
     title?: string,
   ) {
     if (!items.length) {
-      this.messageService.info("空");
+      await this.messageService.infoAndWait("空");
       return;
     }
     const headers: any = columns ? columns : Object.keys(items[0]);

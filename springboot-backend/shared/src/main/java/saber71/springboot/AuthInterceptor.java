@@ -49,7 +49,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
     redisTemplate.expire(authorization, jwtProperties.getExpire(), TimeUnit.MILLISECONDS);
     UserContext.setUID((Long) uid);
-    return false;
+    return true;
   }
 
   @Override

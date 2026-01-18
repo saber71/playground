@@ -24,10 +24,16 @@ export class StartupController {
       .then(async (user: User) => {
         this.gameState.applyPlayer(user);
       })
-      .catch((err) => {
-        this.shared.common.commonAxiosCatch(this.ui, {} as any)(err);
-        initRoutes.push({ name: "login" });
-      });
+      .catch(
+        this.shared.common.commonAxiosCatch(this.ui, {
+          getRoute<T>(): IRoute<T> {
+            return {} as any;
+          },
+          next() {
+            initRoutes.push({ name: "login" });
+          },
+        } as any),
+      );
     return this.sceneManager.run(...initRoutes);
     // this.table.renderKeyValue(
     //   {

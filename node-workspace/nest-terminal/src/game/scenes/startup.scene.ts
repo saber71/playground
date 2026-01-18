@@ -15,7 +15,7 @@ export class StartupScene implements IScene {
   ) {}
 
   enter(router: IRouter, forWhile: ForWhile): Promise<void> | void {
-    this.ui.message.clearScreen();
+    // this.ui.message.clearScreen();
     return this.ui.prompt.menuList("你想要做什么？", [
       { name: "新建用户", callback: () => {} },
       {

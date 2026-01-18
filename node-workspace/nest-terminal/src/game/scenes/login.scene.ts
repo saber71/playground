@@ -19,24 +19,30 @@ export class LoginScene implements IScene {
     this.ui.message.clearScreen().title("登录");
     return forWhile(async (breakWhile, commonCatch) => {
       const dto = await this.ui.prompt.form<LoginDto>([
-        { prompt: "请输入用户名", prop: "name", item: { type: "input" } },
+        {
+          prompt: "请输入用户名",
+          prop: "name",
+          item: { type: "input", required: true },
+        },
         {
           prompt: "请输入密码",
           prop: "password",
           item: { type: "inputPassword", required: false },
         },
       ]);
-      const encrypted = await this.shared.encrypt.encrypt(dto.password);
-      if (!encrypted) {
-        await this.ui.message.errorAndWait("密码加密失败");
-        return;
+      if (dto.password) {
+        const encrypted = await this.shared.encrypt.encrypt(dto.password);
+        if (!encrypted) {
+          await this.ui.message.errorAndWait("密码加密失败");
+          return;
+        }
+        dto.password = encrypted;
       }
-      dto.password = encrypted;
       await this.api.auth
         .login(dto)
         .then(async (token) => {
           this.shared.config.setToken(token);
-          await this.ui.message.success("登录成功").waitContinue();
+          await this.ui.message.successAndWait("登录成功");
           router.back();
           breakWhile();
         })

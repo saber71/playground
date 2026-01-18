@@ -39,13 +39,17 @@ export class GameApiClient {
       req.headers["enable-auth"] = "true";
       return req;
     });
+    this._request.interceptors.response.use((res) => {
+      if (res.status >= 300) return Promise.reject(res);
+      return res;
+    });
   }
 
   async post<T>(url: string, body?: object): Promise<T> {
-    return this._request.post(url, body);
+    return this._request.post(url, body).then((res) => res.data);
   }
 
   async get<T>(url: string, query?: Record<string, any>): Promise<T> {
-    return this._request.get(url, { params: query });
+    return this._request.get(url, { params: query }).then((res) => res.data);
   }
 }

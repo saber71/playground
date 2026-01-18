@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { terminal } from 'terminal-kit';
+import { Injectable } from "@nestjs/common";
+import { terminal } from "terminal-kit";
 
 @Injectable()
 export class MessageService {
@@ -60,12 +60,12 @@ export class MessageService {
   }
 
   title(text: string) {
-    const line = '='.repeat(this.getMaxWidth());
+    const line = "=".repeat(this.getMaxWidth());
     this.term.bold.blue(`${line}\n${text.toUpperCase()}\n${line}\n`);
     return this;
   }
 
-  divider(char = '-', length = this.getMaxWidth()) {
+  divider(char = "-", length = this.getMaxWidth()) {
     this.term.gray(`${char.repeat(length)}\n`);
     return this;
   }
@@ -94,13 +94,13 @@ export class MessageService {
     return this.waitContinue();
   }
 
-  waitContinue(text = '🔻') {
+  waitContinue(text = "🔻") {
     return new Promise<void>((resolve) => {
       this.term(text).grabInput({ mouse: false as any });
-      this.term.once('key', () => {
-        this.term.left(1).grabInput(false);
+      this.term.once("key", () => {
+        this.term.left(1);
         this.term.eraseDisplayBelow();
-        this.term('\n');
+        this.term("\n");
         resolve();
       });
     });

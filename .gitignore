@@ -24,9 +24,10 @@ hs_err_pid*
 replay_pid*
 
 .idea
+*/**/.idea
 .gradle
 gradle
 build
 node_modules
-*/token
+*/**/token
 */dist
