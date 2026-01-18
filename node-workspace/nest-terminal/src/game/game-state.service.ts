@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { User } from "../api/model/user.entity";
+import { Injectable } from "@nestjs/common"
+import { User } from "../api/model/user.entity"
 
 @Injectable()
 export class GameStateService {
@@ -14,9 +14,14 @@ export class GameStateService {
     displayName: "",
     name: "",
     builtin: false,
-  };
+  }
 
   applyPlayer(user: User) {
-    Object.assign(this.player, user);
+    Object.assign(this.player, user)
+  }
+
+  menuPrompt(msg: string = "您想做什么？") {
+    if (this.player.displayName) return `【${this.player.displayName}】${msg}`
+    return msg
   }
 }

@@ -9,15 +9,15 @@ import {
   rawlist,
   search,
   select,
-} from "@inquirer/prompts";
-import { Injectable } from "@nestjs/common";
+} from "@inquirer/prompts"
+import { Injectable } from "@nestjs/common"
 
 interface ItemValidator {
-  required?: boolean;
+  required?: boolean
 }
 
 interface ItemDefaultValue {
-  defaultValue?: any;
+  defaultValue?: any
 }
 
 export type Item =
@@ -27,85 +27,85 @@ export type Item =
   | ({ type: "confirm" } & ItemDefaultValue)
   | ({ type: "editor" } & ItemValidator & ItemDefaultValue)
   | ({
-      type: "select";
-      choices: Parameters<typeof select<any>>[0]["choices"];
+      type: "select"
+      choices: Parameters<typeof select<any>>[0]["choices"]
     } & ItemDefaultValue)
   | {
-      type: "checkbox";
-      choices: Parameters<typeof checkbox<any>>[0]["choices"];
+      type: "checkbox"
+      choices: Parameters<typeof checkbox<any>>[0]["choices"]
     }
   | ({
-      type: "expand";
-      choices: Parameters<typeof expand<any>>[0]["choices"];
+      type: "expand"
+      choices: Parameters<typeof expand<any>>[0]["choices"]
     } & ItemDefaultValue)
   | ({
-      type: "rawList";
-      choices: Parameters<typeof rawlist<any>>[0]["choices"];
-    } & ItemDefaultValue);
+      type: "rawList"
+      choices: Parameters<typeof rawlist<any>>[0]["choices"]
+    } & ItemDefaultValue)
 
 export interface ConsoleFormOption<T extends object> {
-  prompt: string;
-  prop: keyof T;
-  item: Item;
+  prompt: string
+  prop: keyof T
+  item: Item
 }
 
 @Injectable()
 export class PromptService {
   async form<T extends object>(opts: ConsoleFormOption<T>[]): Promise<T> {
-    const result: Array<{ prop: keyof T; value: any }> = [];
+    const result: Array<{ prop: keyof T; value: any }> = []
     for (let opt of opts) {
-      let value: any;
+      let value: any
       if (opt.item.type === "input") {
         value = await this.input(opt.prompt, {
           default: opt.item.defaultValue,
           required: opt.item.required,
-        });
+        })
       } else if (opt.item.type === "inputNumber") {
         value = await this.inputNumber(opt.prompt, {
           default: opt.item.defaultValue,
           required: opt.item.required,
-        });
+        })
       } else if (opt.item.type === "inputPassword") {
-        const required = opt.item.required;
+        const required = opt.item.required
         value = await this.inputPassword(opt.prompt, {
           validate: (str: string) => {
-            if (required === false) return true;
-            return !!str;
+            if (required === false) return true
+            return !!str
           },
-        });
+        })
       } else if (opt.item.type === "editor") {
-        const required = opt.item.required;
+        const required = opt.item.required
         value = await this.editor(opt.prompt, {
           default: opt.item.defaultValue,
           validate: (str: string) => {
-            if (required === false) return true;
-            return !!str;
+            if (required === false) return true
+            return !!str
           },
-        });
+        })
       } else if (opt.item.type === "confirm") {
         value = await this.confirm(opt.prompt, {
           default: opt.item.defaultValue,
-        });
+        })
       } else if (opt.item.type === "select") {
         value = await this.select(opt.prompt, opt.item.choices, {
           default: opt.item.defaultValue,
-        });
+        })
       } else if (opt.item.type === "checkbox") {
-        value = await this.checkbox(opt.prompt, opt.item.choices, {});
+        value = await this.checkbox(opt.prompt, opt.item.choices, {})
       } else if (opt.item.type === "expand") {
         value = await this.expand(opt.prompt, opt.item.choices, {
           default: opt.item.defaultValue,
-        });
+        })
       } else if (opt.item.type === "rawList") {
         value = await this.rawList(opt.prompt, opt.item.choices, {
           default: opt.item.defaultValue,
-        });
-      } else throw new Error("Invalid item type " + (opt.item as any).type);
-      result.push({ prop: opt.prop, value });
+        })
+      } else throw new Error("Invalid item type " + (opt.item as any).type)
+      result.push({ prop: opt.prop, value })
     }
-    const object: any = {};
-    result.forEach((i) => (object[i.prop] = i.value));
-    return object;
+    const object: any = {}
+    result.forEach((i) => (object[i.prop] = i.value))
+    return object
   }
 
   async menuList(
@@ -113,7 +113,7 @@ export class PromptService {
     items: Array<
       | string
       | (() => void | Promise<void>)
-      | { name: string; callback: () => void | Promise<void> }
+      | { name: string; callback: () => void | Promise<void>; isDisabled?: () => boolean }
     >,
   ) {
     const index = await this.select<number>(
@@ -124,50 +124,42 @@ export class PromptService {
             value: index,
             name: i,
             disabled: true,
-          };
+          }
         else if (typeof i === "function")
           return {
             value: index,
             name: "选项" + (index + 1),
-          };
+          }
         return {
           value: index,
           name: i.name,
-        };
+          disabled: i.isDisabled?.() ?? false,
+        }
       }),
-    );
-    const item = items[index];
-    if (typeof item === "function") return item();
-    else if (typeof item === "object") return item.callback();
+    )
+    const item = items[index]
+    if (typeof item === "function") return item()
+    else if (typeof item === "object") return item.callback()
   }
 
   input(prompt: string, opt?: Omit<Parameters<typeof input>[0], "message">) {
-    return input({ message: prompt, ...(opt ?? {}) });
+    return input({ message: prompt, ...(opt ?? {}) })
   }
 
-  inputNumber(
-    prompt: string,
-    opt?: Omit<Parameters<typeof number>[0], "message">,
-  ) {
-    return number({ message: prompt, ...(opt ?? {}) });
+  inputNumber(prompt: string, opt?: Omit<Parameters<typeof number>[0], "message">) {
+    return number({ message: prompt, ...(opt ?? {}) })
   }
 
-  inputPassword(
-    prompt: string,
-    opt?: Omit<Parameters<typeof password>[0], "message">,
-  ) {
-    return password({ message: prompt, ...(opt ?? {}) });
+  inputPassword(prompt: string, opt?: Omit<Parameters<typeof password>[0], "message">) {
+    return password({ message: prompt, ...(opt ?? {}) })
   }
 
-  confirm(
-    prompt: string,
-    opt?: Omit<Parameters<typeof confirm>[0], "message">,
-  ) {
-    return confirm({ message: prompt, ...(opt ?? {}) });
+  confirm(prompt: string, opt?: Omit<Parameters<typeof confirm>[0], "message">) {
+    return confirm({ message: prompt, ...(opt ?? {}) })
   }
 
   editor(prompt: string, opt?: Omit<Parameters<typeof editor>[0], "message">) {
-    return editor({ message: prompt, ...(opt ?? {}) });
+    return editor({ message: prompt, ...(opt ?? {}) })
   }
 
   select<V>(
@@ -175,7 +167,7 @@ export class PromptService {
     choices: Parameters<typeof select<V>>[0]["choices"],
     opt?: Omit<Parameters<typeof select<V>>[0], "message" | "choices">,
   ) {
-    return select<V>({ message: prompt, choices, ...(opt ?? {}) });
+    return select<V>({ message: prompt, choices, ...(opt ?? {}) })
   }
 
   checkbox<V>(
@@ -183,7 +175,7 @@ export class PromptService {
     choices: Parameters<typeof checkbox<V>>[0]["choices"],
     opt?: Omit<Parameters<typeof checkbox<V>>[0], "message" | "choices">,
   ) {
-    return checkbox<V>({ message: prompt, choices, ...(opt ?? {}) });
+    return checkbox<V>({ message: prompt, choices, ...(opt ?? {}) })
   }
 
   expand<V>(
@@ -191,7 +183,7 @@ export class PromptService {
     choices: Parameters<typeof expand<V>>[0]["choices"],
     opt?: Omit<Parameters<typeof expand<V>>[0], "message" | "choices">,
   ) {
-    return expand<V>({ message: prompt, choices, ...(opt ?? {}) });
+    return expand<V>({ message: prompt, choices, ...(opt ?? {}) })
   }
 
   rawList<V>(
@@ -199,7 +191,7 @@ export class PromptService {
     choices: Parameters<typeof rawlist<V>>[0]["choices"],
     opt?: Omit<Parameters<typeof rawlist<V>>[0], "message" | "choices">,
   ) {
-    return rawlist<V>({ message: prompt, choices, ...(opt ?? {}) });
+    return rawlist<V>({ message: prompt, choices, ...(opt ?? {}) })
   }
 
   search<V>(
@@ -207,6 +199,6 @@ export class PromptService {
     source: Parameters<typeof search<V>>[0]["source"],
     opt?: Omit<Parameters<typeof search<V>>[0], "message">,
   ) {
-    return search<V>({ message: prompt, source, ...(opt ?? {}) });
+    return search<V>({ message: prompt, source, ...(opt ?? {}) })
   }
 }
