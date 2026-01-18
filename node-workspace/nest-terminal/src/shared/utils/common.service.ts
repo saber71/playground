@@ -5,11 +5,15 @@ import type { UIService } from "../../ui/ui.service";
 
 @Injectable()
 export class CommonService {
-  commonCatch(ui: UIService, router: IRouter) {
-    return async (error: AxiosError) => {
+  commonAxiosCatch(ui: UIService, router: IRouter) {
+    return async (error: AxiosError<string>) => {
       if (error.status === 401) {
-        await ui.message.warnAndWait("token已失效，请重新登录。");
-        router.forward("login");
+        if (router.getRoute().name !== "login") {
+          await ui.message.warnAndWait("token已失效，请重新登录。");
+          router.next("login");
+        } else {
+          await ui.message.errorAndWait(error.response?.data || "登录失败");
+        }
       } else if (error.code === "ECONNREFUSED") {
         await ui.message.errorAndWait("无法连接到服务器");
       } else {

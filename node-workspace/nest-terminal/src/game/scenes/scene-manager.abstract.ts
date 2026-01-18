@@ -1,5 +1,5 @@
 import { ModuleRef } from "@nestjs/core";
-import type { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { SharedService } from "../../shared/shared.service";
 import { Class } from "../../shared/types/class.type";
 import { UIService } from "../../ui/ui.service";
@@ -23,10 +23,10 @@ export abstract class SceneManagerAbstract {
     const ui = this.ui;
     let history: Array<IRoute> = initRoutes;
     const router: IRouter = {
-      next(name: SceneName, params?: any) {
+      replace(name: SceneName, params?: any) {
         history[history.length - 1] = { name, params };
       },
-      forward(name: SceneName, params?: any) {
+      next(name: SceneName, params?: any) {
         history.push({ name, params });
       },
       back() {
@@ -36,27 +36,27 @@ export abstract class SceneManagerAbstract {
         const index = history.findLastIndex((i) => i.name === name);
         if (index >= 0) history = history.slice(0, index + 1);
       },
-      getParams<T>(): T {
-        return history.at(-1)?.params as T;
+      getRoute<T>(): IRoute<T> {
+        return history.at(-1)!;
       },
-      async forWhile(
-        cb: (
-          breakWhile: () => void,
-          commonCatch: (res: AxiosError) => void,
-        ) => void | Promise<void>,
-      ): Promise<void> {
-        let isBreak = false;
-        while (!isBreak) {
-          try {
-            await cb(
-              () => (isBreak = true),
-              shared.common.commonCatch(ui, router),
-            );
-          } catch (_) {
-            isBreak = true;
-          }
+    };
+    const forWile = async (
+      cb: (
+        breakWhile: () => void,
+        commonCatch: (res: AxiosError) => void,
+      ) => void | Promise<void>,
+    ) => {
+      let isBreak = false;
+      while (!isBreak) {
+        try {
+          await cb(
+            () => (isBreak = true),
+            shared.common.commonAxiosCatch(ui, router),
+          );
+        } catch (_) {
+          isBreak = true;
         }
-      },
+      }
     };
     while (history.length) {
       const cur = history.at(-1)!;
@@ -66,7 +66,7 @@ export abstract class SceneManagerAbstract {
         break;
       }
       const scene = this.module.get<IScene>(clazz);
-      await scene.enter(router);
+      await scene.enter(router, forWile);
     }
   }
 }

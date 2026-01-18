@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { terminal } from 'terminal-kit';
-import { MessageService } from './message.service';
+import { Injectable } from "@nestjs/common";
+import { terminal } from "terminal-kit";
+import { MessageService } from "./message.service";
 
 export interface TableOption {
   title?: string;
@@ -17,7 +17,7 @@ export class TableRenderService {
 
   renderKeyValue(data: Record<string, any>, title?: string) {
     const rows = Object.entries(data).map((e) => [e[0], String(e[1])]);
-    this._renderTable([['属性', '值'], ...rows], {
+    this._renderTable([["属性", "值"], ...rows], {
       title,
       hasHeader: true,
       firstColumnTextAttr: { bold: true },
@@ -26,14 +26,14 @@ export class TableRenderService {
 
   renderObjectList<T extends Record<string, any>>(
     items: T[],
-    columnMap?: Partial<Record<keyof T, string>>,
+    columns?: Array<keyof T>,
     title?: string,
   ) {
     if (!items.length) {
-      this.messageService.info('空');
+      this.messageService.info("空");
       return;
     }
-    const headers = columnMap ? Object.keys(columnMap) : Object.keys(items[0]);
+    const headers: any = columns ? columns : Object.keys(items[0]);
     const rows = items.map((i) => headers.map((k) => String(i[k])));
     this._renderTable([headers, ...rows], { title, hasHeader: true });
   }
@@ -47,10 +47,10 @@ export class TableRenderService {
     const keys = [...new Set([...Object.keys(left), ...Object.keys(right)])];
     const rows = keys.map((k) => [
       k,
-      String(left[k] ?? '-'),
-      String(right[k] ?? '-'),
+      String(left[k] ?? "-"),
+      String(right[k] ?? "-"),
     ]);
-    this._renderTable([['', labels[0], labels[1]], ...rows], {
+    this._renderTable([["", labels[0], labels[1]], ...rows], {
       hasHeader: true,
       title,
       firstColumnTextAttr: { bold: true },
@@ -66,8 +66,8 @@ export class TableRenderService {
       textAttr,
       hasBorder: true,
       contentHasMarkup: true,
-      borderAttr: { color: 'cyan' },
-      borderChars: 'lightRounded',
+      borderAttr: { color: "cyan" },
+      borderChars: "lightRounded",
       firstColumnTextAttr,
       // paddingLeft: 1,
       // paddingRight: 1,

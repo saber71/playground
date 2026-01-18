@@ -25,7 +25,7 @@ export class StartupController {
         this.gameState.applyPlayer(user);
       })
       .catch((err) => {
-        this.shared.common.commonCatch(this.ui, {} as any)(err);
+        this.shared.common.commonAxiosCatch(this.ui, {} as any)(err);
         initRoutes.push({ name: "login" });
       });
     return this.sceneManager.run(...initRoutes);

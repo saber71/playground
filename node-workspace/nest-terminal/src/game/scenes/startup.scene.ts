@@ -3,7 +3,7 @@ import { ApiService } from "../../api/api.service";
 import { SharedService } from "../../shared/shared.service";
 import { UIService } from "../../ui/ui.service";
 import { Scene } from "./decorators";
-import { IRouter, IScene } from "./scene.interface";
+import { ForWhile, IRouter, IScene } from "./scene.interface";
 
 @Injectable()
 @Scene("startup")
@@ -14,7 +14,7 @@ export class StartupScene implements IScene {
     readonly shared: SharedService,
   ) {}
 
-  enter(router: IRouter): Promise<void> | void {
+  enter(router: IRouter, forWhile: ForWhile): Promise<void> | void {
     this.ui.message.clearScreen();
     return this.ui.prompt.menuList("你想要做什么？", [
       { name: "新建用户", callback: () => {} },
@@ -24,7 +24,7 @@ export class StartupScene implements IScene {
           await this.api.auth.logout();
           await this.ui.message.successAndWait("注销成功");
           this.shared.config.setToken("");
-          router.forward("login");
+          router.next("login");
         },
       },
     ]);

@@ -2,22 +2,23 @@ import type { AxiosError } from "axios";
 
 export type SceneName = "login" | "startup";
 
+export type ForWhile = (
+  cb: (
+    breakWhile: () => void,
+    commonCatch: (res: AxiosError) => void,
+  ) => void | Promise<void>,
+) => Promise<void>;
+
 export interface IRouter {
+  replace(name: SceneName, params?: any): void;
   next(name: SceneName, params?: any): void;
-  forward(name: SceneName, params?: any): void;
   back(): void;
   backTo(name: SceneName): void;
-  getParams<T>(): T;
-  forWhile(
-    cb: (
-      breakWhile: () => void,
-      commonCatch: (res: AxiosError) => void,
-    ) => void | Promise<void>,
-  ): Promise<void>;
+  getRoute<T>(): IRoute<T>;
 }
 
 export interface IScene {
-  enter(router: IRouter): Promise<void> | void;
+  enter(router: IRouter, forWhile: ForWhile): Promise<void> | void;
 }
 
 export interface IRoute<T = any> {
