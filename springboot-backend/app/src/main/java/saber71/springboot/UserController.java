@@ -19,6 +19,13 @@ public class UserController {
     this.userRepository = userRepository;
   }
 
+  @Operation(summary = "检查指定账号名是否已存在")
+  @GetMapping("exist-name")
+  public ResponseEntity<Boolean> existName(String name) {
+    var optionalUser = userService.getUser(name, null);
+    return ResponseEntity.ok(optionalUser.isPresent());
+  }
+
   @Operation(summary = "分页搜索")
   @GetMapping("search")
   public ResponseEntity<Page<User>> search(UserService.SearchParam param) {

@@ -1,8 +1,10 @@
 import { Injectable } from "@nestjs/common"
 import { ApiService } from "../../api/api.service"
+import { CreateUserDto } from "../../api/model/create-user.dto"
 import { PageVo } from "../../api/model/page.vo"
 import { UserSearchDto } from "../../api/model/user-search.dto"
 import { User } from "../../api/model/user.entity"
+import { SharedService } from "../../shared/shared.service"
 import { UIService } from "../../ui/ui.service"
 import { GameStateService } from "../game-state.service"
 import { Scene } from "./decorators"
@@ -15,6 +17,7 @@ export class UserManagerScene implements IScene {
     readonly ui: UIService,
     readonly api: ApiService,
     readonly state: GameStateService,
+    readonly shared: SharedService,
   ) {}
 
   enter(router: IRouter, forWhile: ForWhile): Promise<void> | void {
@@ -31,27 +34,88 @@ export class UserManagerScene implements IScene {
         .renderObjectList(tableData.content, ["id", "name", "displayName"])
         .catch(commonCatch)
       this.ui.message.info(
-        `[${param.page} / ${tableData.page.totalPages}]  ${param.size}/页  名字(${param.name})`,
+        this.shared.common.commonPageableInfo(param, tableData, { name: "名字" }),
       )
       await this.ui.prompt.menuList(this.state.menuPrompt(), [
+        this.shared.common.commonPageableMenuItem(this.ui, param, tableData),
         {
-          name: "下一页",
-          callback: () => {
-            param.page++
-          },
-          isDisabled: () => param.page >= tableData.page.totalPages,
-        },
-        {
-          name: "上一页",
-          callback: () => {
-            param.page--
-          },
-          isDisabled: () => param.page <= 1,
-        },
-        {
-          name: "过滤【名字】",
+          name: "过滤",
           callback: async () => {
-            param.name = await this.ui.prompt.input("名字")
+            await this.ui.prompt.menuList("", [
+              {
+                name: `过滤【名字】`,
+                callback: async () => {
+                  param.name = await this.ui.prompt.input("名字")
+                },
+              },
+              {
+                name: "重置",
+                callback() {
+                  param.name = ""
+                },
+              },
+            ])
+          },
+        },
+        {
+          name: "新增用户",
+          callback: async () => {
+            const dto: CreateUserDto & { passwordRepeat: string } = await this.ui.prompt.form([
+              {
+                prop: "name",
+                prompt: "账号名",
+                item: {
+                  type: "input",
+                  required: true,
+                  validate: async (value: string) => {
+                    if (!value) return false
+                    const exist = await this.api.user.existName(value).catch(commonCatch)
+                    if (exist) return "账号名不唯一"
+                    return true
+                  },
+                },
+              },
+              {
+                prop: "displayName",
+                prompt: "显示名",
+                item: { type: "input", required: true },
+              },
+              {
+                prop: "password",
+                prompt: "密码",
+                item: { type: "inputPassword", required: false },
+              },
+              {
+                prop: "passwordRepeat",
+                prompt: "确认密码",
+                item: {
+                  type: "inputPassword",
+                  validate: (value, form) => {
+                    if (!form.password) return true
+                    if (form.password !== value) return "密码不一致"
+                    return true
+                  },
+                },
+              },
+            ])
+            if (dto.password) dto.password = await this.shared.encrypt.encrypt(dto.password)
+            await this.api.user
+              .save(dto)
+              .catch(commonCatch)
+              .then(() => this.ui.message.successAndWait("创建成功"))
+          },
+        },
+        {
+          name: "删除用户",
+          callback: async () => {
+            const id = await this.ui.prompt.select(
+              "选择删除的用户",
+              tableData.content.map((i) => ({ name: i.displayName, value: i.id })),
+            )
+            await this.api.user
+              .delete(id + "")
+              .then(() => this.ui.message.successAndWait("删除成功"))
+              .catch(commonCatch)
           },
         },
         {

@@ -36,7 +36,7 @@ public class RepositoryHelper {
 
     // 构建软删除SQL语句
     var sql =
-        "update %s.%s set deleted=true, deleteAt=now() , deleteBy=:uid where id in (:uids)"
+        "update %s.%s set deleted=true, delete_at=now() , delete_by=:uid where id in (:uids)"
             .formatted(defaultSchema, tableName);
     var params = Map.of("uid", UserContext.getUID(), "uids", ids);
     jdbc.update(sql, params);

@@ -11,9 +11,11 @@ import {
   select,
 } from "@inquirer/prompts"
 import { Injectable } from "@nestjs/common"
+import type { MenuItem } from "../shared/types/class.type"
 
-interface ItemValidator {
+interface ItemValidator<V> {
   required?: boolean
+  validate?: (value: V, form: any) => boolean | string | Promise<boolean | string>
 }
 
 interface ItemDefaultValue {
@@ -21,11 +23,11 @@ interface ItemDefaultValue {
 }
 
 export type Item =
-  | ({ type: "input" } & ItemValidator & ItemDefaultValue)
-  | ({ type: "inputNumber" } & ItemValidator & ItemDefaultValue)
-  | ({ type: "inputPassword" } & ItemValidator)
+  | ({ type: "input" } & ItemValidator<string> & ItemDefaultValue)
+  | ({ type: "inputNumber" } & ItemValidator<number | undefined> & ItemDefaultValue)
+  | ({ type: "inputPassword" } & ItemValidator<string>)
   | ({ type: "confirm" } & ItemDefaultValue)
-  | ({ type: "editor" } & ItemValidator & ItemDefaultValue)
+  | ({ type: "editor" } & ItemValidator<string> & ItemDefaultValue)
   | ({
       type: "select"
       choices: Parameters<typeof select<any>>[0]["choices"]
@@ -52,33 +54,41 @@ export interface ConsoleFormOption<T extends object> {
 @Injectable()
 export class PromptService {
   async form<T extends object>(opts: ConsoleFormOption<T>[]): Promise<T> {
-    const result: Array<{ prop: keyof T; value: any }> = []
+    const formData: any = {}
     for (let opt of opts) {
       let value: any
       if (opt.item.type === "input") {
+        const callback = opt.item.validate
         value = await this.input(opt.prompt, {
           default: opt.item.defaultValue,
           required: opt.item.required,
+          validate: callback ? (value) => callback!(value, formData) : undefined,
         })
       } else if (opt.item.type === "inputNumber") {
+        const callback = opt.item.validate
         value = await this.inputNumber(opt.prompt, {
           default: opt.item.defaultValue,
           required: opt.item.required,
+          validate: callback ? (value) => callback!(value, formData) : undefined,
         })
       } else if (opt.item.type === "inputPassword") {
         const required = opt.item.required
+        const callback = opt.item.validate
         value = await this.inputPassword(opt.prompt, {
           validate: (str: string) => {
             if (required === false) return true
+            if (callback) return callback(str, formData)
             return !!str
           },
         })
       } else if (opt.item.type === "editor") {
         const required = opt.item.required
+        const callback = opt.item.validate
         value = await this.editor(opt.prompt, {
           default: opt.item.defaultValue,
           validate: (str: string) => {
             if (required === false) return true
+            if (callback) return callback(str, formData)
             return !!str
           },
         })
@@ -101,21 +111,12 @@ export class PromptService {
           default: opt.item.defaultValue,
         })
       } else throw new Error("Invalid item type " + (opt.item as any).type)
-      result.push({ prop: opt.prop, value })
+      formData[opt.prop] = value
     }
-    const object: any = {}
-    result.forEach((i) => (object[i.prop] = i.value))
-    return object
+    return formData
   }
 
-  async menuList(
-    prompt: string,
-    items: Array<
-      | string
-      | (() => void | Promise<void>)
-      | { name: string; callback: () => void | Promise<void>; isDisabled?: () => boolean }
-    >,
-  ) {
+  async menuList(prompt: string, items: Array<MenuItem>) {
     const index = await this.select<number>(
       prompt,
       items.map((i, index) => {

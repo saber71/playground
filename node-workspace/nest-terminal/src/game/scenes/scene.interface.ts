@@ -1,9 +1,7 @@
-import type { AxiosError } from "axios"
-
 export type SceneName = "login" | "startup" | "user-manager"
 
 export type ForWhile = (
-  cb: (breakWhile: () => void, commonCatch: (res: AxiosError) => void) => void | Promise<void>,
+  cb: (breakWhile: () => void, commonCatch: (res: any) => void) => void | Promise<void>,
 ) => Promise<void>
 
 export interface IRouter {
