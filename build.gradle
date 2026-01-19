@@ -1,6 +1,6 @@
 // 1. 声明构建脚本依赖（插件本身）
-buildscript{
-    repositories{
+buildscript {
+    repositories {
         maven {
             url "${mavenUrl}"
             allowInsecureProtocol = true

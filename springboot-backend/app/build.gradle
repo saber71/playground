@@ -18,3 +18,8 @@ dependencies {
 jar {
     enabled = true
 }
+
+bootJar{
+    enabled = true
+    archiveFileName = "${project.name}.jar"
+}
