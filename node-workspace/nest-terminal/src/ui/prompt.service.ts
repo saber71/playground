@@ -134,7 +134,7 @@ export class PromptService {
         return {
           value: index,
           name: i.name,
-          disabled: i.isDisabled?.() ?? false,
+          disabled: typeof i.isDisabled === "function" ? i.isDisabled() : (i.isDisabled ?? false),
         }
       }),
     )

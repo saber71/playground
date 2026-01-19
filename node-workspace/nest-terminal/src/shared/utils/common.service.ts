@@ -63,13 +63,14 @@ export class CommonService {
           {
             name: "设置页码",
             callback: async () => {
-              param.page = (await ui.prompt.inputNumber("页码")) ?? 1
+              param.page =
+                (await ui.prompt.inputNumber("页码", { min: 1, max: pageVO.page.totalPages })) ?? 1
             },
             isDisabled: () => pageVO.page.totalPages <= 1,
           },
         ])
       },
-      isDisabled: () => pageVO.page.totalPages <= 1,
+      isDisabled: () => pageVO.page.totalPages <= 1 && param.page === 1,
     }
   }
 
@@ -81,6 +82,10 @@ export class CommonService {
     const keys = Object.keys(param).filter((key) => key in nameMap)
     const fields = keys.map((key) => `${nameMap[key]}[${param[key]}]`)
     return `[${param.page} / ${pageVO.page.totalPages}]  ${param.size}/页  ${fields.join(" ")}`
+  }
+
+  commonAfterDelete(param: BasePageSearchDto, pageVO: PageVo<any>) {
+    if (pageVO.content.length === 1 && param.page > 1) param.page--
   }
 
   isEmpty(arg: any) {

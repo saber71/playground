@@ -110,13 +110,19 @@ export class UserManagerScene implements IScene {
           callback: async () => {
             const id = await this.ui.prompt.select(
               "选择删除的用户",
-              tableData.content.map((i) => ({ name: i.displayName, value: i.id })),
+              tableData.content.map((i) => ({
+                name: i.displayName,
+                value: i.id,
+                disabled: i.builtin,
+              })),
             )
             await this.api.user
               .delete(id + "")
               .then(() => this.ui.message.successAndWait("删除成功"))
               .catch(commonCatch)
+            this.shared.common.commonAfterDelete(param, tableData)
           },
+          isDisabled: tableData.content.filter((i) => !i.builtin).length === 0,
         },
         {
           name: "返回",
