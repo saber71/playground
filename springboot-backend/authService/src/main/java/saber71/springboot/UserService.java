@@ -65,7 +65,7 @@ public class UserService {
         .map(
             user -> {
               if (encryptedPassword == null || encryptedPassword.isEmpty()) return user;
-              log.info("user {}",user.getDeleted());
+              log.info("user {}", user.getDeleted());
               if (user.getDeleted()) return null;
               // 解密密码并验证
               var password = rsaService.decrypt(encryptedPassword);
@@ -91,6 +91,17 @@ public class UserService {
    */
   public Page<User> search(@NonNull SearchParam param) {
     return userRepository.search(param.name, param.getPageable());
+  }
+
+  /**
+   * 检查指定名称的用户是否存在
+   *
+   * @param name 用户名称，用于查询用户是否存在
+   * @return 如果用户存在返回true，否则返回false
+   */
+  public boolean existName(String name) {
+    var optionalUser = getUser(name, null);
+    return optionalUser.isPresent();
   }
 
   /** 用户搜索参数类，继承基础分页参数 */

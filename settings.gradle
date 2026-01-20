@@ -4,6 +4,7 @@ include ':demo-multi:app'
 include ':demo-multi:shared'
 include ":springboot-backend:app"
 include ":springboot-backend:authService"
+include ":springboot-backend:projectService"
 include ":springboot-backend:shared"
 
 // 如果模块目录结构特殊，可以指定路径

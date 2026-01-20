@@ -6,6 +6,7 @@ apply plugin: 'io.spring.dependency-management' // 自动匹配 BOM 版本
 dependencies {
     implementation project(':springboot-backend:shared')
     implementation project(':springboot-backend:authService')
+    implementation project(':springboot-backend:projectService')
     implementation "org.springframework.boot:spring-boot-starter-webmvc:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")

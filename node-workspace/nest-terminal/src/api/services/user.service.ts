@@ -22,10 +22,10 @@ export class UserService {
   }
 
   delete(ids: string) {
-    return this.client.delete<string>("/user/delete", { ids })
+    return this.client.delete<boolean>("/user/delete", { ids })
   }
 
   existName(name: string) {
-    return this.client.get<string>("/user/exist-name", { name })
+    return this.client.get<boolean>("/user/exist-name", { name })
   }
 }

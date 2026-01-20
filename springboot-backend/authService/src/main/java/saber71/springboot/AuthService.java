@@ -28,10 +28,10 @@ public class AuthService {
     return ResponseEntity.ok(token);
   }
 
-  public ResponseEntity<String> logout(@NonNull HttpServletRequest request) {
+  public ResponseEntity<Boolean> logout(@NonNull HttpServletRequest request) {
     var authorization = request.getHeader("Authorization");
     SpringContext.getRedisTemplate().delete(authorization);
-    return ResponseEntity.ok("ok");
+    return ResponseEntity.ok(true);
   }
 
   public ResponseEntity<String> getPublicKey() {

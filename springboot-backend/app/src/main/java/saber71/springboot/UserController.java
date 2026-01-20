@@ -22,8 +22,7 @@ public class UserController {
   @Operation(summary = "检查指定账号名是否已存在")
   @GetMapping("exist-name")
   public ResponseEntity<Boolean> existName(String name) {
-    var optionalUser = userService.getUser(name, null);
-    return ResponseEntity.ok(optionalUser.isPresent());
+    return ResponseEntity.ok(userService.existName(name));
   }
 
   @Operation(summary = "分页搜索")
@@ -40,9 +39,9 @@ public class UserController {
 
   @Operation(summary = "删除指定用户")
   @DeleteMapping("delete")
-  public ResponseEntity<?> delete(String ids) {
+  public ResponseEntity<Boolean> delete(String ids) {
     userService.setDeleted(ListHelper.splitMapLong(ids));
-    return ResponseEntity.ok("ok");
+    return ResponseEntity.ok(true);
   }
 
   @Operation(summary = "获取当前用户信息")

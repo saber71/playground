@@ -29,6 +29,10 @@ public class RepositoryHelper {
    * @param ids 要删除的记录ID列表
    */
   public static void setDeleted(String tableName, List<Long> ids) {
+    setDeleted(tableName, ids, "id");
+  }
+
+  public static void setDeleted(String tableName, List<Long> ids, String fieldName) {
     // 获取JDBC模板和环境配置
     var jdbc = SpringContext.getBean(NamedParameterJdbcTemplate.class);
     var environment = SpringContext.getEnvironment();
@@ -36,8 +40,8 @@ public class RepositoryHelper {
 
     // 构建软删除SQL语句
     var sql =
-        "update %s.%s set deleted=true, delete_at=now() , delete_by=:uid where id in (:uids)"
-            .formatted(defaultSchema, tableName);
+        "update %s.%s set deleted=true, delete_at=now() , delete_by=:uid where %s in (:uids)"
+            .formatted(defaultSchema, tableName, fieldName);
     var params = Map.of("uid", UserContext.getUID(), "uids", ids);
     jdbc.update(sql, params);
   }

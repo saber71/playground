@@ -25,7 +25,7 @@ public class AuthController {
 
   @Operation(summary = "退出登录")
   @PostMapping("logout")
-  public ResponseEntity<String> logout(HttpServletRequest httpServletRequest) {
+  public ResponseEntity<Boolean> logout(HttpServletRequest httpServletRequest) {
     return authService.logout(httpServletRequest);
   }
 
