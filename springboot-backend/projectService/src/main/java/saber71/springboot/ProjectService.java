@@ -1,5 +1,6 @@
 package saber71.springboot;
 
+import java.util.Optional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -8,12 +9,9 @@ import org.springframework.stereotype.Service;
 public class ProjectService {
 
   private final ProjectRepository projectRepository;
-  private final ProjectTaskRepository projectTaskRepository;
 
-  public ProjectService(
-      ProjectRepository projectRepository, ProjectTaskRepository projectTaskRepository) {
+  public ProjectService(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
-    this.projectTaskRepository = projectTaskRepository;
   }
 
   public Project save(@NonNull Project dto) {
@@ -24,7 +22,10 @@ public class ProjectService {
 
   public Page<Project> search(Project.@NonNull SearchParam param) {
     return projectRepository.search(
-        param.getName(), param.getArchive(), param.getStatus(), param.getPageable());
+        Optional.ofNullable(param.getName()).orElse(""),
+        param.getArchive(),
+        param.getStatus(),
+        param.getPageable());
   }
 
   public boolean setDeleted(String ids) {

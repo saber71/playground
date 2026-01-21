@@ -19,7 +19,15 @@ public class BasePageableParam {
   }
 
   public Pageable getPageable() {
-    return getPageable(Sort.by(Sort.Direction.DESC, "createAt"));
+    return getPageable("createAt");
+  }
+
+  public Pageable getPageableNative() {
+    return getPageable("create_at");
+  }
+
+  public Pageable getPageable(String property) {
+    return getPageable(Sort.by(Sort.Direction.DESC, property));
   }
 
   public Pageable getPageable(Sort order) {

@@ -1,9 +1,6 @@
 package saber71.springboot;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
@@ -28,14 +25,6 @@ public class Project extends BaseEntity {
     RUNNING,
     PAUSE,
     COMPLETED
-  }
-
-  @Data
-  public static class CreateDTO {
-    @Nullable private Long id;
-    private String name;
-    private String description;
-    private Status status;
   }
 
   @EqualsAndHashCode(callSuper = true)

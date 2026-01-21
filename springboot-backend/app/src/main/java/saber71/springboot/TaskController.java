@@ -17,10 +17,15 @@ public class TaskController {
     this.taskService = taskService;
   }
 
+  @GetMapping("find-one")
+  public ResponseEntity<TaskVO> findOne(Long id) {
+    return ResponseEntity.ofNullable(taskService.findOne(id));
+  }
+
   @PostMapping("save")
   @Operation(summary = "更新或创建任务")
   public ResponseEntity<TaskVO> save(@RequestBody Task task) {
-    return ResponseEntity.ok(taskService.save(task));
+    return ResponseEntity.ofNullable(taskService.save(task));
   }
 
   @DeleteMapping("delete")
