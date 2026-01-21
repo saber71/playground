@@ -40,8 +40,7 @@ public class UserController {
   @Operation(summary = "删除指定用户")
   @DeleteMapping("delete")
   public ResponseEntity<Boolean> delete(String ids) {
-    userService.setDeleted(ListHelper.splitMapLong(ids));
-    return ResponseEntity.ok(true);
+    return ResponseEntity.ok(userService.setDeleted(ListHelper.splitMapLong(ids)));
   }
 
   @Operation(summary = "获取当前用户信息")

@@ -1,9 +1,8 @@
 package saber71.springboot;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -29,10 +28,10 @@ public class RepositoryHelper {
    * @param ids 要删除的记录ID列表
    */
   public static void setDeleted(String tableName, List<Long> ids) {
-    setDeleted(tableName, ids, "id");
+    setDeleted(tableName, WhereClause.in("id", ids));
   }
 
-  public static void setDeleted(String tableName, List<Long> ids, String fieldName) {
+  public static void setDeleted(String tableName, WhereClause @NonNull ... clauses) {
     // 获取JDBC模板和环境配置
     var jdbc = SpringContext.getBean(NamedParameterJdbcTemplate.class);
     var environment = SpringContext.getEnvironment();
@@ -40,9 +39,17 @@ public class RepositoryHelper {
 
     // 构建软删除SQL语句
     var sql =
-        "update %s.%s set deleted=true, delete_at=now() , delete_by=:uid where %s in (:uids)"
-            .formatted(defaultSchema, tableName, fieldName);
-    var params = Map.of("uid", UserContext.getUID(), "uids", ids);
+        "update %s.%s set deleted=true, delete_at=now() , delete_by=:uid"
+            .formatted(defaultSchema, tableName);
+    if (clauses.length > 1) {
+      sql +=
+          " where " + String.join(" and ", Arrays.stream(clauses).map(WhereClause::build).toList());
+    }
+    var params = new HashMap<String, Object>();
+    params.put("uid", UserContext.getUID());
+    for (WhereClause clause : clauses) {
+      params.put(clause.field(), clause.value());
+    }
     jdbc.update(sql, params);
   }
 }

@@ -27,6 +27,9 @@ public class Task extends BaseEntity {
 
   private LocalDateTime realEndTime;
 
+  @Transient
+  private Long projectId;
+
   public enum Status {
     TODO,
     RUNNING,
@@ -34,7 +37,7 @@ public class Task extends BaseEntity {
     CANCELED
   }
 
-  public enum Priority{
+  public enum Priority {
     LOW,
     MEDIUM,
     HIGH
@@ -42,25 +45,15 @@ public class Task extends BaseEntity {
 
   @EqualsAndHashCode(callSuper = true)
   @Data
-  public static class SearchParam extends BasePageableParam{
-    @Nullable
-    private String name;
+  public static class SearchParam extends BasePageableParam {
+    @Nullable private String name;
 
-    @Nullable
-    private Status status;
+    @Nullable private Status status;
 
-    @Nullable
-    private Priority priority;
+    @Nullable private Priority priority;
 
-    @Nullable
-    private List<Long> labels;
+    @Nullable private List<Long> labels;
 
-    @Nullable
-    private Long projectId;
-  }
-
-  @EqualsAndHashCode(callSuper = true)
-  @Data
-  public static class VO extends Task{
+    @Nullable private Long projectId;
   }
 }

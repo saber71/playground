@@ -79,8 +79,9 @@ public class UserService {
    *
    * @param uids 用户ID列表
    */
-  public void setDeleted(List<Long> uids) {
+  public boolean setDeleted(List<Long> uids) {
     RepositoryHelper.setDeleted("user", uids);
+    return true;
   }
 
   /**
