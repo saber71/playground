@@ -20,6 +20,9 @@ importers:
       '@nestjs/core':
         specifier: ^11.0.1
         version: 11.1.12(@nestjs/common@11.1.12(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@shoelace-style/shoelace':
+        specifier: ^2.20.1
+        version: 2.20.1(@floating-ui/utils@0.2.10)(@types/react@19.2.9)
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -32,6 +35,9 @@ importers:
       element-plus:
         specifier: ^2.13.1
         version: 2.13.1(vue@3.5.26(typescript@5.9.3))
+      injection-js:
+        specifier: ^2.6.1
+        version: 2.6.1
       jsencrypt:
         specifier: ^3.5.4
         version: 3.5.4
@@ -399,6 +405,10 @@ packages:
   '@ctrl/tinycolor@3.6.1':
     resolution: {integrity: sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==}
     engines: {node: '>=10'}
+
+  '@ctrl/tinycolor@4.2.0':
+    resolution: {integrity: sha512-kzyuwOAQnXJNLS9PSyrk0CWk35nWJW/zl/6KvnTBMFK65gm7U1/Z5BqjxeapjZCIhQcM/DsrEmcbRwDyXyXK4A==}
+    engines: {node: '>=14'}
 
   '@element-plus/icons-vue@2.3.2':
     resolution: {integrity: sha512-OzIuTaIfC8QXEPmJvB4Y4kw34rSXdCJzxcD1kFStBvr8bK6X1zQAYDo0CNMjojnfTqRQCJ0I7prlErcoRiET2A==}
@@ -980,6 +990,17 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
+  '@lit-labs/ssr-dom-shim@1.5.1':
+    resolution: {integrity: sha512-Aou5UdlSpr5whQe8AA/bZG0jMj96CoJIWbGfZ91qieWu5AWUMKw8VR/pAkQkJYvBNhmCcWnZlyyk5oze8JIqYA==}
+
+  '@lit/react@1.0.8':
+    resolution: {integrity: sha512-p2+YcF+JE67SRX3mMlJ1TKCSTsgyOVdAwd/nxp3NuV1+Cb6MWALbN6nT7Ld4tpmYofcE5kcaSY1YBB9erY+6fw==}
+    peerDependencies:
+      '@types/react': 17 || 18 || 19
+
+  '@lit/reactive-element@2.1.2':
+    resolution: {integrity: sha512-pbCDiVMnne1lYUIaYNN5wrwQXDtHaYtg7YEFPeW+hws6U47WeFvISGUWekPGKWOP1ygrs0ef0o1VJMk1exos5A==}
+
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
@@ -1304,6 +1325,16 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@shoelace-style/animations@1.2.0':
+    resolution: {integrity: sha512-avvo1xxkLbv2dgtabdewBbqcJfV0e0zCwFqkPMnHFGbJbBHorRFfMAHh1NG9ymmXn0jW95ibUVH03E1NYXD6Gw==}
+
+  '@shoelace-style/localize@3.2.1':
+    resolution: {integrity: sha512-r4C9C/5kSfMBIr0D9imvpRdCNXtUNgyYThc4YlS6K5Hchv1UyxNQ9mxwj+BTRH2i1Neits260sR3OjKMnplsFA==}
+
+  '@shoelace-style/shoelace@2.20.1':
+    resolution: {integrity: sha512-FSghU95jZPGbwr/mybVvk66qRZYpx5FkXL+vLNpy1Vp8UsdwSxXjIHE3fsvMbKWTKi9UFfewHTkc5e7jAqRYoQ==}
+    engines: {node: '>=14.17.0'}
+
   '@sinclair/typebox@0.34.47':
     resolution: {integrity: sha512-ZGIBQ+XDvO5JQku9wmwtabcVTHJsgSWAHYtVuM9pBNNR5E88v6Jcj/llpmsjivig5X8A8HHOb4/mbEKPS5EvAw==}
 
@@ -1401,6 +1432,9 @@ packages:
   '@types/node@25.0.8':
     resolution: {integrity: sha512-powIePYMmC3ibL0UJ2i2s0WIbq6cg6UyVFQxSCpaPxxzAaziRfimGivjdF943sSGV6RADVbk0Nvlm5P/FB44Zg==}
 
+  '@types/react@19.2.9':
+    resolution: {integrity: sha512-Lpo8kgb/igvMIPeNV2rsYKTgaORYdO1XGVZ4Qz3akwOj0ySGYMPlQWa8BaLn0G63D1aSaAQ5ldR06wCpChQCjA==}
+
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
 
@@ -1415,6 +1449,9 @@ packages:
 
   '@types/through@0.0.33':
     resolution: {integrity: sha512-HsJ+z3QuETzP3cswwtzt2vEIiHBk/dCcHGhbmG5X3ecnwFD/lPrMpliGXxSCg03L9AhrdwA4Oz/qfspkDW+xGQ==}
+
+  '@types/trusted-types@2.0.7':
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
   '@types/web-bluetooth@0.0.20':
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
@@ -2007,6 +2044,11 @@ packages:
   component-emitter@1.3.1:
     resolution: {integrity: sha512-T0+barUSQRTUQASh8bx02dl+DhF54GtIDY13Y3m9oWTklKbb3Wv974meRpeZ3lp1JpLVECWWNHC4vaG2XHXouQ==}
 
+  composed-offset-position@0.0.6:
+    resolution: {integrity: sha512-Q7dLompI6lUwd7LWyIcP66r4WcS9u7AL2h8HaeipiRfCRPLMWqRx8fYsjb4OHi6UQFifO7XtNC2IlEJ1ozIFxw==}
+    peerDependencies:
+      '@floating-ui/utils': ^0.2.5
+
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
@@ -2422,6 +2464,9 @@ packages:
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
+  injection-js@2.6.1:
+    resolution: {integrity: sha512-dbR5bdhi7TWDoCye9cByZqeg/gAfamm8Vu3G1KZOTYkOif8WkuM8CD0oeDPtZYMzT5YH76JAFB7bkmyY9OJi2A==}
+
   iota-array@1.0.0:
     resolution: {integrity: sha512-pZ2xT+LOHckCatGQ3DcG/a+QuEqvoxqkiL7tvE8nn3uuu+f6i1TtpB5/FtWFbxUuVr5PZCx8KskuGatbJDXOWA==}
 
@@ -2698,6 +2743,15 @@ packages:
 
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
+
+  lit-element@4.2.2:
+    resolution: {integrity: sha512-aFKhNToWxoyhkNDmWZwEva2SlQia+jfG0fjIWV//YeTaWrVnOxD89dPKfigCUspXFmjzOEUQpOkejH5Ly6sG0w==}
+
+  lit-html@3.3.2:
+    resolution: {integrity: sha512-Qy9hU88zcmaxBXcc10ZpdK7cOLXvXpRoBxERdtqV9QOrfpMZZ6pSYP91LhpPtap3sFMUiL7Tw2RImbe0Al2/kw==}
+
+  lit@3.3.2:
+    resolution: {integrity: sha512-NF9zbsP79l4ao2SNrH3NkfmFgN/hBYSQo90saIVI1o5GpjAdCPVstVzO1MrLOakHoEhYkrtRjPK6Ob521aoYWQ==}
 
   load-esm@1.0.3:
     resolution: {integrity: sha512-v5xlu8eHD1+6r8EHTg6hfmO97LN8ugKtiXcy5e6oN72iD2r6u0RPfLl6fxM+7Wnh2ZRq15o0russMst44WauPA==}
@@ -3049,6 +3103,9 @@ packages:
 
   pure-rand@7.0.1:
     resolution: {integrity: sha512-oTUZM/NAZS8p7ANR3SHh30kXB+zK2r2BPcEn/awJIbOvq82WoMN4p62AWWp3Hhw50G0xMsw1mhIBLqHw64EcNQ==}
+
+  qr-creator@1.0.0:
+    resolution: {integrity: sha512-C0cqfbS1P5hfqN4NhsYsUXePlk9BO+a45bAQ3xLYjBL3bOIFzoVEjs79Fado9u9BPBD3buHi3+vY+C8tHh4qMQ==}
 
   qs@6.14.1:
     resolution: {integrity: sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==}
@@ -4011,6 +4068,8 @@ snapshots:
 
   '@ctrl/tinycolor@3.6.1': {}
 
+  '@ctrl/tinycolor@4.2.0': {}
+
   '@element-plus/icons-vue@2.3.2(vue@3.5.26(typescript@5.9.3))':
     dependencies:
       vue: 3.5.26(typescript@5.9.3)
@@ -4612,6 +4671,16 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@lit-labs/ssr-dom-shim@1.5.1': {}
+
+  '@lit/react@1.0.8(@types/react@19.2.9)':
+    dependencies:
+      '@types/react': 19.2.9
+
+  '@lit/reactive-element@2.1.2':
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.5.1
+
   '@lukeed/csprng@1.1.0': {}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -4845,6 +4914,24 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.55.1':
     optional: true
 
+  '@shoelace-style/animations@1.2.0': {}
+
+  '@shoelace-style/localize@3.2.1': {}
+
+  '@shoelace-style/shoelace@2.20.1(@floating-ui/utils@0.2.10)(@types/react@19.2.9)':
+    dependencies:
+      '@ctrl/tinycolor': 4.2.0
+      '@floating-ui/dom': 1.7.4
+      '@lit/react': 1.0.8(@types/react@19.2.9)
+      '@shoelace-style/animations': 1.2.0
+      '@shoelace-style/localize': 3.2.1
+      composed-offset-position: 0.0.6(@floating-ui/utils@0.2.10)
+      lit: 3.3.2
+      qr-creator: 1.0.0
+    transitivePeerDependencies:
+      - '@floating-ui/utils'
+      - '@types/react'
+
   '@sinclair/typebox@0.34.47': {}
 
   '@sinonjs/commons@3.0.1':
@@ -4954,6 +5041,10 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
+  '@types/react@19.2.9':
+    dependencies:
+      csstype: 3.2.3
+
   '@types/stack-utils@2.0.3': {}
 
   '@types/superagent@8.1.9':
@@ -4975,6 +5066,8 @@ snapshots:
   '@types/through@0.0.33':
     dependencies:
       '@types/node': 25.0.8
+
+  '@types/trusted-types@2.0.7': {}
 
   '@types/web-bluetooth@0.0.20': {}
 
@@ -5634,6 +5727,10 @@ snapshots:
 
   component-emitter@1.3.1: {}
 
+  composed-offset-position@0.0.6(@floating-ui/utils@0.2.10):
+    dependencies:
+      '@floating-ui/utils': 0.2.10
+
   concat-map@0.0.1: {}
 
   consola@3.4.2: {}
@@ -6053,6 +6150,10 @@ snapshots:
       wrappy: 1.0.2
 
   inherits@2.0.4: {}
+
+  injection-js@2.6.1:
+    dependencies:
+      tslib: 2.8.1
 
   iota-array@1.0.0: {}
 
@@ -6492,6 +6593,22 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
+  lit-element@4.2.2:
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.5.1
+      '@lit/reactive-element': 2.1.2
+      lit-html: 3.3.2
+
+  lit-html@3.3.2:
+    dependencies:
+      '@types/trusted-types': 2.0.7
+
+  lit@3.3.2:
+    dependencies:
+      '@lit/reactive-element': 2.1.2
+      lit-element: 4.2.2
+      lit-html: 3.3.2
+
   load-esm@1.0.3: {}
 
   loader-runner@4.3.1: {}
@@ -6775,6 +6892,8 @@ snapshots:
   punycode@2.3.1: {}
 
   pure-rand@7.0.1: {}
+
+  qr-creator@1.0.0: {}
 
   qs@6.14.1:
     dependencies:
