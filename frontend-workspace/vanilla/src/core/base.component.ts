@@ -6,10 +6,15 @@ export class BaseComponent<
   Events = GlobalEventHandlersEventMap,
 > {
   private _children: BaseComponent[] = []
+  private _parent: BaseComponent | undefined
   private readonly _stopWatchers: StopWatcher[] = []
   private readonly _keyMapListener: Map<any, any> = new Map()
 
   constructor(private readonly _htmlElement: El) {}
+
+  getParent() {
+    return this._parent
+  }
 
   getHTMLElement() {
     return this._htmlElement
@@ -27,6 +32,8 @@ export class BaseComponent<
     if (index >= 0) this.removeChild(child, index)
     this._children.push(child)
     this._htmlElement.appendChild(child._htmlElement)
+    //@ts-ignore
+    child._parent = this
     return this
   }
 
@@ -38,6 +45,8 @@ export class BaseComponent<
         const n = this._children[index]
         this._htmlElement.insertBefore(child.getHTMLElement(), n.getHTMLElement())
         this._children = [...this._children.slice(0, index), child, ...this._children.slice(index)]
+        //@ts-ignore
+        child._parent = this
       } else {
         this.addChild(child)
       }
@@ -55,6 +64,7 @@ export class BaseComponent<
     if (index >= 0) {
       this._children.splice(index, 1)
       child._htmlElement.remove()
+      child._parent = undefined
     }
     return this
   }

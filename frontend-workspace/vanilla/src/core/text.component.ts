@@ -8,7 +8,7 @@ export class TextComponent extends BaseComponent<HTMLSpanElement> {
   }
 
   setValue(str: string) {
-    this.getHTMLElement().textContent = str
+    this.getHTMLElement().innerHTML = str
     return this
   }
 }
