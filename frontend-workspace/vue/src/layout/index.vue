@@ -2,7 +2,7 @@
   <div class="layout-container">
     <div class="sidebar">
       <div class="logos">
-        <img src="@/assets/logo.svg" />
+        <img src="../assets/logo.svg" />
         <span>VITE + VUE</span>
       </div>
       <el-scrollbar>
@@ -26,37 +26,37 @@
 </template>
 
 <script setup lang="ts">
-import { routes } from "@/router";
-import { type RouteRecordRaw, RouterView, useRoute } from "vue-router";
-import MenuItem from "./components/MenuItem.vue";
+import { routes } from "@/router"
+import { type RouteRecordRaw, RouterView, useRoute } from "vue-router"
+import MenuItem from "./components/MenuItem.vue"
 
-const route = useRoute();
-const firstRoute = routes[0]!;
-const menus: Menu[] = [];
+const route = useRoute()
+const firstRoute = routes[0]!
+const menus: Menu[] = []
 
 for (let child of firstRoute.children!) {
-  menus.push(toMenu(child, firstRoute));
+  menus.push(toMenu(child, firstRoute))
 }
 
 interface Menu {
-  path: string;
-  name: string;
-  children: Menu[];
-  icon: any;
+  path: string
+  name: string
+  children: Menu[]
+  icon: any
 }
 
 function toMenu(route: RouteRecordRaw, parent: RouteRecordRaw): Menu {
-  route = Object.assign({}, route);
+  route = Object.assign({}, route)
   if (route.path[0] !== "/") {
-    if (parent.path !== "/") route.path = parent.path + "/" + route.path;
-    else route.path = "/" + route.path;
+    if (parent.path !== "/") route.path = parent.path + "/" + route.path
+    else route.path = "/" + route.path
   }
   return {
     path: route.path,
     name: (route.meta?.title as string) ?? "",
     children: route.children?.map((i) => toMenu(i, route)) ?? [],
     icon: route.meta?.icon,
-  };
+  }
 }
 </script>
 
