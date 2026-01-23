@@ -1,0 +1,16 @@
+CMD和ENTRYPOINT是Dockerfile中用于指定容器启动时执行命令的两个指令
+
+CMD为容器提供默认执行命令或参数
+
+ENTRYPOINT定义容器真正运行的主程序，不能被轻易覆盖。docker run的参数会被附加到ENTRYPOINT后面
+更适合构建像可执行文件一样的镜像
+
+CMD提供完整的命令；ENTRYPOINT设置容器的主命令
+CMD的命令可以被docker run覆盖；ENTRYPOINT，除非使用--entrypoint否则不可覆盖
+两者与shell/exec格式兼容
+当两者同时存在时，CMD的内容可以作为参数传给ENTRYPOINT，ENTRYPOINT是主命令，CMD是默认参数
+
+镜像代表一个特定应用，如nginx、redis，使用ENTRYPOINT主命令 + CMD参数
+镜像用于通用环境，如基础python镜像，使用CMD
+镜像像一个可执行程序，使用ENTRYPOINT
+需要在docker run时完全替换启动命令，使用CMD

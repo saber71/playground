@@ -10,10 +10,9 @@
 1、Docker 镜像是如何分层的？为什么分层设计很重要？
 2、解释 Docker 的存储驱动（如 overlay2）的作用。
 3、如何减小 Docker 镜像的大小？有哪些最佳实践？
-4、例如：使用多阶段构建、选择轻量基础镜像（如 alpine）、合并 RUN 指令等。
-5、CMD 和 ENTRYPOINT 有什么区别？什么时候用哪个？
-6、Docker 网络模式有哪些（bridge、host、none、overlay）？分别适用于什么场景？
-7、如何在容器之间共享数据？Volume 和 Bind Mount 有何区别？
+4、CMD 和 ENTRYPOINT 有什么区别？什么时候用哪个？
+5、Docker 网络模式有哪些（bridge、host、none、overlay）？分别适用于什么场景？
+6、如何在容器之间共享数据？Volume 和 Bind Mount 有何区别？
 
 🔴 高级（架构、安全与生产）
 
