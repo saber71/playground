@@ -1,5 +1,6 @@
 import { BlockComponent, TextComponent } from "../core"
-import { waitTime } from "../utils"
+import type { StyledString } from "../utils"
+import { CLASS_NO_SCROLLBAR, waitTime } from "../utils"
 
 export class MessageBox extends BlockComponent {
   private readonly _wrapper: BlockComponent
@@ -7,32 +8,50 @@ export class MessageBox extends BlockComponent {
 
   constructor() {
     super()
-    this.setStyle("position", "fixed")
-      .setStyle("left", "0")
-      .setStyle("bottom", "0")
-      .setStyle("background", "white")
-      .setStyle("boxSizing", "border-box")
-      .setStyle("border", "2px solid black")
-      .setStyle("height", "100px")
-      .setStyle("lineHeight", "24px")
-      .setStyle("width", "100%")
-      .setStyle("padding", "12px 20px")
-      .addChild(
-        (this._wrapper = new BlockComponent())
-          .setStyle("height", "100%")
-          .setStyle("overflow", "auto")
-          .addChild((this._text = new TextComponent()).setStyle("whiteSpace", "pre")),
-      )
+    this.styles({
+      boxSizing: "border-box",
+      background: "white",
+      padding: "8px 14px",
+      lineHeight: "27px",
+      border: "2px solid black",
+    }).addChild(
+      (this._wrapper = new BlockComponent().class(CLASS_NO_SCROLLBAR).styles({
+        height: "100%",
+        overflow: "hidden",
+      })).addChild((this._text = new TextComponent()).whiteSpace("pre")),
+    )
   }
 
-  async typing(text: string, interval: number = 50) {
-    for (let i = 1; i < text.length; i++) {
-      this._text.setValue(text.slice(0, i))
-      await waitTime(interval)
-      this._wrapper.getHTMLElement().scrollTo({
-        behavior: "smooth",
-        top: this._wrapper.getHTMLElement().scrollHeight,
-      })
+  async typing(content: Array<string | StyledString>, interval: number = 50, abort?: AbortSignal) {
+    let aborted = false
+    abort?.addEventListener(
+      "abort",
+      () => {
+        aborted = true
+        this._text.setValue(
+          content.map((i) => (typeof i === "string" ? i : i.toHTMLString())).join(""),
+        )
+        this._wrapper.getHTMLElement().scrollTo({
+          behavior: "smooth",
+          top: this._wrapper.getHTMLElement().scrollHeight,
+        })
+      },
+      { once: true },
+    )
+    let acc = ""
+    for (let i = 0; i < content.length && !aborted; i++) {
+      const text = content[i]
+      const length = text.length
+      for (let i = 1; i < length && !aborted; i++) {
+        this._text.setValue(acc + text.slice(0, i))
+        await waitTime(interval)
+        this._wrapper.getHTMLElement().scrollTo({
+          behavior: "smooth",
+          top: this._wrapper.getHTMLElement().scrollHeight,
+        })
+      }
+      if (!aborted && i + 1 <= content.length)
+        acc += typeof text === "string" ? text : text.toHTMLString()
     }
   }
 }

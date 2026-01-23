@@ -1,13 +1,29 @@
-import type { FunctionKeys, PropertyKeys, StopWatcher } from "../types.ts"
+import type { AddEventListenerOptions } from "rxjs/internal/observable/fromEvent"
+import type {
+  BoxSizing,
+  CssLength,
+  CursorType,
+  DisplayType,
+  FlexDirectionType,
+  FlexPositionType,
+  FunctionKeys,
+  OverflowType,
+  PartialCssStyles,
+  PositionType,
+  PropertyKeys,
+  WhiteSpaceType,
+} from "../types.ts"
 import { Value } from "../utils"
+import { ScopedWatcher } from "../utils/ScopedWatcher.ts"
+import type { Styleable } from "./styleable.interface.ts"
 
 export class BaseComponent<
   El extends HTMLElement = HTMLElement,
   Events = GlobalEventHandlersEventMap,
-> {
+> implements Styleable {
   private _children: BaseComponent[] = []
   private _parent: BaseComponent | undefined
-  private readonly _stopWatchers: StopWatcher[] = []
+  private readonly _scopedWatcher = new ScopedWatcher()
   private readonly _keyMapListener: Map<any, any> = new Map()
 
   constructor(private readonly _htmlElement: El) {}
@@ -73,8 +89,8 @@ export class BaseComponent<
   set<Key extends PropertyKeys<El>>(key: Key, value: El[Key] | Value<El[Key]>) {
     if (value instanceof Value) {
       this._htmlElement[key] = value.get()
-      const stopWatcher = value.register(() => (this._htmlElement[key] = value.get()))
-      this._stopWatchers.push(stopWatcher)
+      ScopedWatcher.current(this._scopedWatcher)
+      value.register(() => (this._htmlElement[key] = value.get()))
     } else {
       this._htmlElement[key] = value
     }
@@ -100,21 +116,28 @@ export class BaseComponent<
     for (let child of this._children) {
       child.destroy()
     }
-    for (let stopWatcher of this._stopWatchers) {
-      stopWatcher()
-    }
+    this._scopedWatcher.destroy()
     this._children.length = 0
-    this._stopWatchers.length = 0
     this._htmlElement.remove()
   }
 
-  setStyle(name: keyof CSSStyleDeclaration, value: string | Value<string>) {
+  id(val: string) {
+    this._htmlElement.id = val
+    return this
+  }
+
+  class(name: string) {
+    this._htmlElement.className = name
+    return this
+  }
+
+  style(name: keyof CSSStyleDeclaration, value: string | Value<string>) {
     if (value instanceof Value) {
       //@ts-ignore
       this._htmlElement.style[name] = value.get()
+      ScopedWatcher.current(this._scopedWatcher)
       //@ts-ignore
-      const stopWatcher = value.register(() => (this._htmlElement.style[name] = value.get()))
-      this._stopWatchers.push(stopWatcher)
+      value.register(() => (this._htmlElement.style[name] = value.get()))
     } else {
       //@ts-ignore
       this._htmlElement.style[name] = value
@@ -122,13 +145,18 @@ export class BaseComponent<
     return this
   }
 
-  setStyleProperty(name: string, value: string | Value<string>) {
+  styles(record: PartialCssStyles): this {
+    for (let [key, val] of Object.entries(record)) {
+      this.style(key as any, val as any)
+    }
+    return this
+  }
+
+  styleProperty(name: string, value: string | Value<string>) {
     if (value instanceof Value) {
       this._htmlElement.style.setProperty(name, value.get())
-      const stopWatcher = value.register(() =>
-        this._htmlElement.style.setProperty(name, value.get()),
-      )
-      this._stopWatchers.push(stopWatcher)
+      ScopedWatcher.current(this._scopedWatcher)
+      value.register(() => this._htmlElement.style.setProperty(name, value.get()))
     } else {
       this._htmlElement.style.setProperty(name, value)
     }
@@ -160,5 +188,133 @@ export class BaseComponent<
     this._htmlElement.removeEventListener(name, listener, options)
     this._keyMapListener.delete(options.key)
     return this
+  }
+
+  absolute(): this {
+    return this.style("position", "absolute")
+  }
+
+  background(val: string | Value<string>): this {
+    return this.style("background", val)
+  }
+
+  color(val: string | Value<string>): this {
+    return this.style("color", val)
+  }
+
+  borderBox(): this {
+    return this.style("boxSizing", "border-box")
+  }
+
+  bottom(val: CssLength | Value<CssLength>): this {
+    return this.style("bottom", val)
+  }
+
+  boxSizing(val: BoxSizing | Value<BoxSizing>): this {
+    return this.style("boxSizing", val)
+  }
+
+  display(val: DisplayType | Value<DisplayType>): this {
+    return this.style("display", val)
+  }
+
+  fixed(): this {
+    return this.style("position", "fixed")
+  }
+
+  flex(): this {
+    return this.style("display", "flex")
+  }
+
+  grid(): this {
+    return this.style("display", "grid")
+  }
+
+  height(val: CssLength | Value<CssLength>): this {
+    return this.style("height", val)
+  }
+
+  left(val: CssLength | Value<CssLength>): this {
+    return this.style("left", val)
+  }
+
+  lineHeight(val: CssLength | Value<CssLength>): this {
+    return this.style("lineHeight", val)
+  }
+
+  margin(...val: CssLength[]): this {
+    return this.style("margin", val.join(" "))
+  }
+
+  overflow(val: OverflowType | Value<OverflowType>): this {
+    return this.style("overflow", val)
+  }
+
+  padding(...val: CssLength[]): this {
+    return this.style("padding", val.join(" "))
+  }
+
+  position(val: PositionType | Value<PositionType>): this {
+    return this.style("position", val)
+  }
+
+  relative(): this {
+    return this.position("relative")
+  }
+
+  right(val: CssLength | Value<CssLength>): this {
+    return this.style("right", val)
+  }
+
+  sticky(): this {
+    return this.position("sticky")
+  }
+
+  top(val: CssLength | Value<CssLength>): this {
+    return this.style("top", val)
+  }
+
+  whiteSpace(val: WhiteSpaceType | Value<WhiteSpaceType>): this {
+    return this.style("whiteSpace", val)
+  }
+
+  width(val: CssLength | Value<CssLength>): this {
+    return this.style("width", val)
+  }
+
+  alignItems(val: FlexPositionType | Value<FlexPositionType>): this {
+    return this.style("alignItems", val)
+  }
+
+  justifyContent(val: FlexPositionType | Value<FlexPositionType>): this {
+    return this.style("justifyContent", val)
+  }
+
+  flexGrow(val: number | Value<number>): this {
+    return this.style("flexGrow", val as any)
+  }
+
+  flexShrink(val: number | Value<number>): this {
+    return this.style("flexShrink", val as any)
+  }
+
+  flexDirection(val: FlexDirectionType | Value<FlexDirectionType>): this {
+    return this.style("flexDirection", val)
+  }
+
+  gap(val: CssLength | Value<CssLength>): this {
+    return this.style("gap", val)
+  }
+
+  gridTemplateColumns(val: string | Value<string>): this {
+    return this.style("gridTemplateColumns", val)
+  }
+
+  gridTemplateRows(val: string | Value<string>): this {
+    return this.style("gridTemplateRows", val)
+  }
+
+  cursor(val: CursorType | Value<CursorType>): this {
+    return this.style("cursor", val)
   }
 }

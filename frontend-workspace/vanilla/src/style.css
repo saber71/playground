@@ -5,3 +5,7 @@
   width: 100vw;
   height: 100vh;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
