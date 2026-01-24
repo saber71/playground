@@ -1,14 +1,13 @@
-import { El } from "./el.decorator.ts"
 import { HTMLComponent } from "./HTMLComponent.ts"
 
-@El("text")
 export class TextComponent extends HTMLComponent<HTMLSpanElement> {
-  constructor() {
+  constructor(str?: string) {
     super(document.createElement("span"))
+    if (str) this.setContent(str)
   }
 
-  setContent(str: string) {
-    this.getElement().innerHTML = str
+  setContent(str?: string) {
+    this.getElement().innerHTML = str || ""
     return this
   }
 }

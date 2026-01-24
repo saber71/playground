@@ -1,6 +1,5 @@
-import { inject } from "injection-js"
 import { BORDER, FLEX_CENTER, Service } from "../utils"
-import { BlockComponent, ComponentFactory } from "./core"
+import { BlockComponent, TextComponent } from "./core"
 
 export interface TableColumn<T> {
   label: string
@@ -9,10 +8,6 @@ export interface TableColumn<T> {
 
 @Service()
 export class Table extends BlockComponent {
-  constructor(readonly componentFactory = inject(ComponentFactory)) {
-    super()
-  }
-
   render<T>(columns: TableColumn<T>[], data: T[]) {
     this.removeAll()
     if (!data.length) return this
@@ -26,20 +21,17 @@ export class Table extends BlockComponent {
   }
 
   private _renderRow(item: any[], border: boolean = true) {
-    const row = this.componentFactory.create("block").styles({
+    const row = new BlockComponent().styles({
       display: "grid",
       gridTemplateColumns: `repeat(${item.length}, 1fr)`,
     })
     const children = item.map((i) =>
-      this.componentFactory
-        .create("text")
-        .setContent(i)
-        .styles({
-          ...FLEX_CENTER,
-          wordBreak: "break-all",
-          padding: "12px",
-          textAlign: "center",
-        }),
+      new TextComponent(i).styles({
+        ...FLEX_CENTER,
+        wordBreak: "break-all",
+        padding: "12px",
+        textAlign: "center",
+      }),
     )
     row.addChildren(...children)
     if (border) {

@@ -1,7 +1,6 @@
 import { inject } from "injection-js"
 import type { PartialCssStyles } from "../types.ts"
 import { FLEX_CENTER, Service } from "../utils"
-import { ComponentFactory } from "./ComponentFactory.ts"
 import { BlockComponent, DropdownComponent, type MenuItemOption, TextComponent } from "./core"
 import { HTMLComponent } from "./core/HTMLComponent.ts"
 import { MessageBox } from "./MessageBox.ts"
@@ -14,7 +13,6 @@ export class FrontendService extends HTMLComponent<HTMLDivElement> {
   constructor(
     readonly messageBox = inject(MessageBox),
     readonly table = inject(Table),
-    readonly componentFactory = inject(ComponentFactory),
   ) {
     super(document.getElementById("app") as any)
     const padding: PartialCssStyles = {
@@ -26,15 +24,12 @@ export class FrontendService extends HTMLComponent<HTMLDivElement> {
       display: "flex",
       flexDirection: "column",
     }).addChildren(
-      componentFactory
-        .create("block")
-        .addChildren(table)
-        .styles({
-          ...FLEX_CENTER,
-          ...padding,
-          flexGrow: "1",
-          position: "relative",
-        }),
+      new BlockComponent().addChildren(table).styles({
+        ...FLEX_CENTER,
+        ...padding,
+        flexGrow: "1",
+        position: "relative",
+      }),
       messageBox,
     )
     this.body.addChild(

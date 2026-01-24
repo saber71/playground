@@ -1,14 +1,3 @@
-import type { SlButtonGroup } from "@shoelace-style/shoelace"
-import type { DropdownComponent } from "./ui/core"
-import {
-  type AbstractComponent,
-  type BlockComponent,
-  type ButtonComponent,
-  type InputComponent,
-  type MenuComponent,
-  MenuItemComponent,
-  type TextComponent,
-} from "./ui/core"
 import type { Value } from "./utils"
 
 export type FunctionKeys<T> = {
@@ -23,19 +12,6 @@ export type Class<T> = new (...args: any[]) => T
 
 export type Watcher = () => void
 export type StopWatcher = () => void
-
-export interface ComponentNameMapClass {
-  button: ButtonComponent
-  "button-group": AbstractComponent<SlButtonGroup>
-  input: InputComponent
-  text: TextComponent
-  block: BlockComponent
-  menu: MenuComponent
-  menuItem: MenuItemComponent
-  dropdown: DropdownComponent
-}
-
-export type ComponentName = keyof ComponentNameMapClass
 
 export type PositionType = "absolute" | "fixed" | "relative" | "static" | "sticky"
 

@@ -1,10 +1,9 @@
-import { inject } from "injection-js"
 import { BORDER, CLASS_NO_SCROLLBAR, Service, type StyledString, waitTime } from "../utils"
-import { BlockComponent, ComponentFactory, TextComponent } from "./core"
+import { BlockComponent, TextComponent } from "./core"
 
 @Service()
 export class MessageBox extends BlockComponent {
-  constructor(readonly componentFactory = inject(ComponentFactory)) {
+  constructor() {
     super()
     this.styles({
       boxSizing: "border-box",
@@ -16,14 +15,13 @@ export class MessageBox extends BlockComponent {
       height: "100px",
       flexShrink: "0",
     }).addChild(
-      componentFactory
-        .create("block")
+      new BlockComponent()
         .class(CLASS_NO_SCROLLBAR)
         .styles({
           height: "100%",
           overflow: "hidden",
         })
-        .addChild(componentFactory.create("text").styles({ whiteSpace: "pre" })),
+        .addChild(new TextComponent().styles({ whiteSpace: "pre" })),
     )
   }
 

@@ -1,10 +1,8 @@
 import { SlDropdown } from "@shoelace-style/shoelace"
 import type { AbstractComponent } from "./AbstractComponent.ts"
-import { El } from "./el.decorator.ts"
 import { HTMLComponent } from "./HTMLComponent.ts"
 import { MenuComponent, type MenuItemOption } from "./MenuComponent.ts"
 
-@El("dropdown")
 export class DropdownComponent extends HTMLComponent<SlDropdown> {
   constructor() {
     super(document.createElement("sl-dropdown"))

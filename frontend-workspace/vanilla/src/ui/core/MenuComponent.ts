@@ -1,5 +1,4 @@
 import type { SlMenu } from "@shoelace-style/shoelace"
-import { El } from "./el.decorator.ts"
 import { HTMLComponent } from "./HTMLComponent.ts"
 import { MenuItemComponent } from "./MenuItemComponent.ts"
 import { TextComponent } from "./TextComponent.ts"
@@ -12,7 +11,6 @@ export interface MenuItemOption {
   key?: string
 }
 
-@El("menu")
 export class MenuComponent extends HTMLComponent<SlMenu> {
   constructor() {
     super(document.createElement("sl-menu"))
