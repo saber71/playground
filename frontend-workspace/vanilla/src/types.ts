@@ -47,6 +47,7 @@ export type DisplayType =
   | "inline-flex"
   | "inline-grid"
   | "grid"
+  | "none"
 
 export type WhiteSpaceType = "normal" | "nowrap" | "pre" | "pre-wrap" | "pre-line"
 

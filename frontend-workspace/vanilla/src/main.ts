@@ -4,9 +4,9 @@ import "@shoelace-style/shoelace/dist/themes/light.css"
 import "@shoelace-style/shoelace/dist/shoelace.js"
 import type { SlButton } from "@shoelace-style/shoelace"
 import { ReflectiveInjector } from "injection-js"
-import { MessageBox } from "./components/MessageBox.ts"
-import { ComponentFactory, RootComponent } from "./core"
-import { ServiceClasses, StyledString, Value } from "./utils"
+import { ComponentFactory } from "./core"
+import { FrontendService } from "./services"
+import { ServiceClasses, Value } from "./utils"
 
 // 可选：设置默认主题（如果需要暗色）
 // document.documentElement.classList.add('sl-theme-dark');
@@ -25,7 +25,7 @@ app.innerHTML = `
 const injector = ReflectiveInjector.resolveAndCreate(ServiceClasses)
 const variant = new Value<SlButton["variant"]>("default")
 const componentFactory: ComponentFactory = injector.get(ComponentFactory)
-const root = injector.get(RootComponent) as RootComponent
+const root = injector.get(FrontendService) as FrontendService
 const button = componentFactory.create("button")
 button
   .addChild(componentFactory.create("text").setValue("button"))
@@ -33,13 +33,22 @@ button
   .set("circle", true)
   .on("click", () => variant.set("primary"))
 root.addChild(button)
-
-const messageBox = new MessageBox().style("height", "100px")
-root.addChild(messageBox)
-messageBox.typing([
-  `时区逻辑是否合理？
-你假设输入字符串是`,
-  new StyledString("UTC\n 时间（带 Z），并想将其\n“当", { color: "red", fontWeight: "bold" }),
-  `作 UTC 本地时间”存入 LocalDateTime。
-异常处理`,
-])
+//
+// const menu = new MenuComponent()
+// const item = document.createElement("sl-menu-item")
+// item.textContent = "123"
+// menu.getHTMLElement().appendChild(item)
+// const messageBox = new MessageBox().style("height", "100px")
+// root.addChild(messageBox)
+// root.addChild(menu)
+// messageBox
+//   .typing([
+//     `时区逻辑是否合理？
+// 你假设输入字符串是`,
+//     new StyledString("UTC\n 时间（带 Z），并想将其\n“当", { color: "red", fontWeight: "bold" }),
+//     `作 UTC 本地时间”存入 LocalDateTime。
+// 异常处理`,
+//   ])
+//   .then(() => {
+//     item.focus()
+//   })
