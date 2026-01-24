@@ -1,7 +1,0 @@
-export * from "./base.component.ts"
-export * from "./block.component.ts"
-export * from "./button.component.ts"
-export * from "./service/component.factory.ts"
-export * from "./el.decorator.ts"
-export * from "./input.component.ts"
-export * from "./text.component.ts"

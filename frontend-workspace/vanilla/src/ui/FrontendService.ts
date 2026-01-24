@@ -1,9 +1,9 @@
-import { MessageBox } from "../components/MessageBox.ts"
-import { BaseComponent } from "../core"
 import { Service } from "../utils"
+import { AbstractComponent } from "./core"
+import { MessageBox } from "./MessageBox.ts"
 
 @Service()
-export class FrontendService extends BaseComponent {
+export class FrontendService extends AbstractComponent {
   private readonly _messageBox = new MessageBox()
 
   constructor() {

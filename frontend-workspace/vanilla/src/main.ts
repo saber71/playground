@@ -4,8 +4,8 @@ import "@shoelace-style/shoelace/dist/themes/light.css"
 import "@shoelace-style/shoelace/dist/shoelace.js"
 import type { SlButton } from "@shoelace-style/shoelace"
 import { ReflectiveInjector } from "injection-js"
-import { ComponentFactory } from "./core"
-import { FrontendService } from "./services"
+import { FrontendService } from "./ui"
+import { ComponentFactory } from "./ui/core"
 import { ServiceClasses, Value } from "./utils"
 
 // 可选：设置默认主题（如果需要暗色）

@@ -1,11 +1,12 @@
 import type { SlButtonGroup } from "@shoelace-style/shoelace"
 import type {
-  BaseComponent,
+  AbstractComponent,
   BlockComponent,
   ButtonComponent,
   InputComponent,
+  MenuComponent,
   TextComponent,
-} from "./core"
+} from "./ui/core"
 import type { Value } from "./utils"
 
 export type FunctionKeys<T> = {
@@ -23,10 +24,11 @@ export type StopWatcher = () => void
 
 export interface ComponentNameMapClass {
   button: ButtonComponent
-  "button-group": BaseComponent<SlButtonGroup>
+  "button-group": AbstractComponent<SlButtonGroup>
   input: InputComponent
   text: TextComponent
   block: BlockComponent
+  menu: MenuComponent
 }
 
 export type ComponentName = keyof ComponentNameMapClass
