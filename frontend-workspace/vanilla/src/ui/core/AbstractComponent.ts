@@ -22,6 +22,10 @@ export class AbstractComponent<El extends Element = Element, Events = GlobalEven
     return this._children[index] as E
   }
 
+  findChild<T>(predicate: (child: AbstractComponent) => boolean): T | undefined {
+    return this._children.find(predicate) as any
+  }
+
   addChildren(...children: AbstractComponent[]) {
     for (let child of children) {
       this.addChild(child)
@@ -53,6 +57,16 @@ export class AbstractComponent<El extends Element = Element, Events = GlobalEven
         this.addChild(child)
       }
     }
+  }
+
+  removeAll(destroy: boolean = true) {
+    for (let child of this._children) {
+      child._parent = undefined
+      child._element.remove()
+      if (destroy) child.destroy()
+    }
+    this._children.length = 0
+    return this
   }
 
   removeChildren(...children: AbstractComponent[]) {
@@ -115,6 +129,11 @@ export class AbstractComponent<El extends Element = Element, Events = GlobalEven
   class(name: string) {
     this._element.className = name
     return this
+  }
+
+  slot(name: string) {
+    //@ts-ignore
+    return this.set("slot", name)
   }
 
   on<Name extends keyof Events>(

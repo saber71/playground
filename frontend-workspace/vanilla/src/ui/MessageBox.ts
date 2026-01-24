@@ -1,24 +1,29 @@
-import type { StyledString } from "../utils"
-import { CLASS_NO_SCROLLBAR, waitTime } from "../utils"
-import { BlockComponent, TextComponent } from "./core"
+import { inject } from "injection-js"
+import { BORDER, CLASS_NO_SCROLLBAR, Service, type StyledString, waitTime } from "../utils"
+import { BlockComponent, ComponentFactory, TextComponent } from "./core"
 
+@Service()
 export class MessageBox extends BlockComponent {
-  constructor() {
+  constructor(readonly componentFactory = inject(ComponentFactory)) {
     super()
     this.styles({
       boxSizing: "border-box",
       background: "white",
       padding: "8px 14px",
       lineHeight: "27px",
-      border: "2px solid black",
+      border: BORDER,
+      width: "100%",
+      height: "100px",
+      flexShrink: "0",
     }).addChild(
-      new BlockComponent()
+      componentFactory
+        .create("block")
         .class(CLASS_NO_SCROLLBAR)
         .styles({
           height: "100%",
           overflow: "hidden",
         })
-        .addChild(new TextComponent().styles({ whiteSpace: "pre" })),
+        .addChild(componentFactory.create("text").styles({ whiteSpace: "pre" })),
     )
   }
 
@@ -30,13 +35,17 @@ export class MessageBox extends BlockComponent {
     return this.wrapper.getChild(0)
   }
 
+  setContent() {
+    this.text.setContent("")
+  }
+
   async typing(content: Array<string | StyledString>, interval: number = 50, abort?: AbortSignal) {
     let aborted = false
     abort?.addEventListener(
       "abort",
       () => {
         aborted = true
-        this.text.setValue(
+        this.text.setContent(
           content.map((i) => (typeof i === "string" ? i : i.toHTMLString())).join(""),
         )
         this._scrollToBottom()
@@ -48,7 +57,7 @@ export class MessageBox extends BlockComponent {
       const text = content[i]
       const length = text.length
       for (let i = 1; i < length && !aborted; i++) {
-        this.text.setValue(acc + text.slice(0, i))
+        this.text.setContent(acc + text.slice(0, i))
         await waitTime(interval)
         this._scrollToBottom()
       }

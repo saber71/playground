@@ -1,11 +1,13 @@
 import type { SlButtonGroup } from "@shoelace-style/shoelace"
-import type {
-  AbstractComponent,
-  BlockComponent,
-  ButtonComponent,
-  InputComponent,
-  MenuComponent,
-  TextComponent,
+import type { DropdownComponent } from "./ui/core"
+import {
+  type AbstractComponent,
+  type BlockComponent,
+  type ButtonComponent,
+  type InputComponent,
+  type MenuComponent,
+  MenuItemComponent,
+  type TextComponent,
 } from "./ui/core"
 import type { Value } from "./utils"
 
@@ -29,13 +31,21 @@ export interface ComponentNameMapClass {
   text: TextComponent
   block: BlockComponent
   menu: MenuComponent
+  menuItem: MenuItemComponent
+  dropdown: DropdownComponent
 }
 
 export type ComponentName = keyof ComponentNameMapClass
 
 export type PositionType = "absolute" | "fixed" | "relative" | "static" | "sticky"
 
-export type CssLength = `${number}px` | `${number}%` | `${number}vw` | `${number}vh` | string
+export type CssLength =
+  | number
+  | `${number}px`
+  | `${number}%`
+  | `${number}vw`
+  | `${number}vh`
+  | string
 
 export type BoxSizing = "border-box" | "content-box"
 

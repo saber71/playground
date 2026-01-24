@@ -7,7 +7,7 @@ export class TextComponent extends HTMLComponent<HTMLSpanElement> {
     super(document.createElement("span"))
   }
 
-  setValue(str: string) {
+  setContent(str: string) {
     this.getElement().innerHTML = str
     return this
   }

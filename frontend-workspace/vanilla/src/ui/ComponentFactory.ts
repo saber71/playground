@@ -8,6 +8,11 @@ export class ComponentFactory {
 
   create<Name extends keyof ComponentNameMapClass>(name: Name): ComponentNameMapClass[Name] {
     const cls = ComponentFactory.nameMapClass[name]
-    return new cls() as any
+    try {
+      return new cls() as any
+    } catch (e) {
+      console.error("error in", name)
+      throw e
+    }
   }
 }
