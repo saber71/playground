@@ -1,19 +1,24 @@
-import { BORDER, FLEX_CENTER, Service } from "../utils"
-import { BlockComponent, TextComponent } from "./core"
+import { BORDER, FLEX_CENTER, isNil } from "../utils"
+import { BlockComponent, HTMLComponent, TextComponent } from "./core"
 
 export interface TableColumn<T> {
   label: string
   prop: keyof T
 }
 
-@Service()
-export class Table extends BlockComponent {
+export class Table extends HTMLComponent<HTMLDivElement> {
+  constructor() {
+    super(document.createElement("div"))
+  }
+
   render<T>(columns: TableColumn<T>[], data: T[]) {
     this.removeAll()
     if (!data.length) return this
     const rows: BlockComponent[] = [
       this._renderRow(columns.map((i) => i.label)),
-      ...data.map((i) => this._renderRow(columns.map((c) => i[c.prop]))),
+      ...data.map((i) =>
+        this._renderRow(columns.map((c) => (isNil(i[c.prop]) ? "--" : i[c.prop]))),
+      ),
     ]
     rows.at(-1)!.styles({ border: BORDER })
     this.addChildren(...rows)

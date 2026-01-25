@@ -1,6 +1,5 @@
 import type { PartialCssStyles } from "../../types.ts"
 import { Value } from "../../utils"
-import { ScopedWatcher } from "../../utils/ScopedWatcher.ts"
 import { AbstractComponent } from "./AbstractComponent.ts"
 import type { Styleable } from "./styleable.interface.ts"
 
@@ -12,7 +11,7 @@ export class HTMLComponent<E extends HTMLElement>
     if (value instanceof Value) {
       //@ts-ignore
       this._element.style[name] = value.get()
-      ScopedWatcher.current(this._scopedWatcher)
+      this.beCurrent()
       //@ts-ignore
       value.register(() => (this._element.style[name] = value.get()))
     } else {
@@ -31,11 +30,11 @@ export class HTMLComponent<E extends HTMLElement>
 
   styleProperty(name: string, value: string | Value<string>) {
     if (value instanceof Value) {
-      this.getElement().style.setProperty(name, value.get())
-      ScopedWatcher.current(this._scopedWatcher)
-      value.register(() => this.getElement().style.setProperty(name, value.get()))
+      this._getElement().style.setProperty(name, value.get())
+      this.beCurrent()
+      value.register(() => this._getElement().style.setProperty(name, value.get()))
     } else {
-      this.getElement().style.setProperty(name, value)
+      this._getElement().style.setProperty(name, value)
     }
     return this
   }

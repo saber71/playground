@@ -1,6 +1,6 @@
-import { HTMLComponent } from "./HTMLComponent.ts"
+import { HTMLContainerComponent } from "./HTMLContainerComponent.ts"
 
-export class BlockComponent extends HTMLComponent<HTMLDivElement> {
+export class BlockComponent extends HTMLContainerComponent<HTMLDivElement> {
   constructor() {
     super(document.createElement("div"))
   }

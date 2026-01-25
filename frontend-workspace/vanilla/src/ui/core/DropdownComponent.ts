@@ -13,17 +13,14 @@ export class DropdownComponent extends HTMLComponent<SlDropdown> {
   }
 
   async show() {
-    await this.getElement().show()
+    await this.invoke("show")
     this.menu?.focus()
   }
 
   setContent(trigger: AbstractComponent, itemOptions: MenuItemOption[]) {
-    this.removeAll().addChild(trigger)
+    this.removeAll().addChildren(trigger)
     const menu = new MenuComponent()
-    this.addChild(menu)
-    return Promise.all([
-      menu.setItems(itemOptions).then(() => this.getElement().hide()),
-      this.show(),
-    ])
+    this.addChildren(menu)
+    return Promise.all([menu.setItems(itemOptions).then(() => this.invoke("hide")), this.show()])
   }
 }

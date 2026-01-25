@@ -1,10 +1,9 @@
-import { BORDER, CLASS_NO_SCROLLBAR, Service, type StyledString, waitTime } from "../utils"
-import { BlockComponent, TextComponent } from "./core"
+import { BORDER, CLASS_NO_SCROLLBAR, type StyledString, waitTime } from "../utils"
+import { BlockComponent, HTMLComponent, TextComponent } from "./core"
 
-@Service()
-export class MessageBox extends BlockComponent {
+export class MessageBox extends HTMLComponent<HTMLDivElement> {
   constructor() {
-    super()
+    super(document.createElement("div"))
     this.styles({
       boxSizing: "border-box",
       background: "white",
@@ -14,14 +13,14 @@ export class MessageBox extends BlockComponent {
       width: "100%",
       height: "100px",
       flexShrink: "0",
-    }).addChild(
+    }).addChildren(
       new BlockComponent()
         .class(CLASS_NO_SCROLLBAR)
         .styles({
           height: "100%",
           overflow: "hidden",
         })
-        .addChild(new TextComponent().styles({ whiteSpace: "pre" })),
+        .addChildren(new TextComponent().styles({ whiteSpace: "pre" })),
     )
   }
 
@@ -66,9 +65,10 @@ export class MessageBox extends BlockComponent {
 
   private _scrollToBottom() {
     const wrapper = this.wrapper
-    wrapper.getElement().scrollTo({
+    //@ts-ignore
+    wrapper.invoke("scrollTo", {
       behavior: "smooth",
-      top: wrapper.getElement().scrollHeight,
-    })
+      top: wrapper.get("scrollHeight"),
+    } as ScrollToOptions)
   }
 }

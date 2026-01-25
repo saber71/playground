@@ -1,10 +1,9 @@
 import type { StopWatcher } from "../types.ts"
 
 export class ScopedWatcher {
-  private readonly _stopWatchers: StopWatcher[] = []
-
   private static readonly _defaultCurrent = new ScopedWatcher()
   private static _current: ScopedWatcher | null = null
+  private readonly _stopWatchers: StopWatcher[] = []
 
   static current(cur?: ScopedWatcher | null) {
     if (cur === null) this._current = cur
@@ -20,5 +19,10 @@ export class ScopedWatcher {
       stopWatcher()
     }
     this._stopWatchers.length = 0
+  }
+
+  beCurrent() {
+    ScopedWatcher.current(this)
+    return this
   }
 }

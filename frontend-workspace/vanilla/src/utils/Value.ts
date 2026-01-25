@@ -1,5 +1,6 @@
 import type { StopWatcher, Watcher } from "../types.ts"
 import { ScopedWatcher } from "./ScopedWatcher.ts"
+import { stopWatcher } from "./stopWatcher.ts"
 
 export class Value<T> {
   private readonly _watcher: Watcher[] = []
@@ -22,12 +23,13 @@ export class Value<T> {
 
   register(watcher: Watcher): StopWatcher {
     this._watcher.push(watcher)
-    const stopWatcher: StopWatcher = () => {
+    const scoped = ScopedWatcher.current()
+    const fn = stopWatcher(() => {
       const index = this._watcher.indexOf(watcher)
       if (index >= 0) this._watcher.splice(index, 1)
-    }
-    ScopedWatcher.current().attach(stopWatcher)
-    return stopWatcher
+    })
+    scoped.attach(fn)
+    return fn
   }
 
   clear() {

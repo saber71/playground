@@ -5,4 +5,8 @@ export class ButtonComponent extends HTMLComponent<SlButton> {
   constructor() {
     super(document.createElement("sl-button"))
   }
+
+  setContent(str: string) {
+    this.set("textContent", str)
+  }
 }

@@ -1,7 +1,7 @@
 import type { SlMenuItem } from "@shoelace-style/shoelace"
-import { HTMLComponent } from "./HTMLComponent.ts"
+import { HTMLContainerComponent } from "./HTMLContainerComponent.ts"
 
-export class MenuItemComponent extends HTMLComponent<SlMenuItem> {
+export class MenuItemComponent extends HTMLContainerComponent<SlMenuItem> {
   constructor() {
     super(document.createElement("sl-menu-item"))
   }

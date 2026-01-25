@@ -2,85 +2,99 @@ import type { FunctionKeys, PropertyKeys } from "../../types.ts"
 import { Value } from "../../utils"
 import { ScopedWatcher } from "../../utils/ScopedWatcher.ts"
 
-export class AbstractComponent<El extends Element = Element, Events = GlobalEventHandlersEventMap> {
-  private _children: AbstractComponent[] = []
+export class AbstractComponent<
+  El extends Element = Element,
+  Events = GlobalEventHandlersEventMap,
+> extends ScopedWatcher {
   private _parent: AbstractComponent | undefined
-  protected readonly _scopedWatcher = new ScopedWatcher()
+  private _children: AbstractComponent[] = []
   private readonly _keyMapListener: Map<any, any> = new Map()
 
-  constructor(private readonly _element: El) {}
+  constructor(private readonly _element: El) {
+    super()
+  }
+
+  protected _getElement() {
+    return this._element
+  }
 
   getParent() {
     return this._parent
   }
 
-  getElement() {
-    return this._element
+  setParent(val?: AbstractComponent) {
+    this._parent = val
+    return this
   }
 
-  getChild<E extends AbstractComponent>(index: number): E {
+  protected getChild<E extends AbstractComponent>(index: number): E {
     return this._children[index] as E
   }
 
-  findChild<T>(predicate: (child: AbstractComponent) => boolean): T | undefined {
+  protected findChild<T>(predicate: (child: AbstractComponent) => boolean): T | undefined {
     return this._children.find(predicate) as any
   }
 
-  addChildren(...children: AbstractComponent[]) {
+  protected setChildren(...children: AbstractComponent[]) {
+    this.removeAll().addChildren(...children)
+    return this
+  }
+
+  protected addChildren(...children: AbstractComponent[]): this {
     for (let child of children) {
-      this.addChild(child)
+      const index = this._children.indexOf(child)
+      if (index >= 0) this.removeChild(child, index)
+      this._children.push(child)
+      this._getElement().appendChild(child._getElement())
+      //@ts-ignore
+      child.setParent(this)
     }
     return this
   }
 
-  addChild(child: AbstractComponent) {
-    const index = this._children.indexOf(child)
-    if (index >= 0) this.removeChild(child, index)
-    this._children.push(child)
-    this._element.appendChild(child._element)
-    //@ts-ignore
-    child._parent = this
-    return this
-  }
-
-  addChildAt(child: AbstractComponent, index: number) {
+  protected addChildAt(child: AbstractComponent, index: number) {
     const oldIndex = this._children.indexOf(child)
     if (oldIndex !== index) {
       if (oldIndex >= 0) this.removeChild(child, oldIndex)
       if (index < this._children.length) {
         const n = this._children[index]
-        this._element.insertBefore(child.getElement(), n.getElement())
+        this._getElement().insertBefore(child._getElement(), n._getElement())
         this._children = [...this._children.slice(0, index), child, ...this._children.slice(index)]
         //@ts-ignore
-        child._parent = this
+        child.setParent(this)
       } else {
-        this.addChild(child)
+        this.addChildren(child)
       }
     }
+    return this
   }
 
-  removeAll(destroy: boolean = true) {
+  protected removeAll(destroy: boolean = true) {
     for (let child of this._children) {
-      child._parent = undefined
-      child._element.remove()
+      //@ts-ignore
+      child.setParent(this)
+      child._getElement().remove()
       if (destroy) child.destroy()
     }
     this._children.length = 0
     return this
   }
 
-  removeChildren(...children: AbstractComponent[]) {
+  protected removeChildren(...children: AbstractComponent[]) {
     for (let child of children) {
       this.removeChild(child)
     }
     return this
   }
 
-  removeChild(child: AbstractComponent, index: number = this._children.indexOf(child)) {
+  protected removeChild(
+    child: AbstractComponent,
+    index: number = this._children.indexOf(child),
+  ): this {
     if (index >= 0) {
       this._children.splice(index, 1)
-      child._element.remove()
-      child._parent = undefined
+      child._getElement().remove()
+      child.setParent(this as any)
     }
     return this
   }
@@ -89,7 +103,7 @@ export class AbstractComponent<El extends Element = Element, Events = GlobalEven
   set<Key extends PropertyKeys<El>>(key: Key, value: El[Key] | Value<El[Key]>) {
     if (value instanceof Value) {
       this._element[key] = value.get()
-      ScopedWatcher.current(this._scopedWatcher)
+      this.beCurrent()
       value.register(() => (this._element[key] = value.get()))
     } else {
       this._element[key] = value
@@ -113,10 +127,10 @@ export class AbstractComponent<El extends Element = Element, Events = GlobalEven
   }
 
   destroy() {
+    super.destroy()
     for (let child of this._children) {
       child.destroy()
     }
-    this._scopedWatcher.destroy()
     this._children.length = 0
     this._element.remove()
   }

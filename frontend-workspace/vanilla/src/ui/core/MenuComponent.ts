@@ -1,5 +1,5 @@
 import type { SlMenu } from "@shoelace-style/shoelace"
-import { HTMLComponent } from "./HTMLComponent.ts"
+import { HTMLContainerComponent } from "./HTMLContainerComponent.ts"
 import { MenuItemComponent } from "./MenuItemComponent.ts"
 import { TextComponent } from "./TextComponent.ts"
 
@@ -11,14 +11,14 @@ export interface MenuItemOption {
   key?: string
 }
 
-export class MenuComponent extends HTMLComponent<SlMenu> {
+export class MenuComponent extends HTMLContainerComponent<SlMenu, MenuItemComponent> {
   constructor() {
     super(document.createElement("sl-menu"))
   }
 
   focus() {
     const item = this.getChild(0) as MenuItemComponent
-    item.getElement().focus()
+    item.invoke("focus")
   }
 
   setItems(options: MenuItemOption[]) {
