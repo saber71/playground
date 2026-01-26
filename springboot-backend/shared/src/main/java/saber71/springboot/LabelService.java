@@ -19,9 +19,8 @@ public class LabelService {
     return labelRepository.save(label);
   }
 
-  public boolean setDeleted(String ids) {
-    var longList = ListHelper.splitMapLong(ids);
-    RepositoryHelper.setDeleted("label", longList);
+  public boolean setDeleted(List<Long> ids) {
+    RepositoryHelper.setDeleted("label", ids);
     return true;
   }
 

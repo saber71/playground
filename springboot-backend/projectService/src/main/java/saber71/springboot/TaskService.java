@@ -40,11 +40,10 @@ public class TaskService {
     return findOne(task.getId());
   }
 
-  public boolean setDeleted(String ids) {
-    var longList = ListHelper.splitMapLong(ids);
-    RepositoryHelper.setDeleted("task", longList);
-    RepositoryHelper.setDeleted("project_task", WhereClause.in("task_id", longList));
-    RepositoryHelper.setDeleted("task_label", WhereClause.in("task_id", longList));
+  public boolean setDeleted(List<Long> ids) {
+    RepositoryHelper.setDeleted("task", ids);
+    RepositoryHelper.setDeleted("project_task", WhereClause.in("task_id", ids));
+    RepositoryHelper.setDeleted("task_label", WhereClause.in("task_id", ids));
     return true;
   }
 

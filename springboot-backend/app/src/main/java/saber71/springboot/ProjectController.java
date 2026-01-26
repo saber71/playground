@@ -32,7 +32,7 @@ public class ProjectController {
   @DeleteMapping("delete")
   @Operation(summary = "删除项目")
   public ResponseEntity<Boolean> delete(String ids) {
-    return ResponseEntity.ok(projectService.setDeleted(ids));
+    return ResponseEntity.ok(projectService.setDeleted(ListHelper.splitMapLong(ids)));
   }
 
   @GetMapping("exist-name")

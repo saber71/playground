@@ -1,5 +1,6 @@
 package saber71.springboot;
 
+import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
@@ -28,10 +29,9 @@ public class ProjectService {
         param.getPageable());
   }
 
-  public boolean setDeleted(String ids) {
-    var longList = ListHelper.splitMapLong(ids);
-    RepositoryHelper.setDeleted("project", longList);
-    RepositoryHelper.setDeleted("project_task", WhereClause.in("project_id", longList));
+  public boolean setDeleted(List<Long> ids) {
+    RepositoryHelper.setDeleted("project", ids);
+    RepositoryHelper.setDeleted("project_task", WhereClause.in("project_id", ids));
     return true;
   }
 

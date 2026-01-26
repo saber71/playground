@@ -31,7 +31,7 @@ public class TaskController {
   @DeleteMapping("delete")
   @Operation(summary = "删除任务")
   public ResponseEntity<Boolean> delete(String ids) {
-    return ResponseEntity.ok(taskService.setDeleted(ids));
+    return ResponseEntity.ok(taskService.setDeleted(ListHelper.splitMapLong(ids)));
   }
 
   @GetMapping("search")
