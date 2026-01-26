@@ -1,5 +1,3 @@
-import type { Value } from "./utils"
-
 export type FunctionKeys<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never
 }[keyof T]
@@ -15,13 +13,7 @@ export type StopWatcher = () => void
 
 export type PositionType = "absolute" | "fixed" | "relative" | "static" | "sticky"
 
-export type CssLength =
-  | number
-  | `${number}px`
-  | `${number}%`
-  | `${number}vw`
-  | `${number}vh`
-  | string
+export type CssLength = number | `${number}px` | `${number}%` | `${number}vw` | `${number}vh`
 
 export type BoxSizing = "border-box" | "content-box"
 
@@ -55,23 +47,27 @@ export type FontStyleType = "normal" | "italic"
 
 export type FontWeightType = "normal" | "bold" | "lighter" | "bolder"
 
-export type PartialCssStyles = Partial<Record<keyof CSSStyleDeclaration, string | Value<string>>> &
+export type PartialCssStyles = Partial<Record<keyof CSSStyleDeclaration, string>> &
   Partial<{
-    display: DisplayType | Value<DisplayType>
-    position: PositionType | Value<PositionType>
-    left: CssLength | Value<CssLength>
-    top: CssLength | Value<CssLength>
-    right: CssLength | Value<CssLength>
-    bottom: CssLength | Value<CssLength>
-    width: CssLength | Value<CssLength>
-    height: CssLength | Value<CssLength>
-    justifyContent: FlexPositionType | Value<FlexPositionType>
-    alignItems: FlexPositionType | Value<FlexPositionType>
-    whiteSpace: WhiteSpaceType | Value<WhiteSpaceType>
-    flexDirection: FlexDirectionType | Value<FlexDirectionType>
-    boxSizing: BoxSizing | Value<BoxSizing>
-    overflow: OverflowType | Value<OverflowType>
-    cursor: CursorType | Value<CursorType>
-    fontStyle: FontStyleType | Value<FontStyleType>
-    fontWeight: FontWeightType | Value<FontWeightType>
+    display: DisplayType
+    position: PositionType
+    left: CssLength
+    top: CssLength
+    right: CssLength
+    bottom: CssLength
+    width: CssLength
+    height: CssLength
+    justifyContent: FlexPositionType
+    alignItems: FlexPositionType
+    whiteSpace: WhiteSpaceType
+    flexDirection: FlexDirectionType
+    boxSizing: BoxSizing
+    overflow: OverflowType
+    cursor: CursorType
+    fontStyle: FontStyleType
+    fontWeight: FontWeightType
   }>
+
+declare global {
+  interface HTMLElementTagNameMap {}
+}

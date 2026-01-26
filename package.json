@@ -40,6 +40,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@shoelace-style/shoelace": "^2.20.1",
+    "@vue/reactivity": "^3.5.27",
     "axios": "^1.13.2",
     "chalk": "^5.6.2",
     "dayjs": "^1.11.19",

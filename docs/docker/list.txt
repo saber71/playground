@@ -19,11 +19,11 @@
 1、Docker Compose 和 Docker Swarm 的区别是什么？何时使用 Kubernetes 而不是 Swarm？
 2、如何实现 Docker 容器的持久化存储？在 Kubernetes 中又是如何处理的？
 3、Docker 容器的安全风险有哪些？如何加固容器安全？
-4、例如：非 root 用户运行、只读文件系统、限制 capabilities、使用 seccomp/apparmor 等。
-5、解释 Docker 的命名空间（Namespaces）和控制组（cgroups）是如何实现容器隔离的。
-6、如何监控 Docker 容器的资源使用（CPU、内存、网络）？有哪些常用工具？
-7、如 docker stats、cAdvisor、Prometheus + Node Exporter 等。
-8、在 CI/CD 流水线中，如何高效构建和推送 Docker 镜像？如何避免重复构建？
-9、Docker BuildKit 是什么？它相比传统构建方式有哪些优势？
-10、如何排查一个启动失败的 Docker 容器？你会查看哪些日志或指标？
-11、在大规模生产环境中，如何管理 Docker 镜像的版本和生命周期？
+例如：非 root 用户运行、只读文件系统、限制 capabilities、使用 seccomp/apparmor 等。
+4、解释 Docker 的命名空间（Namespaces）和控制组（cgroups）是如何实现容器隔离的。
+5、如何监控 Docker 容器的资源使用（CPU、内存、网络）？有哪些常用工具？
+如 docker stats、cAdvisor、Prometheus + Node Exporter 等。
+6、在 CI/CD 流水线中，如何高效构建和推送 Docker 镜像？如何避免重复构建？
+7、Docker BuildKit 是什么？它相比传统构建方式有哪些优势？
+8、如何排查一个启动失败的 Docker 容器？你会查看哪些日志或指标？
+9、在大规模生产环境中，如何管理 Docker 镜像的版本和生命周期？

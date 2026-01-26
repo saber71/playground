@@ -1,5 +1,5 @@
 import type { FontStyleType, FontWeightType } from "../types.ts"
-import { toJoinNaming } from "./toJoinNaming.ts"
+import { toKebabCase } from "./toKebabCase.ts"
 
 export interface StringStyles {
   color: string
@@ -29,7 +29,7 @@ export class StyledString {
   }
 
   toHTMLString() {
-    const attrs = Object.entries(this.styles).map((e) => `${toJoinNaming(e[0])}:${e[1]}`)
+    const attrs = Object.entries(this.styles).map((e) => `${toKebabCase(e[0])}:${e[1]}`)
     const styleStr = attrs.join(";")
     return `<span ${attrs.length ? `style="${styleStr}"` : ""}>${this.value}</span>`
   }

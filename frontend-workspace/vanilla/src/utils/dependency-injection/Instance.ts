@@ -1,5 +1,5 @@
 import { ReflectiveInjector } from "injection-js"
-import type { Class } from "../types.ts"
+import type { Class } from "../../types.ts"
 import { ServiceClasses } from "./service.decorator.ts"
 
 export class Instance {
