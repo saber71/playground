@@ -15,7 +15,6 @@ alert.open = true
 alert.variant = "warning"
 alert.innerHTML = `
 <sl-icon slot="icon" name="info-circle"></sl-icon>
-<sl-button variant="danger">123</sl-button>
 You're not stuck, the alert will close after a pretty long duration.
 `
 document.createElement("sl-alert")
