@@ -1,5 +1,5 @@
-import type { FontStyleType, FontWeightType } from "../types.ts"
 import { toKebabCase } from "./toKebabCase.ts"
+import type { FontStyleType, FontWeightType } from "./types.ts"
 
 export interface StringStyles {
   color: string

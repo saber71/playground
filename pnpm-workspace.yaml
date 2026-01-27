@@ -7,3 +7,4 @@ onlyBuiltDependencies:
 
 packages:
   - 'node-workspace/*'
+  - 'frontend-workspace/*'

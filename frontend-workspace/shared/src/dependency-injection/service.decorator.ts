@@ -1,5 +1,5 @@
 import { Injectable } from "injection-js"
-import type { Class } from "../../types.ts"
+import type { Class } from "../types.ts"
 
 export const ServiceClasses: Class<any>[] = []
 

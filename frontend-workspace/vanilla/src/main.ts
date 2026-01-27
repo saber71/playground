@@ -3,7 +3,7 @@ import "./style.css"
 import "@shoelace-style/shoelace/dist/themes/light.css"
 import "@shoelace-style/shoelace/dist/shoelace.js"
 import { setBasePath, SlAlert } from "@shoelace-style/shoelace"
-import { Instance } from "./utils"
+import { Instance } from "shared"
 
 setBasePath("/")
 

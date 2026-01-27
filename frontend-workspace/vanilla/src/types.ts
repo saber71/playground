@@ -1,3 +1,5 @@
+import type { FontStyleType, FontWeightType } from "shared"
+
 export type FunctionKeys<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never
 }[keyof T]
@@ -5,8 +7,6 @@ export type FunctionKeys<T> = {
 export type PropertyKeys<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => any ? never : K
 }[keyof T]
-
-export type Class<T> = new (...args: any[]) => T
 
 export type Watcher = () => void
 export type StopWatcher = () => void
@@ -42,10 +42,6 @@ export type FlexPositionType =
 export type FlexDirectionType = "row" | "column"
 
 export type CursorType = "pointer" | "default"
-
-export type FontStyleType = "normal" | "italic"
-
-export type FontWeightType = "normal" | "bold" | "lighter" | "bolder"
 
 export type PartialCssStyles = Partial<Record<keyof CSSStyleDeclaration, string>> &
   Partial<{
