@@ -1,9 +1,35 @@
 import { toKebabCase } from "shared"
 
-export function CustomElement(name?: string) {
+const attributeMap = new Map()
+let attributes: string[] = []
+let curCls: any
+
+export function CustomElement(option?: { name?: string; observedAttributes?: string[] }) {
   return (...args: any[]) => {
     const cls = args[0]
-    customElements.define(name || toKebabCase(cls.name), cls)
+    cls.observedAttributes = attributes.slice()
+    if (option?.observedAttributes) cls.observedAttributes.push(...option.observedAttributes)
+    let parent = Object.getPrototypeOf(cls)
+    while (parent && parent !== HTMLElement) {
+      const array = attributeMap.get(parent)
+      if (array) cls.observedAttributes.push(...array)
+      parent = Object.getPrototypeOf(parent)
+    }
+    attributes = []
+    cls.observedAttributes = [...new Set(cls.observedAttributes)]
+    customElements.define(option?.name || toKebabCase(cls.name), cls)
+  }
+}
+
+export function Attribute() {
+  return (...args: any[]) => {
+    const cls = args[0].constructor
+    const array = attributeMap.get(cls) || []
+    array.push(args[1])
+    attributeMap.set(cls, array)
+    if (curCls !== cls) attributes = []
+    attributes.push(args[1])
+    curCls = cls
   }
 }
 

@@ -86,14 +86,14 @@ export interface Ext {
    * @param val 要设置的id值
    * @returns 返回当前实例以支持链式调用
    */
-  id(val: string): this
+  setId(val: string): this
 
   /**
    * 设置元素的class属性
    * @param val 要设置的一个或多个CSS类名
    * @returns 返回当前实例以支持链式调用
    */
-  className(...val: string[]): this
+  setClassName(...val: string[]): this
 
   /**
    * 设置元素的属性
@@ -274,7 +274,7 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): El & Ext {
      * @param val 类名字符串数组
      * @returns 返回当前扩展对象以支持链式调用
      */
-    className(...val: string[]) {
+    setClassName(...val: string[]) {
       element.className = val.join(" ")
       return this
     },
@@ -284,7 +284,7 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): El & Ext {
      * @param val id值
      * @returns 返回当前扩展对象以支持链式调用
      */
-    id(val: string) {
+    setId(val: string) {
       element.id = val
       return this
     },
@@ -344,5 +344,45 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): El & Ext {
       return this
     },
   }
+
+  // 监听自定义元素的属性变化
+  observeAttribute(element)
+
   return Object.assign(element, ext)
+}
+
+/**
+ * 观察元素的属性变化并自动调用attributeChangedCallback方法
+ * 该函数会遍历元素构造函数中定义的observedAttributes数组，并为每个属性创建getter/setter
+ * 当属性值发生变化时，会触发自定义元素的attributeChangedCallback回调
+ *
+ * @param el - 需要观察属性变化的HTML元素
+ * @returns void
+ */
+export function observeAttribute(el: HTMLElement) {
+  //@ts-ignore
+  // 如果不是自定义元素不监听属性变化
+  if (typeof el.attributeChangedCallback !== "function") return
+
+  // 获取元素构造函数中定义的被观察属性列表
+  const observedAttributes = (el.constructor as any).observedAttributes
+  if (observedAttributes) {
+    for (let attr of observedAttributes) {
+      //@ts-ignore
+      let value = el[attr]
+      // 为属性重新定义getter/setter以拦截属性访问和修改
+      Object.defineProperty(el, attr, {
+        get(): any {
+          return value
+        },
+        set(v: any) {
+          if (v === value) return
+          const oldValue = value
+          value = v
+          //@ts-ignore
+          el.attributeChangedCallback(attr, oldValue, v)
+        },
+      })
+    }
+  }
 }

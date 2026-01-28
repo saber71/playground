@@ -14,5 +14,5 @@ export function toKebabCase(str: string) {
   for (let char of str) {
     res += /[A-Z]/.test(char) ? "-" + char.toLowerCase() : char
   }
-  return res
+  return res.replace(/^-+/, "")
 }
