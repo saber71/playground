@@ -1,14 +1,14 @@
-import type { Flex } from "./Flex.ts"
 import { type Ext, HTMLElementExt } from "./HTMLElementExt.ts"
+import type { SlFlex } from "./SlFlex.ts"
 
 declare global {
   interface HTMLElementTagNameMap {
-    "sl-flex": Flex
+    "sl-flex": SlFlex
   }
 }
 
 export * from "./HTMLElementExt.ts"
-export * from "./Flex.ts"
+export * from "./SlFlex.ts"
 export * from "./BaseElement.ts"
 
 export function createElement<K extends keyof HTMLElementTagNameMap>(

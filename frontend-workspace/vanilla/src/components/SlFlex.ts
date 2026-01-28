@@ -3,7 +3,7 @@ import { CustomElement } from "../custom-element.decorator.ts"
 import { BaseElement } from "./BaseElement.ts"
 
 @CustomElement("sl-flex")
-export class Flex extends BaseElement {
+export class SlFlex extends BaseElement {
   static readonly observedAttributes = ["justifyContent", "alignItems", "inline", "gap"]
 
   justifyContent: FlexPositionType = "flex-start"
