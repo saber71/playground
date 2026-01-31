@@ -1,9 +1,15 @@
 <template>
   <div class="layout-container">
-    <div class="sidebar">
+    <div class="sidebar" :class="{ collapsed: collapse }">
+      <div v-if="collapse" class="expand-icon">
+        <el-icon @click="collapse = false"><Expand /></el-icon>
+      </div>
       <div class="logos">
         <img src="../assets/logo.svg" />
-        <span>VITE + VUE</span>
+        <span v-if="!collapse">VITE + VUE</span>
+        <div class="icon" v-if="!collapse">
+          <el-icon @click="collapse = true"><Fold /></el-icon>
+        </div>
       </div>
       <el-scrollbar>
         <el-menu
@@ -13,6 +19,7 @@
           text-color="#ffffff"
           active-text-color="#ffffff"
           background-color="transparent"
+          :collapse="collapse"
         >
           <MenuItem v-for="(val, index) in menus" :menu="val" :key="index" />
         </el-menu>
@@ -27,12 +34,15 @@
 
 <script setup lang="ts">
 import { routes } from "@/router"
+import { Expand, Fold } from "@element-plus/icons-vue"
+import { ref } from "vue"
 import { type RouteRecordRaw, RouterView, useRoute } from "vue-router"
 import MenuItem from "./components/MenuItem.vue"
 
 const route = useRoute()
 const firstRoute = routes[0]!
 const menus: Menu[] = []
+const collapse = ref(false)
 
 for (let child of firstRoute.children!) {
   menus.push(toMenu(child, firstRoute))
@@ -75,7 +85,9 @@ function toMenu(route: RouteRecordRaw, parent: RouteRecordRaw): Menu {
     background: rgba(0, 0, 0, 0.85);
     box-sizing: border-box;
     --el-menu-item-height: 38px;
+    transition: all 0.3s;
     .logos {
+      position: relative;
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -86,6 +98,16 @@ function toMenu(route: RouteRecordRaw, parent: RouteRecordRaw): Menu {
       img {
         width: 32px;
         margin-left: 12px;
+      }
+      span{
+        white-space: nowrap;
+      }
+      .icon {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        cursor: pointer;
+        font-size: 12px;
       }
     }
     .el-scrollbar {
@@ -115,6 +137,36 @@ function toMenu(route: RouteRecordRaw, parent: RouteRecordRaw): Menu {
       height: 50px;
       flex-shrink: 0;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+  .sidebar.collapsed {
+    width: 48px;
+    .logos {
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        margin-left: 0;
+      }
+    }
+    .expand-icon{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 12px;
+      color: white;
+      cursor:pointer;
+    }
+    .el-menu {
+      margin: 0;
+      width: 100%;
+    }
+    .el-menu-item {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
   .view-container {
