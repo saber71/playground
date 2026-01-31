@@ -1,5 +1,5 @@
-import {
-  type SlAlert,
+import type {
+  SlAlert,
   SlAnimation,
   SlButton,
   SlMenu,
@@ -7,13 +7,13 @@ import {
   SlTabPanel,
   SlTreeItem,
 } from "@shoelace-style/shoelace"
-import { type ElementExt, type ElementExtArray, HTMLElementExt } from "./HTMLElementExt.ts"
+import { type ElementExt, elementExt, type ElementExtArray } from "./ElementExt.ts"
 
 declare global {
   interface HTMLElementTagNameMap {}
 }
 
-export * from "./HTMLElementExt.ts"
+export * from "./ElementExt.ts"
 export * from "./BaseCustomElement.ts"
 
 export function createElExt<K extends keyof HTMLElementTagNameMap>(
@@ -22,31 +22,31 @@ export function createElExt<K extends keyof HTMLElementTagNameMap>(
 ): ElementExt<HTMLElementTagNameMap[K]> {
   // constructor.observedAttributes
   const el = document.createElement(name)
-  return HTMLElementExt(el as any)
+  return elementExt(el as any)
 }
 
 export function querySelector<E extends HTMLElement>(selector: string): ElementExt<E> | null {
   const result = document.querySelector(selector)
   if (!result) return null
-  return HTMLElementExt(result as any)
+  return elementExt(result as any)
 }
 
 export function queryAllSelector<E extends HTMLElement>(select: string): Array<ElementExt<E>> {
   const nodes = document.querySelectorAll(select)
-  return Array.from(nodes).map(HTMLElementExt as any)
+  return Array.from(nodes).map(elementExt as any)
 }
 
 export function getElementById<E extends HTMLElement>(id: string): ElementExt<E> | null {
   const result = document.getElementById(id)
   if (!result) return null
-  return HTMLElementExt(result as any)
+  return elementExt(result as any)
 }
 
 export function getElementByClassName<E extends HTMLElement>(
   className: string,
 ): Array<ElementExt<E>> {
   const nodes = document.getElementsByClassName("select")
-  return Array.from(nodes).map(HTMLElementExt as any)
+  return Array.from(nodes).map(elementExt as any)
 }
 
 export function div(...children: ElementExtArray) {

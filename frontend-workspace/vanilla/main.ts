@@ -2,15 +2,8 @@ import "reflect-metadata"
 import "@shoelace-style/shoelace/dist/themes/light.css"
 import "@shoelace-style/shoelace/dist/shoelace.js"
 import { setBasePath } from "@shoelace-style/shoelace"
-import Element from "element-plus"
-import { createPinia } from "pinia"
-import "./src/components"
-import "./style/index.scss"
-import "./style/element/index.scss"
 import { Instance } from "shared"
-import { createApp } from "vue"
-import App from "./App.vue"
-import router from "./router"
+import "./src/components"
 
 setBasePath("/")
 
@@ -18,11 +11,3 @@ setBasePath("/")
 // document.documentElement.classList.add('sl-theme-dark');
 
 Instance.initial()
-
-const app = createApp(App)
-
-app.use(Element)
-app.use(createPinia())
-app.use(router)
-
-app.mount("#app")

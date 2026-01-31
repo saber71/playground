@@ -177,7 +177,14 @@ importers:
         specifier: workspace:^
         version: link:../shared
 
-  frontend-workspace/vue: {}
+  frontend-workspace/vue:
+    dependencies:
+      shared:
+        specifier: workspace:^
+        version: link:../shared
+      vanilla:
+        specifier: workspace:^
+        version: link:../vanilla
 
   node-workspace/nest-terminal: {}
 

@@ -1,64 +1,63 @@
-import type { AddEventListenerOptions } from "rxjs/internal/observable/fromEvent"
 import type { PartialCssStyles, PropertyKeys } from "shared"
 import { BaseCustomElement } from "./BaseCustomElement.ts"
 
-export type ElementExt<E extends HTMLElement> = E & Ext<E>
+export type ElementExt<E extends Element> = E & Ext<E>
 
-export type ElementExtArray<E extends HTMLElement = HTMLElement> = Array<
+export type ElementExtArray<E extends Element = Element> = Array<
   ElementExt<E> | null | undefined | ElementExtArray<E>
 >
 
 /**
- * Ext 接口定义了扩展HTML元素的功能集合
+ * Ext 接口定义了扩展元素的功能集合
  * 提供了DOM操作、样式设置、元素查询等便捷方法
  */
-export interface Ext<E extends HTMLElement> {
+export interface Ext<E extends Element> {
   readonly isExt: true
 
   /**
    * 获取当前元素的所有祖先元素
    *
-   * @template E 继承自HTMLElement的元素类型
-   * @returns {Array<E & HTMLElement>} 返回一个包含所有祖先元素的数组，每个元素都是E与Ext的交集类型
+   * @template E 继承自Element的元素类型
+   * @returns {Array<E & Element>} 返回一个包含所有祖先元素的数组，每个元素都是E与Ext的交集类型
    */
-  getAncestor<E extends HTMLElement>(): Array<E & HTMLElement>
+  getAncestor<E extends Element>(): Array<ElementExt<E>>
 
   /**
    * 获取当前元素的父元素
    *
-   * @template E - 指定要获取的父元素的HTML元素类型
+   * @template E - 指定要获取的父元素的元素类型
    * @returns {E & Ext | null} 返回指定类型的父元素，如果不存在则返回null
    */
-  getParent<E extends HTMLElement>(): ElementExt<E> | null
+  getParent<E extends Element>(): ElementExt<E> | null
 
   /**
    * 添加子元素到当前元素
-   * @param children 要添加的HTML元素列表
+   * @param children 要添加的元素列表
    * @returns 返回当前实例以支持链式调用
    */
   addChildren(...children: ElementExtArray): this
 
   /**
    * 在指定索引位置插入子元素
-   * @param child 要插入的HTML元素
+   * @param child 要插入的元素
    * @param index 插入位置的索引
    * @returns 返回当前实例以支持链式调用
    */
-  addChildAt(child: HTMLElement, index: number): this
+  addChildAt(child: Element, index: number): this
 
   /**
    * 从当前元素中移除指定的子元素
-   * @param children 要移除的HTML元素列表
+   * @param children 要移除的元素列表
    * @returns 返回当前实例以支持链式调用
    */
-  removeChildren(...children: HTMLElement[]): this
+  removeChildren(...children: Element[]): this
 
   /**
    * 根据索引获取子元素并扩展其功能
    * @param index 子元素的索引位置
    * @returns 返回指定位置的子元素，并扩展了Ext功能
    */
-  getChild<E extends HTMLElement>(index: number): ElementExt<E>
+  getChild<E extends Element>(index: number): ElementExt<E>
 
   /**
    * 为元素应用CSS样式
@@ -74,21 +73,21 @@ export interface Ext<E extends HTMLElement> {
    * @param className 要查询的CSS类名
    * @returns 返回匹配类名的元素数组，每个元素都扩展了Ext功能
    */
-  queryByClassName<El extends HTMLElement>(className: string): Array<ElementExt<El>>
+  queryByClassName<El extends Element>(className: string): Array<ElementExt<El>>
 
   /**
    * 根据CSS选择器查询单个元素
    * @param selector CSS选择器字符串
    * @returns 返回第一个匹配的选择器元素，如果未找到则返回null
    */
-  queryBySelector<El extends HTMLElement>(selector: string): ElementExt<El> | null
+  queryBySelector<El extends Element>(selector: string): ElementExt<El> | null
 
   /**
    * 根据CSS选择器查询所有匹配的元素
    * @param selector CSS选择器字符串
    * @returns 返回所有匹配选择器的元素数组
    */
-  queryAllBySelector<El extends HTMLElement>(selector: string): Array<ElementExt<El>>
+  queryAllBySelector<El extends Element>(selector: string): Array<ElementExt<El>>
 
   /**
    * 设置元素的id属性
@@ -145,22 +144,22 @@ export interface Ext<E extends HTMLElement> {
 }
 
 /**
- * 检查对象是否为扩展的HTML元素类型
+ * 检查对象是否为扩展的元素类型
  *
  * @param obj - 待检查的对象
- * @returns 如果对象是HTMLElement的扩展类型则返回true，否则返回false
+ * @returns 如果对象是Element的扩展类型则返回true，否则返回false
  */
-export function isHTMLElementExt(obj: any): obj is ElementExt<HTMLElement> {
-  return obj.isExt && obj instanceof HTMLElement
+export function isElementExt(obj: any): obj is ElementExt<Element> {
+  return obj.isExt && obj instanceof Element
 }
 
 /**
- * 扩展HTML元素功能，为其添加额外的方法和属性
- * @param element 需要扩展的HTML元素
+ * 扩展元素功能，为其添加额外的方法和属性
+ * @param element 需要扩展的元素
  * @returns 返回扩展后的元素，包含原始元素的所有属性和方法以及扩展的功能
  */
-export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<El> {
-  if (isHTMLElementExt(element)) return element
+export function elementExt<El extends Element>(element: El): ElementExt<El> {
+  if (isElementExt(element)) return element
 
   const keyCallbackMap = new Map()
 
@@ -171,7 +170,7 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
     /**
      * 获取当前元素的所有祖先元素
      *
-     * @template E 继承自HTMLElement的元素类型
+     * @template E 继承自Element的元素类型
      * @returns 返回一个包含所有祖先元素的数组，每个元素都是E与Ext的交集类型
      */
     getAncestor() {
@@ -187,11 +186,11 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
     /**
      * 获取当前元素的父元素
      *
-     * @template E - 指定要获取的父元素的HTML元素类型
+     * @template E - 指定要获取的父元素的元素类型
      * @returns {E & Ext | null} 返回指定类型的父元素，如果不存在则返回null
      */
     getParent(): any {
-      return element.parentElement ? HTMLElementExt(element.parentElement) : null
+      return element.parentElement ? elementExt(element.parentElement) : null
     },
 
     /**
@@ -225,7 +224,7 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
      * @returns 返回扩展后的子元素
      */
     getChild(index: number) {
-      return HTMLElementExt(element.children.item(index) as any) as any
+      return elementExt(element.children.item(index) as any) as any
     },
 
     /**
@@ -246,13 +245,18 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
      * @returns 返回当前扩展对象以支持链式调用
      */
     styles(part) {
-      Object.assign(element.style, part)
+      //@ts-ignore
+      if (element.style) Object.assign(element.style, part)
       return this
     },
 
     styleProperties(part: Record<string, any>) {
-      for (let [key, value] of Object.entries(part)) {
-        element.style.setProperty(key, value)
+      //@ts-ignore
+      if (element.style) {
+        for (let [key, value] of Object.entries(part)) {
+          //@ts-ignore
+          element.style.setProperty(key, value)
+        }
       }
       return this
     },
@@ -262,9 +266,9 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
      * @param className 要查询的类名
      * @returns 返回匹配的扩展元素数组
      */
-    queryByClassName<El extends HTMLElement>(className: string): Array<ElementExt<El>> {
+    queryByClassName<El extends Element>(className: string): Array<ElementExt<El>> {
       const queryResult = element.getElementsByClassName(className)
-      return Array.from(queryResult).map(HTMLElementExt as any)
+      return Array.from(queryResult).map(elementExt as any)
     },
 
     /**
@@ -272,9 +276,9 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
      * @param selector CSS选择器
      * @returns 返回匹配的扩展元素数组
      */
-    queryAllBySelector<El extends HTMLElement>(selector: string): Array<ElementExt<El>> {
+    queryAllBySelector<El extends Element>(selector: string): Array<ElementExt<El>> {
       const queryResult = element.querySelectorAll(selector)
-      return Array.from(queryResult).map(HTMLElementExt as any)
+      return Array.from(queryResult).map(elementExt as any)
     },
 
     /**
@@ -282,9 +286,9 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
      * @param selector CSS选择器
      * @returns 返回匹配的扩展元素或null
      */
-    queryBySelector<El extends HTMLElement>(selector: string): ElementExt<El> | null {
+    queryBySelector<El extends Element>(selector: string): ElementExt<El> | null {
       const result = element.querySelector(selector)
-      return result ? HTMLElementExt(result as any) : null
+      return result ? elementExt(result as any) : null
     },
 
     /**
@@ -341,6 +345,7 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
       let callback = options.callback
       if (options.key && !callback) callback = keyCallbackMap.get(options.key)
       if (callback) {
+        //@ts-ignore
         element.removeEventListener(name, callback)
         keyCallbackMap.delete(options.key)
       }
@@ -363,6 +368,7 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
       },
     ) {
       if (options?.key) keyCallbackMap.set(options.key, callback)
+      //@ts-ignore
       element.addEventListener(name, callback, options)
       return this
     },
@@ -379,7 +385,7 @@ export function HTMLElementExt<El extends HTMLElement>(element: El): ElementExt<
  * 该函数会遍历元素构造函数中定义的observedAttributes数组，并为每个属性创建getter/setter
  * 当属性值发生变化时，会触发自定义元素的attributeChangedCallback回调
  *
- * @param el - 需要观察属性变化的HTML元素
+ * @param el - 需要观察属性变化的元素
  * @returns void
  */
 export function observeAttribute(el: any) {

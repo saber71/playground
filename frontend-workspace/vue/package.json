@@ -12,5 +12,9 @@
     "build": "vite build",
     "type-check": "vue-tsc --build",
     "format": "prettier --write --experimental-cli src"
+  },
+  "dependencies": {
+    "shared": "workspace:^",
+    "vanilla": "workspace:^"
   }
 }
