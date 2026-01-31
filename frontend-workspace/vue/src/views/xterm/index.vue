@@ -1,18 +1,29 @@
 <template>
-  <div ref="el" class="content-container"></div>
+  <div class="content-container">
+    <div ref="el" class="container"></div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { TerminalExt } from "@/views/xterm/index.ts"
+import { TerminalExt } from "@/views/xterm/TerminalExt.ts"
 import { TerminalText } from "@/views/xterm/TerminalText.ts"
 import { onMounted, ref } from "vue"
 
 const el = ref()
-onMounted(() => {
+onMounted(async () => {
   const termExt = new TerminalExt(el.value)
   termExt.term.write(
-    `Hello from ${new TerminalText("xterm.js", { bold: true, italic: true, underline: true, forecolor: "red", backcolor: "white" })} $ \n\r可考虑ippo`,
+    `Hello from ${new TerminalText("xterm.js", { bold: true, italic: true, underline: true, forecolor: "red", backcolor: "white" })} $`,
   )
+  console.log(
+    await termExt.getCursorPosition(),
+    termExt.term.buffer.active.cursorX,
+    termExt.term.buffer.active.cursorY,
+  )
+  // await termExt.hideCursor()
+  await termExt.clearHome()
+  const input = await termExt.readline()
+  termExt.write(new TerminalText(input, { forecolor: "cyan" }))
 })
 const array = TerminalText.wrap(6, new TerminalText("\n看1\n看撒旦"), new TerminalText("旦撒223"))
 console.log(
@@ -24,5 +35,8 @@ console.log(
 <style scoped lang="scss">
 .content-container {
   background: black;
+  .container {
+    height: 100%;
+  }
 }
 </style>
