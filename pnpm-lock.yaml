@@ -47,6 +47,9 @@ importers:
       chalk:
         specifier: ^5.6.2
         version: 5.6.2
+      color-name:
+        specifier: ^2.1.0
+        version: 2.1.0
       dayjs:
         specifier: ^1.11.19
         version: 1.11.19
@@ -59,6 +62,9 @@ importers:
       jsencrypt:
         specifier: ^3.5.4
         version: 3.5.4
+      parse-color:
+        specifier: ^1.0.0
+        version: 1.0.0
       pinia:
         specifier: ^3.0.4
         version: 3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))
@@ -105,6 +111,9 @@ importers:
       '@types/node':
         specifier: ^25.0.8
         version: 25.0.8
+      '@types/parse-color':
+        specifier: ^1.0.3
+        version: 1.0.3
       '@types/supertest':
         specifier: ^6.0.2
         version: 6.0.3
@@ -1531,6 +1540,9 @@ packages:
   '@types/node@25.0.8':
     resolution: {integrity: sha512-powIePYMmC3ibL0UJ2i2s0WIbq6cg6UyVFQxSCpaPxxzAaziRfimGivjdF943sSGV6RADVbk0Nvlm5P/FB44Zg==}
 
+  '@types/parse-color@1.0.3':
+    resolution: {integrity: sha512-1zpnjrXCl0KklQOtMDDXhqQN9ouePkt4NBoAJ/dRjyMqWMkegyIqeZUOf3Xq4yaUPPdY8wmR8cye/D9v1kcrsQ==}
+
   '@types/react@19.2.9':
     resolution: {integrity: sha512-Lpo8kgb/igvMIPeNV2rsYKTgaORYdO1XGVZ4Qz3akwOj0ySGYMPlQWa8BaLn0G63D1aSaAQ5ldR06wCpChQCjA==}
 
@@ -2170,12 +2182,19 @@ packages:
   collect-v8-coverage@1.0.3:
     resolution: {integrity: sha512-1L5aqIkwPfiodaMgQunkF1zRhNqifHBmtbbbxcr6yVxxBnliw4TDOW6NxpO8DJLgJ16OT+Y4ztZqP6p/FtXnAw==}
 
+  color-convert@0.5.3:
+    resolution: {integrity: sha512-RwBeO/B/vZR3dfKL1ye/vx8MHZ40ugzpyfeVG5GsiuGnrlMWe2o8wxBbLCpw9CsxV+wHuzYlCiWnybrIA0ling==}
+
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
     engines: {node: '>=7.0.0'}
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  color-name@2.1.0:
+    resolution: {integrity: sha512-1bPaDNFm0axzE4MEAzKPuqKWeRaT43U/hyxKPBdqTfmPF+d6n7FSoTFxLVULUJOmiLp01KjhIPPH+HrXZJN4Rg==}
+    engines: {node: '>=12.20'}
 
   combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
@@ -3204,6 +3223,9 @@ packages:
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
+
+  parse-color@1.0.0:
+    resolution: {integrity: sha512-fuDHYgFHJGbpGMgw9skY/bj3HL/Jrn4l/5rSspy00DoT4RyLnDcRvPxdZ+r6OFwIsgAuhDh4I09tAId4mI12bw==}
 
   parse-json@5.2.0:
     resolution: {integrity: sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==}
@@ -5383,6 +5405,8 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
+  '@types/parse-color@1.0.3': {}
+
   '@types/react@19.2.9':
     dependencies:
       csstype: 3.2.3
@@ -6109,11 +6133,15 @@ snapshots:
 
   collect-v8-coverage@1.0.3: {}
 
+  color-convert@0.5.3: {}
+
   color-convert@2.0.1:
     dependencies:
       color-name: 1.1.4
 
   color-name@1.1.4: {}
+
+  color-name@2.1.0: {}
 
   combined-stream@1.0.8:
     dependencies:
@@ -7267,6 +7295,10 @@ snapshots:
   parent-module@1.0.1:
     dependencies:
       callsites: 3.1.0
+
+  parse-color@1.0.0:
+    dependencies:
+      color-convert: 0.5.3
 
   parse-json@5.2.0:
     dependencies:
