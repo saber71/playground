@@ -180,6 +180,12 @@ importers:
 
   frontend-workspace/shared: {}
 
+  frontend-workspace/terminal-ext:
+    dependencies:
+      shared:
+        specifier: workspace:^
+        version: link:../shared
+
   frontend-workspace/vanilla:
     dependencies:
       shared:
