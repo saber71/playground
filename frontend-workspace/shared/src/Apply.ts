@@ -1,6 +1,6 @@
 import type { Class } from "./types.ts"
 
-export function ExtendsFrom<T = any>(...array: Class<any>[]): Class<T> {
+export function Apply<T = any>(...array: Class<any>[]): Class<T> {
   const Base = class MultiBase {}
   array.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {

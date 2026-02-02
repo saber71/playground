@@ -186,6 +186,12 @@ importers:
         specifier: workspace:^
         version: link:../shared
 
+  frontend-workspace/terminal-kit-xterm:
+    dependencies:
+      terminal-ext:
+        specifier: workspace:^
+        version: link:../terminal-ext
+
   frontend-workspace/vanilla:
     dependencies:
       shared:

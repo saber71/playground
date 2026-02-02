@@ -1,0 +1,14 @@
+{
+  "name": "terminal-kit-xterm",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.es.js",
+  "scripts": {
+    "build": "tsc && vite build"
+  },
+  "dependencies": {
+    "terminal-ext": "workspace:^"
+  }
+}
