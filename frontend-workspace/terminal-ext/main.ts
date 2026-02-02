@@ -5,7 +5,7 @@ import { FitAddon } from "@xterm/addon-fit"
 import { ImageAddon } from "@xterm/addon-image"
 import { Unicode11Addon } from "@xterm/addon-unicode11"
 import { Terminal as XTerm } from "@xterm/xterm"
-import { type ITerminal, type Stop, TerminalExt } from "./src"
+import { type ITerminal, type Stop, TerminalExt, TerminalText } from "./src"
 
 class Terminal implements ITerminal {
   readonly xterm = new XTerm({
@@ -49,4 +49,9 @@ class Terminal implements ITerminal {
 }
 
 const termExt = new TerminalExt(new Terminal(document.body))
-termExt.readline.read("abcccs$ ").then(console.log)
+termExt.term
+  .write(new TerminalText("1234567890", { forecolor: "red", backcolor: "blue" }))
+  .then(async () => {
+    await termExt.cursorManager.setPosition({ row: 1, col: 2 })
+    termExt.readline.read("abcccs$ ").then(console.log)
+  })

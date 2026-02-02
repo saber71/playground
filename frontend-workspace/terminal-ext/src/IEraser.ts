@@ -1,4 +1,5 @@
 import type { Class } from "shared"
+import { AnsiErase } from "./ansi-code.ts"
 import { InjectKeyTerminal } from "./inject-key.ts"
 import { injectValue } from "./provider-inject.ts"
 
@@ -58,31 +59,31 @@ export function Eraser<Base extends Class<Object>>(base: Base): Base & Class<IEr
     readonly term = injectValue(InjectKeyTerminal)
 
     all(): Promise<void> {
-      return this.term.write("\x1b[3J")
+      return this.term.write(AnsiErase.ALL)
     }
 
     bottom(): Promise<void> {
-      return this.term.write("\x1b[J")
+      return this.term.write(AnsiErase.TO_BOTTOM)
     }
 
     line(): Promise<void> {
-      return this.term.write("\x1b[2K")
+      return this.term.write(AnsiErase.LINE)
     }
 
     screen(): Promise<void> {
-      return this.term.write("\x1b[2J")
+      return this.term.write(AnsiErase.SCREEN)
     }
 
     toEnd(): Promise<void> {
-      return this.term.write("\x1b[K")
+      return this.term.write(AnsiErase.TO_END)
     }
 
     toHome(): Promise<void> {
-      return this.term.write("\x1b[1K")
+      return this.term.write(AnsiErase.TO_HOME)
     }
 
     top(): Promise<void> {
-      return this.term.write("\x1b[1J")
+      return this.term.write(AnsiErase.TO_TOP)
     }
   }
 }

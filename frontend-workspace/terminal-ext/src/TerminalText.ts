@@ -1,6 +1,6 @@
+import { isNil, parseColor } from "shared"
 import wcwidth from "wcwidth"
-import { ansiColor } from "./ansiColor.ts"
-import { AnsiBack, AnsiFore, AnsiReset, AnsiStyle } from "./constants.ts"
+import { AnsiBack, AnsiFore, AnsiReset, AnsiStyle } from "./ansi-code.ts"
 
 export interface TerminalTextOption {
   bold: boolean
@@ -108,8 +108,8 @@ export class TerminalText {
   toString() {
     const option = this.option
     if (option) {
-      const forecolor = option.forecolor ? ansiColor(option.forecolor) : ""
-      const backcolor = option.backcolor ? ansiColor(option.backcolor) : ""
+      const forecolor = !isNil(option.forecolor) ? parseColor(option.forecolor).join(";") : ""
+      const backcolor = !isNil(option.backcolor) ? parseColor(option.backcolor).join(";") : ""
       const styles: number[] = []
       if (option.bold) styles.push(AnsiStyle.BOLD)
       if (option.italic) styles.push(AnsiStyle.ITALIC)

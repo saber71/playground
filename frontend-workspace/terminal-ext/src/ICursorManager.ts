@@ -1,4 +1,5 @@
 import type { Class } from "shared"
+import { AnsiCursor, parseAnsiCursorPosition } from "./ansi-code.ts"
 import { InjectKeyTerminal } from "./inject-key.ts"
 import { injectValue } from "./provider-inject.ts"
 
@@ -68,7 +69,7 @@ export interface ICursorManager {
   right(n?: number): Promise<void>
 
   /**
-   * 设置光标到指定位置
+   * 设置光标到指定位置，1-based
    * @param pos 部分光标位置对象，可以只设置行或列中的一个或两个都设置
    * @returns Promise<void> 异步操作完成的Promise
    */
@@ -95,38 +96,40 @@ export function CursorManager<Base extends Class<Object>>(
     readonly term = injectValue(InjectKeyTerminal)
 
     down(n: number = 1): Promise<void> {
-      return this.term.write(`\x1b[${n}B`)
+      return this.term.write(AnsiCursor.DOWN(n))
     }
 
     getPosition(): Promise<CursorPosition> {
       return new Promise<CursorPosition>((resolve) => {
-        this.term.onData((str) => {
-          const pos = str.replace("\x1B[", "").replace("R", "")
-          const array = pos.split(";").map(Number)
-          resolve({ row: array[0], col: array[1] })
-        }, true)
-        this.term.write("\x1B[6n")
+        this.term.onData((str, stop) => {
+          const pos = parseAnsiCursorPosition(str)
+          if (pos) {
+            resolve(pos)
+            stop()
+          }
+        })
+        this.term.write(AnsiCursor.REQUEST_POSITION)
       })
     }
 
     hide(): Promise<void> {
-      return this.term.write("\x1b[?25l")
+      return this.term.write(AnsiCursor.HIDE)
     }
 
     left(n: number = 1): Promise<void> {
-      return this.term.write(`\x1b[${n}D`)
+      return this.term.write(AnsiCursor.LEFT(n))
     }
 
     restorePosition(): Promise<void> {
-      return this.term.write("\x1b[u")
+      return this.term.write(AnsiCursor.RESTORE_POSITION)
     }
 
     right(n: number = 1): Promise<void> {
-      return this.term.write(`\x1b[${n}C`)
+      return this.term.write(AnsiCursor.RIGHT(n))
     }
 
     savePosition(): Promise<void> {
-      return this.term.write("\x1b[s")
+      return this.term.write(AnsiCursor.SAVE_POSITION)
     }
 
     async setPosition(pos: Partial<CursorPosition>): Promise<void> {
@@ -135,19 +138,19 @@ export function CursorManager<Base extends Class<Object>>(
         if (typeof pos.row !== "number") pos.row = curPos.row
         if (typeof pos.col !== "number") pos.col = curPos.col
       }
-      return this.term.write(`\x1b[${pos.row};${pos.col}H`)
+      return this.term.write(AnsiCursor.SET_POSITION(pos.row, pos.col))
     }
 
     show(): Promise<void> {
-      return this.term.write("\x1b[?25h")
+      return this.term.write(AnsiCursor.SHOW)
     }
 
     top(n: number = 1): Promise<void> {
-      return this.term.write(`\x1b[${n}A`)
+      return this.term.write(AnsiCursor.TOP(n))
     }
 
     autoWrap(val: boolean) {
-      return this.term.write(val ? "\x1b[?7h" : "\x1b[?7l")
+      return this.term.write(val ? AnsiCursor.ENABLE_AUTOWRAP : AnsiCursor.DISABLE_AUTOWRAP)
     }
   }
 }

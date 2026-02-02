@@ -12,7 +12,7 @@ export default defineConfig({
       fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
-      external: ["injection-js"],
+      external: ["injection-js", "color-name", "parse-color"],
     },
   },
 })

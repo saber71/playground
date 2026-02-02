@@ -1,5 +1,7 @@
 export type Class<T> = new (...args: any[]) => T
 
+export type Color = [number, number, number]
+
 export type FunctionKeys<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never
 }[keyof T]
