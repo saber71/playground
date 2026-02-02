@@ -1,24 +1,15 @@
-import { isNil, parseColor } from "shared"
 import wcwidth from "wcwidth"
-import { AnsiBack, AnsiFore, AnsiReset, AnsiStyle } from "./ansi-code.ts"
+import { TerminalStyle, type TerminalStyleOption } from "./TerminalStyle.ts"
 
-export interface TerminalTextOption {
-  bold: boolean
-  italic: boolean
-  underline: boolean
-  inverse: boolean
-  strikeThrough: boolean
-  forecolor: string | number
-  backcolor: string | number
-}
-
-export class TerminalText {
+export class TerminalText extends TerminalStyle {
   private _width?: number
 
   constructor(
     readonly value: string,
-    readonly option?: Partial<TerminalTextOption>,
-  ) {}
+    option?: Partial<TerminalStyleOption>,
+  ) {
+    super(option)
+  }
 
   static width(...array: TerminalText[]) {
     return array.map((i) => i.getWidth()).reduce((pre, cur) => pre + cur, 0)
@@ -60,6 +51,10 @@ export class TerminalText {
     return rows
   }
 
+  create(options?: Partial<TerminalStyleOption & { value: string }>) {
+    return new TerminalText(options?.value ?? "", options).setParent(this)
+  }
+
   getWidth() {
     if (typeof this._width === "number") return this._width
     return (this._width = wcwidth(this.value))
@@ -81,47 +76,31 @@ export class TerminalText {
         rowWidth += width
         rowStr += this.value[i]
         if (this.value[i] === "\n") {
-          row.push(this.cloneOption(rowStr))
+          row.push(this.clone(rowStr))
           rowStr = ""
           rowWidth = 0
         }
       } else {
-        row.push(this.cloneOption(rowStr))
+        row.push(this.clone(rowStr))
         rowWidth = width
         rowStr = this.value[i]!
       }
     }
     if (rowStr) {
-      row.push(this.cloneOption(rowStr))
+      row.push(this.clone(rowStr))
     }
     return row
   }
 
-  cloneOption(value: string) {
-    return new TerminalText(value, Object.assign({}, this.option))
+  clone(value: string = this.value) {
+    return new TerminalText(value, Object.assign({}, this))
   }
 
   slice(start?: number, end?: number) {
-    return this.cloneOption(this.value.slice(start, end))
+    return this.clone(this.value.slice(start, end))
   }
 
   toString() {
-    const option = this.option
-    if (option) {
-      const forecolor = !isNil(option.forecolor) ? parseColor(option.forecolor).join(";") : ""
-      const backcolor = !isNil(option.backcolor) ? parseColor(option.backcolor).join(";") : ""
-      const styles: number[] = []
-      if (option.bold) styles.push(AnsiStyle.BOLD)
-      if (option.italic) styles.push(AnsiStyle.ITALIC)
-      if (option.strikeThrough) styles.push(AnsiStyle.STRIKE_THROUGH)
-      if (option.inverse) styles.push(AnsiStyle.INVERSE)
-      if (option.underline) styles.push(AnsiStyle.UNDERLINE)
-      const codes: string[] = []
-      if (styles.length) codes.push(styles.join(";"))
-      if (forecolor) codes.push(AnsiFore + ";" + forecolor)
-      if (backcolor) codes.push(AnsiBack + ";" + backcolor)
-      if (codes.length) return `\x1B[${codes.join(";")}m${this.value}${AnsiReset}`
-      return this.value
-    } else return this.value
+    return super.toString(this.value)
   }
 }
