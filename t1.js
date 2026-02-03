@@ -37,10 +37,20 @@ class Duckable {
   duck() {
     console.log(this._duckName)
   }
+
+  jump() {
+    console.log(this.jumpName + "q23")
+    return this
+  }
 }
 
 class Sprite extends applyMixins(Jumpable, Duckable) {
   name = "20" + 30
+
+  jump() {
+    console.log(this.jumpName + "Sprite")
+    console.log(Duckable.prototype.jump.call(this))
+  }
 }
 
 const sprite = new Sprite()

@@ -1,7 +1,7 @@
+import type { ITerminal } from "./capabilities/ITerminal.ts"
 import type { ICursorManager } from "./ICursorManager.ts"
 import type { IEraser } from "./IEraser.ts"
 import type { IReadLine } from "./IReadLine.ts"
-import type { ITerminal } from "./ITerminal.ts"
 
 export interface SymbolKey<T> extends Symbol {}
 

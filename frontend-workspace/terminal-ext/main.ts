@@ -46,6 +46,14 @@ class Terminal implements ITerminal {
       this.xterm.write(data, resolve)
     })
   }
+
+  getRows(): number {
+    return this.xterm.rows
+  }
+
+  getCols(): number {
+    return this.xterm.cols
+  }
 }
 
 const termExt = new TerminalExt(new Terminal(document.body))

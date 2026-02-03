@@ -1,7 +1,7 @@
 import { type Color, isNil, parseColor } from "shared"
 import { AnsiBack, AnsiFore, AnsiReset, AnsiStyle } from "./ansi-code.ts"
 
-export interface TerminalStyleOption {
+export interface ITerminalStyle {
   bold: boolean
   italic: boolean
   underline: boolean
@@ -11,7 +11,7 @@ export interface TerminalStyleOption {
   backcolor: Color | string | number
 }
 
-export class TerminalStyle implements Partial<TerminalStyleOption> {
+export class TerminalStyle implements Partial<ITerminalStyle> {
   bold?: boolean
   italic?: boolean
   underline?: boolean
@@ -21,11 +21,7 @@ export class TerminalStyle implements Partial<TerminalStyleOption> {
   backcolor?: Color | string | number
   parent?: TerminalStyle
 
-  static create(option?: Partial<TerminalStyleOption>) {
-    return new TerminalStyle(option)
-  }
-
-  constructor(option?: Partial<TerminalStyleOption>) {
+  constructor(option?: Partial<ITerminalStyle>) {
     Object.assign(this, option)
   }
 
@@ -34,11 +30,11 @@ export class TerminalStyle implements Partial<TerminalStyleOption> {
     return this
   }
 
-  create(option?: Partial<TerminalStyleOption>) {
+  create(option?: Partial<ITerminalStyle>) {
     return new TerminalStyle(option).setParent(this)
   }
 
-  get<Key extends keyof TerminalStyleOption>(key: Key): TerminalStyle[Key] | undefined {
+  get<Key extends keyof ITerminalStyle>(key: Key): TerminalStyle[Key] | undefined {
     let result = this[key]
     let parent = this.parent
     while (isNil(result) && parent) {
@@ -52,7 +48,7 @@ export class TerminalStyle implements Partial<TerminalStyleOption> {
     return new TerminalStyle(this)
   }
 
-  toString(str: string = "") {
+  toString(str: string = "", reset: boolean = true) {
     const fore = this.get("forecolor")
     const back = this.get("backcolor")
     const forecolor = !isNil(fore) ? parseColor(fore).join(";") : ""
@@ -67,7 +63,23 @@ export class TerminalStyle implements Partial<TerminalStyleOption> {
     if (styles.length) codes.push(styles.join(";"))
     if (forecolor) codes.push(AnsiFore + ";" + forecolor)
     if (backcolor) codes.push(AnsiBack + ";" + backcolor)
-    if (codes.length) return `\x1B[${codes.join(";")}m${str}${AnsiReset}`
+    if (codes.length) return `\x1B[${codes.join(";")}m${str}${reset ? AnsiReset : ""}`
     return str
+  }
+
+  equal(other: TerminalStyle) {
+    const props: Array<keyof ITerminalStyle> = [
+      "forecolor",
+      "backcolor",
+      "bold",
+      "italic",
+      "inverse",
+      "strikeThrough",
+      "underline",
+    ]
+    for (let prop of props) {
+      if (!this.get(prop) === other.get(prop)) return false
+    }
+    return true
   }
 }

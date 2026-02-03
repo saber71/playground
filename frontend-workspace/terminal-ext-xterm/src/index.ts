@@ -44,4 +44,12 @@ export class XtermTerminal implements ITerminal {
       this.xterm.write(data, resolve)
     })
   }
+
+  getRows(): number {
+    return this.xterm.rows
+  }
+
+  getCols(): number {
+    return this.xterm.cols
+  }
 }

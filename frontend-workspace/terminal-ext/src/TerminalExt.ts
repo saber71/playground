@@ -1,3 +1,4 @@
+import type { ITerminal } from "./capabilities/ITerminal.ts"
 import { CursorManager, type ICursorManager } from "./ICursorManager.ts"
 import { Eraser, type IEraser } from "./IEraser.ts"
 import {
@@ -7,7 +8,6 @@ import {
   InjectKeyTerminal,
 } from "./inject-key.ts"
 import { type IReadLine, ReadLine } from "./IReadLine.ts"
-import type { ITerminal } from "./ITerminal.ts"
 import { providerValue } from "./provider-inject.ts"
 
 export class TerminalExt {

@@ -1,12 +1,12 @@
 import wcwidth from "wcwidth"
-import { TerminalStyle, type TerminalStyleOption } from "./TerminalStyle.ts"
+import { type ITerminalStyle, TerminalStyle } from "./TerminalStyle.ts"
 
 export class TerminalText extends TerminalStyle {
   private _width?: number
 
   constructor(
     readonly value: string,
-    option?: Partial<TerminalStyleOption>,
+    option?: Partial<ITerminalStyle>,
   ) {
     super(option)
   }
@@ -51,7 +51,7 @@ export class TerminalText extends TerminalStyle {
     return rows
   }
 
-  create(options?: Partial<TerminalStyleOption & { value: string }>) {
+  create(options?: Partial<ITerminalStyle & { value: string }>) {
     return new TerminalText(options?.value ?? "", options).setParent(this)
   }
 
@@ -101,6 +101,6 @@ export class TerminalText extends TerminalStyle {
   }
 
   toString() {
-    return super.toString(this.value)
+    return super.toString(this.value, true)
   }
 }

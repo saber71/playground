@@ -1,4 +1,4 @@
-import type { ITerminal } from "./ITerminal.ts"
+import type { ITerminal } from "./capabilities/ITerminal.ts"
 
 export class TerminalComponent {
   constructor(readonly term: ITerminal) {}
