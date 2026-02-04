@@ -2,11 +2,12 @@
 
 ## 多阶段构建
 将构建环境与运行环境分离，减小镜像体积
+
 ```dockerfile
 # 构建阶段
 FROM golang:1.23 AS builder
 WORKDIR /app
-COPY . .
+COPY 在%20CI .
 RUN go build -o myapp .
 
 # 运行阶段
