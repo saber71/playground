@@ -66,20 +66,4 @@ export class TerminalStyle implements Partial<ITerminalStyle> {
     if (codes.length) return `\x1B[${codes.join(";")}m${str}${reset ? AnsiReset : ""}`
     return str
   }
-
-  equal(other: TerminalStyle) {
-    const props: Array<keyof ITerminalStyle> = [
-      "forecolor",
-      "backcolor",
-      "bold",
-      "italic",
-      "inverse",
-      "strikeThrough",
-      "underline",
-    ]
-    for (let prop of props) {
-      if (!this.get(prop) === other.get(prop)) return false
-    }
-    return true
-  }
 }

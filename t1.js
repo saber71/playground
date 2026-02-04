@@ -1,65 +1,50 @@
 function applyMixins(...constructors) {
   const derivedCtor = class {}
+
   constructors.forEach((baseCtor) => {
-    Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
-      Object.defineProperty(
-        derivedCtor.prototype,
-        name,
-        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) || Object.create(null),
-      )
-    })
+    // 递归遍历原型链，获取所有祖先类的成员
+    let proto = baseCtor.prototype
+    while (proto && proto !== Object.prototype) {
+      Object.getOwnPropertyNames(proto).forEach((name) => {
+        if (name === "constructor") return
+        if (!derivedCtor.prototype.hasOwnProperty(name)) {
+          Object.defineProperty(
+            derivedCtor.prototype,
+            name,
+            Object.getOwnPropertyDescriptor(proto, name) || Object.create(null),
+          )
+        }
+      })
+      proto = Object.getPrototypeOf(proto) // 向上查找原型链
+    }
   })
+
   return derivedCtor
 }
 
-class Jumpable {
-  get jumpName() {
-    return "kkk"
+class A {
+  get propA() {
+    return "prop:A"
   }
 
-  jump() {
-    console.log(this.jumpName)
-    return this
-  }
-}
-
-class Duckable {
-  _duckName = 2
-
-  get duckName() {
-    return this._duckName
-  }
-
-  set duckName(value) {
-    this._duckName = value
-  }
-
-  duck() {
-    console.log(this._duckName)
-  }
-
-  jump() {
-    console.log(this.jumpName + "q23")
-    return this
+  a() {
+    return "A:a()"
   }
 }
 
-class Sprite extends applyMixins(Jumpable, Duckable) {
-  name = "20" + 30
-
-  jump() {
-    console.log(this.jumpName + "Sprite")
-    console.log(Duckable.prototype.jump.call(this))
+class B extends applyMixins(A) {
+  b() {
+    return ["B:b()", this.a(), this.propA]
+  }
+}
+console.log(B.prototype)
+// const b = new B()
+// console.log(b.b, b.a, b.propA)
+//
+class C extends applyMixins(B) {
+  c() {
+    return ["C:c()", this.b()]
   }
 }
 
-const sprite = new Sprite()
-sprite.duckName = "123"
-console.log(
-  sprite.duck(),
-  sprite.jump(),
-  sprite,
-  sprite.jumpName,
-  sprite.duckName,
-  sprite._duckName,
-)
+console.log(new C().c())

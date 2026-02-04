@@ -11,15 +11,22 @@ export function Apply<T = any>(...array: (Class<any> | AbstractClass<any>)[]): C
 
   // 遍历每个要应用的类构造函数
   array.forEach((baseCtor) => {
-    // 获取当前类原型上的所有属性名
-    Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
-      // 将当前类原型上的属性/方法定义到基础类的原型上
-      Object.defineProperty(
-        Base.prototype,
-        name,
-        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) || Object.create(null),
-      )
-    })
+    // 递归遍历原型链，获取所有祖先类的成员
+    let proto = baseCtor.prototype
+    while (proto && proto !== Object.prototype) {
+      Object.getOwnPropertyNames(proto).forEach((name) => {
+        if (name === "constructor") return
+        if (!Base.prototype.hasOwnProperty(name)) {
+          Object.defineProperty(
+            Base.prototype,
+            name,
+            Object.getOwnPropertyDescriptor(proto, name) || Object.create(null),
+          )
+        }
+      })
+      proto = Object.getPrototypeOf(proto) // 向上查找原型链
+    }
   })
+
   return Base as any
 }

@@ -1,3 +1,5 @@
+import type { CursorPosition } from "./types.ts"
+
 export enum AnsiStyle {
   BOLD = 1,
   ITALIC = 3,
@@ -50,11 +52,6 @@ export class AnsiCursor {
   }
 }
 
-export interface CursorPosition {
-  row: number
-  col: number
-}
-
 export function parseAnsiCursorPosition(value?: string): CursorPosition | undefined {
   if (!value) return
   const result = value.match(/^\x1b\[(\d+);(\d+)R$/)
@@ -62,4 +59,8 @@ export function parseAnsiCursorPosition(value?: string): CursorPosition | undefi
     return { row: Number(result[1]), col: Number(result[2]) }
   }
   return
+}
+
+export function isAnsiCode(str: string) {
+  return /^\x1b\[[^A-Za-z]*[A-Za-z]$/.test(str)
 }
