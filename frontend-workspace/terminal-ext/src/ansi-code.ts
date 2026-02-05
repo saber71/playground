@@ -52,6 +52,11 @@ export class AnsiCursor {
   }
 }
 
+export enum AnsiScreenBuffer {
+  MAIN = "\x1b[?1049l",
+  BACKUP = "\x1b[?1049h",
+}
+
 export function parseAnsiCursorPosition(value?: string): CursorPosition | undefined {
   if (!value) return
   const result = value.match(/^\x1b\[(\d+);(\d+)R$/)
@@ -61,6 +66,6 @@ export function parseAnsiCursorPosition(value?: string): CursorPosition | undefi
   return
 }
 
-export function isAnsiCode(str: string) {
-  return /^\x1b\[[^A-Za-z]*[A-Za-z]$/.test(str)
+export function hasAnsiCode(str: string) {
+  return /\x1b\[[^A-Za-z]*[A-Za-z]/.test(str)
 }

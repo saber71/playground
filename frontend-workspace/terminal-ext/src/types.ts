@@ -3,4 +3,9 @@ export interface CursorPosition {
   col: number
 }
 
+export interface TerminalDimension {
+  rows: number
+  cols: number
+}
+
 export type StopListener = () => void

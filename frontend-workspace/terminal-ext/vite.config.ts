@@ -12,7 +12,15 @@ export default defineConfig({
       fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
-      external: ["shared", "parse-color", "color-name", "@xterm/xterm", "wcwidth"],
+      external: [
+        "shared",
+        "parse-color",
+        "color-name",
+        "@xterm/xterm",
+        "wcwidth",
+        "deep-equal",
+        "wrap-ansi",
+      ],
     },
   },
   server: {

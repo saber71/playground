@@ -1,5 +1,13 @@
-import { Apply } from "shared"
-import { AnsiCursor, parseAnsiCursorPosition } from "./ansi-code.ts"
+import deepEqual from "deep-equal"
+import { Apply, type Color, isNil, parseColor } from "shared"
+import {
+  AnsiBack,
+  AnsiCursor,
+  AnsiFore,
+  AnsiReset,
+  AnsiStyle,
+  parseAnsiCursorPosition,
+} from "./ansi-code.ts"
 import type {
   IBox,
   ICursorControl,
@@ -10,25 +18,12 @@ import type {
   IStyleProvider,
   ITerminal,
   ITerminalProvider,
+  ITerminalStyle,
   IViewport,
   IWriter,
 } from "./capabilities.interface.ts"
-import { TerminalStyle } from "./TerminalStyle.ts"
-import { TerminalText } from "./TerminalText.ts"
+import type { ITextChar, ITextViewport } from "./text.interface.ts"
 import type { CursorPosition } from "./types.ts"
-
-export abstract class AbstractTerminalProvider implements ITerminalProvider {
-  abstract getTerminal(): ITerminal
-}
-
-export class StyleProvider implements IStyleProvider {
-  private _style?: TerminalStyle
-
-  getTerminalStyle(): TerminalStyle {
-    if (!this._style) this._style = new TerminalStyle()
-    return this._style
-  }
-}
 
 export abstract class AbstractDimension implements IDimension {
   abstract getRows(): number
@@ -75,12 +70,81 @@ export class Viewport extends AbstractRect implements IViewport {
   }
 }
 
+export class TerminalStyle implements ITerminalStyle {
+  bold?: boolean
+  italic?: boolean
+  underline?: boolean
+  inverse?: boolean
+  strikeThrough?: boolean
+  forecolor?: Color | string | number
+  backcolor?: Color | string | number
+  parent?: ITerminalStyle
+
+  constructor(option?: ITerminalStyle) {
+    Object.assign(this, option)
+  }
+
+  equals(other: ITerminalStyle): boolean {
+    if (other === this) return true
+    const props: Array<keyof ITerminalStyle> = [
+      "bold",
+      "italic",
+      "underline",
+      "inverse",
+      "strikeThrough",
+      "forecolor",
+      "backcolor",
+    ]
+    for (let prop of props) {
+      if (!deepEqual(this.get(prop), other.get(prop))) return false
+    }
+    return true
+  }
+
+  get<Key extends keyof ITerminalStyle>(key: Key): TerminalStyle[Key] | undefined {
+    let result = this[key]
+    let parent = this.parent
+    while (isNil(result) && parent) {
+      result = parent[key] as any
+      parent = parent.parent
+    }
+    return result
+  }
+
+  toString(str: string = "", reset: boolean = true) {
+    const fore = this.get("forecolor")
+    const back = this.get("backcolor")
+    const forecolor = !isNil(fore) ? parseColor(fore).join(";") : ""
+    const backcolor = !isNil(back) ? parseColor(back).join(";") : ""
+    const styles: number[] = []
+    if (this.get("bold")) styles.push(AnsiStyle.BOLD)
+    if (this.get("italic")) styles.push(AnsiStyle.ITALIC)
+    if (this.get("strikeThrough")) styles.push(AnsiStyle.STRIKE_THROUGH)
+    if (this.get("inverse")) styles.push(AnsiStyle.INVERSE)
+    if (this.get("underline")) styles.push(AnsiStyle.UNDERLINE)
+    const codes: string[] = []
+    if (styles.length) codes.push(styles.join(";"))
+    if (forecolor) codes.push(AnsiFore + ";" + forecolor)
+    if (backcolor) codes.push(AnsiBack + ";" + backcolor)
+    if (codes.length) return `\x1B[${codes.join(";")}m${str}${reset ? AnsiReset : ""}`
+    return str
+  }
+}
+
+export abstract class AbstractTerminalProvider implements ITerminalProvider {
+  abstract getTerminal(): ITerminal
+}
+
+export abstract class AbstractStyleProvider implements IStyleProvider {
+  abstract getTerminalStyle(): ITerminalStyle
+}
+
 export abstract class AbstractEraser extends AbstractTerminalProvider implements IEraser {
   async erase(view: IRect, style: IStyleProvider) {
     const end = view.getEndPosition()
     const start = view.getStartPosition()
     const term = this.getTerminal()
-    for (let i = start.col; i < end.col; i++) {
+    for (let i = start.row; i < end.row; i++) {
       await term.write(
         AnsiCursor.SET_POSITION(start.row, i) +
           style.getTerminalStyle().toString(" ".repeat(view.getRows())),
@@ -90,21 +154,41 @@ export abstract class AbstractEraser extends AbstractTerminalProvider implements
 }
 
 export abstract class AbstractWriter extends AbstractTerminalProvider implements IWriter {
-  async write(data: TerminalText[], view: IRect, style: IStyleProvider) {
-    const maxWidth = view.getRows()
+  async write(data: ITextViewport, view: IRect, style: IStyleProvider) {
     const start = view.getStartPosition()
-    const wrapped = TerminalText.wrap(maxWidth, ...data)
     const term = this.getTerminal()
-    for (let i = Math.max(0, wrapped.length - view.getCols()); i < wrapped.length; i++) {
-      await term.write(
+    const array: string[] = []
+    const rows = data.getRegion().endRow - data.getRegion().startRow + 1
+    for (let i = 0; i < rows && i < view.getRows(); i++) {
+      const chars = data.getChars(i)
+      if (chars.length === 0) continue
+      let group: Readonly<ITextChar>[] = []
+      const groups: Readonly<ITextChar>[][] = [group]
+      for (let char of chars) {
+        if (group.length) {
+          const last = group.at(-1)!
+          if (last.style.equals(char.style)) group.push(char)
+          else {
+            group = [char]
+            groups.push(group)
+          }
+        } else {
+          group.push(char)
+        }
+      }
+      const strWithWidths = groups.map((group) => {
+        const str = group.map((i) => i.char).join("")
+        const width = group.reduce((acc, char) => acc + char.width, 0)
+        return { str, width, style: group[0].style }
+      })
+      const strings = strWithWidths.map((i) => i.style.toString(i.str))
+      array.push(
         style
           .getTerminalStyle()
-          .toString(
-            AnsiCursor.SET_POSITION(i + start.col, start.row) +
-              wrapped[i].map((i) => i.toString()).join(""),
-          ),
+          .toString(AnsiCursor.SET_POSITION(i + start.row, start.col) + strings.join("")),
       )
     }
+    await term.write(array.join(""))
   }
 }
 
@@ -168,7 +252,7 @@ export class Box
   >(
     AbstractEraser,
     Viewport,
-    StyleProvider,
+    AbstractStyleProvider,
     AbstractCursorControl,
     AbstractCursorPositionable,
     AbstractWriter,
@@ -177,12 +261,12 @@ export class Box
 {
   constructor(
     readonly term: ITerminal,
-    readonly style: TerminalStyle,
+    readonly style: ITerminalStyle,
   ) {
     super()
   }
 
-  getTerminalStyle(): TerminalStyle {
+  getTerminalStyle(): ITerminalStyle {
     return this.style
   }
 
