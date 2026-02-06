@@ -48,14 +48,38 @@ export abstract class AbstractRect extends AbstractDimension implements IRect {
 export class Viewport extends AbstractRect implements IViewport {
   private _startPosition?: CursorPosition
   private _endPosition?: CursorPosition
+  private _parent?: IViewport | null
+
+  setParent(val?: IViewport) {
+    this._parent = val
+    return this
+  }
+
+  getParent() {
+    return this._parent
+  }
 
   getStartPosition() {
     if (!this._startPosition) throw new Error("startPosition is not set")
+    if (this._parent) {
+      const parentStart = this._parent.getStartPosition()
+      return {
+        row: parentStart.row + this._startPosition.row,
+        col: parentStart.col + this._startPosition.col,
+      }
+    }
     return this._startPosition
   }
 
   getEndPosition() {
     if (!this._endPosition) throw new Error("endPosition is not set")
+    if (this._parent) {
+      const parentStart = this._parent.getStartPosition()
+      return {
+        row: this._endPosition.row + parentStart.row,
+        col: this._endPosition.col + parentStart.col,
+      }
+    }
     return this._endPosition
   }
 
@@ -80,7 +104,7 @@ export class TerminalStyle implements ITerminalStyle {
   backcolor?: Color | string | number
   parent?: ITerminalStyle
 
-  constructor(option?: ITerminalStyle) {
+  constructor(option?: Partial<ITerminalStyle>) {
     Object.assign(this, option)
   }
 
@@ -144,10 +168,10 @@ export abstract class AbstractEraser extends AbstractTerminalProvider implements
     const end = view.getEndPosition()
     const start = view.getStartPosition()
     const term = this.getTerminal()
-    for (let i = start.row; i < end.row; i++) {
+    for (let i = start.row; i <= end.row; i++) {
       await term.write(
-        AnsiCursor.SET_POSITION(start.row, i) +
-          style.getTerminalStyle().toString(" ".repeat(view.getRows())),
+        AnsiCursor.SET_POSITION(i, start.col) +
+          style.getTerminalStyle().toString(" ".repeat(view.getCols())),
       )
     }
   }
@@ -248,7 +272,7 @@ export abstract class AbstractCursorPositionable
 
 export class Box
   extends Apply<
-    IEraser & IViewport & IStyleProvider & ICursorControl & ICursorPositionable & IWriter
+    IEraser & Viewport & IStyleProvider & ICursorControl & ICursorPositionable & IWriter
   >(
     AbstractEraser,
     Viewport,
@@ -262,8 +286,17 @@ export class Box
   constructor(
     readonly term: ITerminal,
     readonly style: ITerminalStyle,
+    parent?: IBox,
   ) {
     super()
+    this.setParent(parent)
+  }
+
+  create(style?: Partial<ITerminalStyle>) {
+    return new Box(
+      this.term,
+      new TerminalStyle(Object.assign({}, style, { parent: this.style })),
+    ).setParent(this)
   }
 
   getTerminalStyle(): ITerminalStyle {

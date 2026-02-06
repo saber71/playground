@@ -17,7 +17,7 @@ export class StyledText extends TerminalStyle implements IStyledText {
 
   constructor(
     readonly value: string,
-    option?: ITerminalStyle,
+    option?: Partial<ITerminalStyle>,
   ) {
     if (hasAnsiCode(value)) throw new Error("ansi code is not allowed")
     super(option)
@@ -85,7 +85,14 @@ export class TextView implements ITextView {
     return this
   }
 
-  getViewport(region: ITextRegion): ITextViewport {
+  getViewport(region?: ITextRegion): ITextViewport {
+    if (!region)
+      return new TextViewport(this._rows, {
+        startRow: 0,
+        endRow: this._rows.length - 1,
+        startIndex: 0,
+        maxWidth: -1,
+      })
     const result: ITextRow[] = []
     for (let i = region.startRow; i <= region.endRow && i < this._rows.length; i++) {
       const row = this._rows[i]

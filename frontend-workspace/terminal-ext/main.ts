@@ -5,7 +5,7 @@ import { FitAddon } from "@xterm/addon-fit"
 import { ImageAddon } from "@xterm/addon-image"
 import { Unicode11Addon } from "@xterm/addon-unicode11"
 import { Terminal as XTerm } from "@xterm/xterm"
-import { type ITerminal, type Stop, TerminalExt, TerminalText } from "./src"
+import { type ITerminal, type StopListener, StyledText, TerminalExt, TextView } from "./src"
 
 class Terminal implements ITerminal {
   readonly xterm = new XTerm({
@@ -26,7 +26,7 @@ class Terminal implements ITerminal {
     fitAddon.fit()
   }
 
-  onData(listener: (str: string, stop: Stop) => void, once?: boolean) {
+  onData(listener: (str: string, stop: StopListener) => void, once?: boolean) {
     if (once) {
       const disposable = this.xterm.onData((str) => {
         listener(str, () => disposable.dispose())
@@ -57,9 +57,27 @@ class Terminal implements ITerminal {
 }
 
 const termExt = new TerminalExt(new Terminal(document.body))
-termExt.term
-  .write(new TerminalText("1234567890", { forecolor: "red", backcolor: "blue" }))
-  .then(async () => {
-    await termExt.cursorManager.setPosition({ row: 1, col: 2 })
-    termExt.readline.read("abcccs$ ").then(console.log)
+termExt.style.backcolor = "white"
+termExt.style.forecolor = "blue"
+termExt.screen.erase(termExt.screen, termExt).then(async () => {
+  const textView = new TextView([
+    new StyledText("的雾气大窘12撒大家撒都期待无期132\n1321"),
+    new StyledText("\n"),
+    new StyledText("123ada", { bold: true, strikeThrough: true }),
+  ])
+    .setMaxWidth(11)
+    .update()
+  const renderArea = termExt.screen.create({
+    bold: true,
+    inverse: true,
+    backcolor: "red",
+    italic: true,
   })
+  renderArea.setStartPosition({ row: 10, col: 10 }).setEndPosition({ row: 13, col: 20 })
+  await renderArea.erase(renderArea, renderArea)
+  termExt.screen.write(
+    textView.getViewport({ startRow: 0, endRow: 4, startIndex: 0, maxWidth: 11 }),
+    renderArea,
+    renderArea,
+  )
+})

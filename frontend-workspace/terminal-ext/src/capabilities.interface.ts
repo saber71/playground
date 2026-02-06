@@ -17,12 +17,14 @@ export interface IRect extends IDimension {
 }
 
 export interface IViewport extends IRect {
+  getParent(): IViewport | undefined | null
+
   setStartPosition(value: CursorPosition): this
 
   setEndPosition(value: CursorPosition): this
 }
 
-// ============终端输出样式和文本=============
+// ============终端输出样式=============
 
 export interface ITerminalStyle {
   bold?: boolean
@@ -41,16 +43,16 @@ export interface ITerminalStyle {
   toString(text?: string, reset?: boolean): string
 }
 
+export interface IStyleProvider {
+  getTerminalStyle(): ITerminalStyle
+}
+
 // ============终端功能性接口=============
 
 export interface ITerminal extends IDimension {
   onData(listener: (str: string, stop: StopListener) => void, once?: boolean): void
 
   write(data: any): Promise<void>
-}
-
-export interface IStyleProvider {
-  getTerminalStyle(): ITerminalStyle
 }
 
 export interface ITerminalProvider {
@@ -86,4 +88,6 @@ export interface ICursorPositionable extends ITerminalProvider {
 }
 
 export interface IBox
-  extends IEraser, IViewport, IStyleProvider, ICursorControl, ICursorPositionable, IWriter {}
+  extends IEraser, IViewport, IStyleProvider, ICursorControl, ICursorPositionable, IWriter {
+  create(style?: Partial<ITerminalStyle>): IBox
+}

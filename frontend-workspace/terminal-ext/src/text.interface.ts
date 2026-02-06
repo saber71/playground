@@ -34,7 +34,7 @@ export interface ITextViewport {
 }
 
 export interface ITextView {
-  getViewport(region: ITextRegion): ITextViewport
+  getViewport(region?: ITextRegion): ITextViewport
 
   setMaxWidth(val: number): this
 
