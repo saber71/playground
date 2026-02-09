@@ -63,8 +63,17 @@ export interface IEraser extends ITerminalProvider {
   erase(view: IRect, style: IStyleProvider): Promise<void>
 }
 
+export interface IWriteOption {
+  align?: "left" | "center" | "right"
+}
+
 export interface IWriter extends ITerminalProvider {
-  write(data: ITextViewport, renderArea: IRect, style: IStyleProvider): Promise<void>
+  write(
+    data: ITextViewport,
+    renderArea: IRect,
+    style: IStyleProvider,
+    options?: IWriteOption,
+  ): Promise<void>
 }
 
 export interface ICursorControl extends ITerminalProvider {

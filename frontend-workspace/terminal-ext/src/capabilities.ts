@@ -20,6 +20,7 @@ import type {
   ITerminalProvider,
   ITerminalStyle,
   IViewport,
+  IWriteOption,
   IWriter,
 } from "./capabilities.interface.ts"
 import type { ITextChar, ITextViewport } from "./text.interface.ts"
@@ -178,7 +179,7 @@ export abstract class AbstractEraser extends AbstractTerminalProvider implements
 }
 
 export abstract class AbstractWriter extends AbstractTerminalProvider implements IWriter {
-  async write(data: ITextViewport, view: IRect, style: IStyleProvider) {
+  async write(data: ITextViewport, view: IRect, style: IStyleProvider, options?: IWriteOption) {
     const start = view.getStartPosition()
     const term = this.getTerminal()
     const array: string[] = []
@@ -206,10 +207,14 @@ export abstract class AbstractWriter extends AbstractTerminalProvider implements
         return { str, width, style: group[0].style }
       })
       const strings = strWithWidths.map((i) => i.style.toString(i.str))
+      const width = strWithWidths.reduce((pre, cur) => pre + cur.width, 0)
+      let bias = view.getCols() - width
+      if (options?.align === "center") bias = Math.floor(bias / 2)
+      else if (options?.align === "left" || !options?.align) bias = 0
       array.push(
         style
           .getTerminalStyle()
-          .toString(AnsiCursor.SET_POSITION(i + start.row, start.col) + strings.join("")),
+          .toString(AnsiCursor.SET_POSITION(i + start.row, start.col + bias) + strings.join("")),
       )
     }
     await term.write(array.join(""))

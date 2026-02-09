@@ -76,8 +76,9 @@ termExt.screen.erase(termExt.screen, termExt).then(async () => {
   renderArea.setStartPosition({ row: 10, col: 10 }).setEndPosition({ row: 13, col: 20 })
   await renderArea.erase(renderArea, renderArea)
   termExt.screen.write(
-    textView.getViewport({ startRow: 0, endRow: 4, startIndex: 0, maxWidth: 11 }),
+    textView.getViewport({ startRow: 0, endRow: 4, startIndex: 0, maxWidth: 8 }),
     renderArea,
     renderArea,
+    { align: "left" },
   )
 })
