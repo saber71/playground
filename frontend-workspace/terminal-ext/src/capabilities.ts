@@ -1,5 +1,5 @@
+import { Apply, type Color, isNil, parseColor } from "@saber71/shared"
 import deepEqual from "deep-equal"
-import { Apply, type Color, isNil, parseColor } from "shared"
 import {
   AnsiBack,
   AnsiCursor,
@@ -185,8 +185,17 @@ export abstract class AbstractWriter extends AbstractTerminalProvider implements
     const array: string[] = []
     const rows = data.getRegion().endRow - data.getRegion().startRow + 1
     for (let i = 0; i < rows && i < view.getRows(); i++) {
-      const chars = data.getChars(i)
+      let chars = data.getChars(i)
       if (chars.length === 0) continue
+      let endIndex = 0
+      let accWidth = 0
+      for (; endIndex < chars.length; endIndex++) {
+        const char = chars[endIndex]
+        if (accWidth + char.width < view.getCols()) {
+          accWidth += char.width
+        } else break
+      }
+      chars = chars.slice(0, endIndex)
       let group: Readonly<ITextChar>[] = []
       const groups: Readonly<ITextChar>[][] = [group]
       for (let char of chars) {

@@ -85,7 +85,7 @@ export class TextView implements ITextView {
     return this
   }
 
-  getViewport(region?: ITextRegion): ITextViewport {
+  getViewport(region?: Partial<ITextRegion>): ITextViewport {
     if (!region)
       return new TextViewport(this._rows, {
         startRow: 0,
@@ -93,25 +93,25 @@ export class TextView implements ITextView {
         startIndex: 0,
         maxWidth: -1,
       })
+    const startRow = region.startRow ?? 0
+    const endRow = region.endRow ?? this._rows.length - 1
+    const maxWidth = region.maxWidth ?? Number.MAX_SAFE_INTEGER
+    const startIndex = region.startIndex ?? 0
     const result: ITextRow[] = []
-    for (let i = region.startRow; i <= region.endRow && i < this._rows.length; i++) {
+    for (let i = startRow; i <= endRow && i < this._rows.length; i++) {
       const row = this._rows[i]
       const resultRow: ITextRow = { chars: [], width: 0 }
       result.push(resultRow)
-      for (
-        let j = region.startIndex;
-        j < row.chars.length && resultRow.width <= region.maxWidth;
-        j++
-      ) {
+      for (let j = startIndex; j < row.chars.length && resultRow.width <= maxWidth; j++) {
         const char = row.chars[j]
         const accWidth = resultRow.width + char.width
-        if (accWidth <= region.maxWidth) {
+        if (accWidth <= maxWidth) {
           resultRow.width = accWidth
           resultRow.chars.push(char)
         }
       }
     }
-    return new TextViewport(result, { ...region })
+    return new TextViewport(result, { startRow, startIndex, maxWidth, endRow })
   }
 
   update(force?: boolean): this {

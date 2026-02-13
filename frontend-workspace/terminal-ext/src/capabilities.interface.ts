@@ -1,4 +1,4 @@
-import type { Color } from "shared"
+import type { Color } from "@saber71/shared"
 import type { ITextViewport } from "./text.interface.ts"
 import type { CursorPosition, StopListener } from "./types.ts"
 
@@ -9,6 +9,8 @@ export interface IDimension {
 
   getCols(): number
 }
+
+export interface ICellPosition extends IDimension {}
 
 export interface IRect extends IDimension {
   getStartPosition(): Readonly<CursorPosition>
