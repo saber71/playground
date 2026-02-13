@@ -9,6 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "shared": "workspace:^"
+    "@saber71/shared": "workspace:^"
   }
 }

@@ -14,7 +14,7 @@
     "format": "prettier --write --experimental-cli src"
   },
   "dependencies": {
-    "shared": "workspace:^",
+    "@saber71/shared": "workspace:^",
     "vanilla": "workspace:^"
   }
 }

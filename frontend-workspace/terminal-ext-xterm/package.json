@@ -1,6 +1,5 @@
 {
-  "name": "terminal-ext-xterm",
-  "private": true,
+  "name": "@saber71/terminal-ext-xterm",
   "version": "0.0.0",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -9,6 +8,9 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "terminal-ext": "workspace:^"
+    "@saber71/terminal-ext": "workspace:^"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

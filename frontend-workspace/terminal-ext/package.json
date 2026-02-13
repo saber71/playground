@@ -1,6 +1,5 @@
 {
-  "name": "terminal-ext",
-  "private": true,
+  "name": "@saber71/terminal-ext",
   "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
@@ -10,6 +9,9 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "shared": "workspace:^"
+    "@saber71/shared": "workspace:^"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
