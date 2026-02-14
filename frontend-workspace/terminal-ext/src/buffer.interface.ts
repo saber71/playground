@@ -4,6 +4,7 @@ import type {
   IRect,
   IStyleProvider,
   ITerminalStyle,
+  IWriteOption,
 } from "./capabilities.interface.ts"
 import type { ITextViewport } from "./text.interface.ts"
 
@@ -33,15 +34,19 @@ export interface IScreenBufferProvider {
 export interface IScreenBufferView extends IScreenBufferProvider, IScreenBufferViewProvider {
   getRange(): Readonly<IRect>
 
-  write(text: ITextViewport): this
+  write(text: ITextViewport, option?: IWriteOption): this
 }
 
 export interface IScreenBufferViewProvider {
-  getIScreenBufferView(range: IRect): IScreenBufferView
+  getScreenBufferView(range?: IRect): IScreenBufferView
 }
 
 export interface IScreenBufferManager extends IScreenBufferProvider {
   pop(): this
 
   add(styleProvider: IStyleProvider): this
+}
+
+export interface IScreenBufferManagerProvider {
+  getScreenBufferManager(): IScreenBufferManager
 }

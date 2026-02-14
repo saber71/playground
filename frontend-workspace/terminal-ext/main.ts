@@ -6,13 +6,13 @@ import { ImageAddon } from "@xterm/addon-image"
 import { Unicode11Addon } from "@xterm/addon-unicode11"
 import { Terminal as XTerm } from "@xterm/xterm"
 import { type ITerminal, type StopListener, StyledText, TerminalExt, TextView } from "./src"
+import { createRect } from "./src/utils"
 
 class Terminal implements ITerminal {
   readonly xterm = new XTerm({
     allowProposedApi: true,
     allowTransparency: true,
     fontFamily: "monospace",
-    convertEol: true,
   })
 
   constructor(el: HTMLElement) {
@@ -59,26 +59,24 @@ class Terminal implements ITerminal {
 const termExt = new TerminalExt(new Terminal(document.body))
 termExt.style.backcolor = "white"
 termExt.style.forecolor = "blue"
-termExt.screen.erase(termExt.screen, termExt).then(async () => {
-  const textView = new TextView([
-    new StyledText("的雾气大窘12撒大家撒都期待无期132\n1321"),
-    new StyledText("\n"),
-    new StyledText("123ada", { bold: true, strikeThrough: true }),
-  ])
-    .setMaxWidth(11)
-    .update()
-  const renderArea = termExt.screen.create({
-    bold: true,
-    inverse: true,
-    backcolor: "red",
-    italic: true,
-  })
-  renderArea.setStartPosition({ row: 10, col: 10 }).setEndPosition({ row: 13, col: 20 })
-  await renderArea.erase(renderArea, renderArea)
-  termExt.screen.write(
-    textView.getViewport({ startRow: 0, endRow: 4, startIndex: 0, maxWidth: 8 }),
-    renderArea,
-    renderArea,
-    { align: "left" },
-  )
-})
+const textView = new TextView([
+  new StyledText("的雾气大窘12撒大家撒都期待无期132\n1321", { forecolor: "black" }),
+  new StyledText("\n"),
+  new StyledText("123ada", { bold: true, strikeThrough: true }),
+])
+  .setMaxWidth(12)
+  .update()
+const view = termExt.getScreenBuffer().getScreenBufferView(
+  createRect(
+    {
+      row: 3,
+      col: 1,
+    },
+    {
+      row: 5,
+      col: 11,
+    },
+  ),
+)
+view.write(textView.getViewport({ startRow: 0, endRow: 4 }), { align: "right" })
+termExt.flushBuffer()

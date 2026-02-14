@@ -108,6 +108,8 @@ export class TextView implements ITextView {
         if (accWidth <= maxWidth) {
           resultRow.width = accWidth
           resultRow.chars.push(char)
+        } else {
+          break
         }
       }
     }

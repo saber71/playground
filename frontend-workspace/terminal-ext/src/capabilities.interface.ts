@@ -43,6 +43,8 @@ export interface ITerminalStyle {
   equals(other: ITerminalStyle): boolean
 
   toString(text?: string, reset?: boolean): string
+
+  copyFrom(other: ITerminalStyle): this
 }
 
 export interface IStyleProvider {

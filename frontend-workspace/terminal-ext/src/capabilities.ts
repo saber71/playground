@@ -154,6 +154,13 @@ export class TerminalStyle implements ITerminalStyle {
     if (codes.length) return `\x1B[${codes.join(";")}m${str}${reset ? AnsiReset : ""}`
     return str
   }
+
+  copyFrom(other: ITerminalStyle): this {
+    const parent = this.parent
+    Object.assign(this, other)
+    this.parent = parent
+    return this
+  }
 }
 
 export abstract class AbstractTerminalProvider implements ITerminalProvider {
