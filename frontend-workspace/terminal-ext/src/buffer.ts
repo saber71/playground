@@ -6,22 +6,50 @@ import type {
   IScreenBufferManager,
   IScreenBufferView,
 } from "./buffer.interface.ts"
-import type { IDimension, IRect, IStyleProvider, IWriteOption } from "./capabilities.interface.ts"
+import type {
+  IDimension,
+  IRect,
+  IStyleProvider,
+  ITerminalStyle,
+  IWriteOption,
+} from "./capabilities.interface.ts"
 import { TerminalStyle } from "./capabilities.ts"
 import type { ITextViewport } from "./text.interface.ts"
 import { type CursorPosition } from "./types.ts"
 import { assertValidCursorPosition } from "./utils.ts"
 
-export class ScreenBufferCell extends TerminalStyle implements IScreenBufferCell {
+export class ScreenBufferCell implements IScreenBufferCell {
   private _width = 0
+  private readonly _styles: ITerminalStyle[] = []
+  private _textStyle: ITerminalStyle = new TerminalStyle()
+  private readonly _style = new TerminalStyle()
 
   constructor(
     private readonly _row: number,
     private readonly _col: number,
     private _value: string = " ",
   ) {
-    super()
     this._width = this._value[0] ? wcwidth(this._value[0]) : 0
+  }
+
+  appendStyle(style: ITerminalStyle): this {
+    this._styles.push(style)
+    return this
+  }
+
+  removeStyle(style: ITerminalStyle): this {
+    const index = this._styles.indexOf(style)
+    if (index >= 0) this._styles.splice(index, 1)
+    return this
+  }
+
+  setTextStyle(style: ITerminalStyle): this {
+    this._textStyle = style
+    return this
+  }
+
+  getTerminalStyle(): ITerminalStyle {
+    return this._style.reset().copyFrom(...this._styles, this._textStyle)
   }
 
   getWidth(): number {
@@ -66,6 +94,19 @@ export class ScreenBuffer implements IScreenBuffer {
     })
   }
 
+  getCells(range?: IRect): IScreenBufferCell[] {
+    if (!range) return this._matrix.flat()
+    const array: IScreenBufferCell[] = []
+    const start = range.getStartPosition()
+    const end = range.getEndPosition()
+    for (let r = start.row; r <= end.row; r++) {
+      for (let c = start.col; c <= end.col; c++) {
+        array.push(this.getCell(r, c))
+      }
+    }
+    return array
+  }
+
   getScreenBufferView(range?: IRect): IScreenBufferView {
     const { _rows, _cols } = this
     const r = range ?? {
@@ -104,7 +145,7 @@ export class ScreenBuffer implements IScreenBuffer {
       const cells = this._matrix[r]
       for (let c = 0; c < cells.length; ) {
         const cell = cells[c]
-        const string = cell.toString(cell.getValue(), true)
+        const string = cell.getTerminalStyle().toString(cell.getValue(), true)
         if (this._oldStrings[r][c] !== string) {
           array.push(AnsiCursor.SET_POSITION(r + 1, c + 1) + string)
           this._oldStrings[r][c] = string
@@ -138,7 +179,7 @@ export class ScreenBuffer implements IScreenBuffer {
       }
       while (cells.length < this._cols) {
         const cell = new ScreenBufferCell(row + 1, cells.length + 1)
-        cell.parent = this.styleProvider.getTerminalStyle()
+        cell.appendStyle(this.styleProvider.getTerminalStyle())
         cells.push(cell)
       }
     }
@@ -165,7 +206,30 @@ export class ScreenBufferView implements IScreenBufferView {
   constructor(
     private readonly _range: IRect,
     private readonly _buffer: IScreenBuffer,
-  ) {}
+    private readonly _style: ITerminalStyle = new TerminalStyle(),
+  ) {
+    for (let cell of _buffer.getCells(_range)) {
+      cell.appendStyle(_style)
+    }
+  }
+
+  dispose(): this {
+    for (let cell of this._buffer.getCells(this._range)) {
+      cell.removeStyle(this._style)
+    }
+    return this
+  }
+
+  getStyle(): ITerminalStyle {
+    return this._style
+  }
+
+  erase(): this {
+    for (let cell of this._buffer.getCells(this._range)) {
+      cell.setValue(" ")
+    }
+    return this
+  }
 
   write(text: ITextViewport, option?: IWriteOption): this {
     const region = text.getRegion()
@@ -188,7 +252,6 @@ export class ScreenBufferView implements IScreenBufferView {
           c = bias
         }
       }
-      console.log(chars, this._range.getCols(), accWidth, c, i)
       for (; i < chars.length; i++) {
         const char = chars[i]
         if (c + char.width <= this._range.getCols()) {
@@ -196,7 +259,7 @@ export class ScreenBufferView implements IScreenBufferView {
             r + this._range.getStartPosition().row,
             c + this._range.getStartPosition().col,
           )
-          cell.setValue(char.char).copyFrom(char.style)
+          cell.setValue(char.char).setTextStyle(char.style)
           c += char.width || 1
         } else {
           break

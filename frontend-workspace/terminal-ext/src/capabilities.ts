@@ -109,6 +109,17 @@ export class TerminalStyle implements ITerminalStyle {
     Object.assign(this, option)
   }
 
+  reset(): this {
+    this.bold = undefined
+    this.italic = undefined
+    this.underline = undefined
+    this.inverse = undefined
+    this.strikeThrough = undefined
+    this.forecolor = undefined
+    this.backcolor = undefined
+    return this
+  }
+
   equals(other: ITerminalStyle): boolean {
     if (other === this) return true
     const props: Array<keyof ITerminalStyle> = [
@@ -155,10 +166,22 @@ export class TerminalStyle implements ITerminalStyle {
     return str
   }
 
-  copyFrom(other: ITerminalStyle): this {
-    const parent = this.parent
-    Object.assign(this, other)
-    this.parent = parent
+  copyFrom(...other: ITerminalStyle[]): this {
+    const props: Array<keyof ITerminalStyle> = [
+      "bold",
+      "italic",
+      "underline",
+      "inverse",
+      "strikeThrough",
+      "forecolor",
+      "backcolor",
+    ]
+    for (let item of other) {
+      for (let prop of props) {
+        if (isNil(item.get(prop))) continue
+        ;(this as any)[prop] = item.get(prop)
+      }
+    }
     return this
   }
 }

@@ -60,7 +60,7 @@ const termExt = new TerminalExt(new Terminal(document.body))
 termExt.style.backcolor = "white"
 termExt.style.forecolor = "blue"
 const textView = new TextView([
-  new StyledText("的雾气大窘12撒大家撒都期待无期132\n1321", { forecolor: "black" }),
+  new StyledText("的雾气大窘12撒大家撒都期待无期132\n1321"),
   new StyledText("\n"),
   new StyledText("123ada", { bold: true, strikeThrough: true }),
 ])
@@ -78,5 +78,8 @@ const view = termExt.getScreenBuffer().getScreenBufferView(
     },
   ),
 )
+view.getStyle().backcolor = "yellow"
+view.getStyle().bold = true
+view.getStyle().forecolor = "red"
 view.write(textView.getViewport({ startRow: 0, endRow: 4 }), { align: "right" })
-termExt.flushBuffer()
+termExt.flushBuffer().then(() => {})

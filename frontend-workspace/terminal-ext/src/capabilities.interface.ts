@@ -38,13 +38,15 @@ export interface ITerminalStyle {
   backcolor?: Color | string | number
   parent?: ITerminalStyle
 
+  reset(): this
+
   get<Key extends keyof ITerminalStyle>(key: Key): ITerminalStyle[Key] | undefined
 
   equals(other: ITerminalStyle): boolean
 
   toString(text?: string, reset?: boolean): string
 
-  copyFrom(other: ITerminalStyle): this
+  copyFrom(...other: ITerminalStyle[]): this
 }
 
 export interface IStyleProvider {
