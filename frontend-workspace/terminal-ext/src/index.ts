@@ -12,6 +12,8 @@ import type {
   ITerminalComponentManagerProvider,
 } from "./component.interface.ts"
 import { TerminalComponentManager } from "./component.ts"
+import type { ITerminalLines, ITerminalLinesProvider } from "./lines.interface.ts"
+import { TerminalLines } from "./lines.ts"
 
 export * from "./ansi-code"
 export * from "./buffer.interface.ts"
@@ -22,6 +24,8 @@ export * from "./component.interface.ts"
 export * from "./component.ts"
 export * from "./buffer.interface.ts"
 export * from "./buffer.ts"
+export * from "./lines.interface.ts"
+export * from "./lines.ts"
 export * from "./text.interface.ts"
 export * from "./text.ts"
 export * from "./types.ts"
@@ -33,11 +37,13 @@ export class TerminalExt
     IStyleProvider,
     IScreenBufferProvider,
     IScreenBufferManagerProvider,
-    ITerminalComponentManagerProvider
+    ITerminalComponentManagerProvider,
+    ITerminalLinesProvider
 {
   readonly screen: IBox
   private readonly _screenBufferManager: IScreenBufferManager
   private readonly _terminalComponentManager: ITerminalComponentManager
+  private readonly _terminalLines: ITerminalLines
 
   constructor(
     readonly term: ITerminal,
@@ -56,6 +62,7 @@ export class TerminalExt
       new ScreenBuffer(term.getRows(), term.getCols(), this),
     )
     this._terminalComponentManager = new TerminalComponentManager()
+    this._terminalLines = new TerminalLines(this)
   }
 
   getScreenBuffer(): IScreenBuffer {
@@ -82,5 +89,9 @@ export class TerminalExt
 
   getTerminalComponentManager(): ITerminalComponentManager {
     return this._terminalComponentManager
+  }
+
+  getTerminalLines(): ITerminalLines {
+    return this._terminalLines
   }
 }
