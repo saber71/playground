@@ -41,4 +41,6 @@ export interface ITextView {
   getDimension(): Readonly<TerminalDimension>
 
   update(force?: boolean): this
+
+  append(char: string, option?: { at?: number; style?: ITerminalStyle }): this
 }

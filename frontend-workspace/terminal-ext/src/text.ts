@@ -63,15 +63,64 @@ export class TextViewport implements ITextViewport {
   }
 }
 
+const defaultStyle = new TerminalStyle()
+
 export class TextView implements ITextView {
   private readonly _dimension: TerminalDimension = { rows: 0, cols: 0 }
   private readonly _rows: ITextRow[] = []
-  private readonly _texts: IStyledText[] = []
+  private readonly _rawRows: ITextChar[][] = []
+  private _chars: ITextChar[]
   private _maxWidth: number = 0
   private _dirty = true
+  private _rawRowsDirty = true
 
   constructor(texts: IStyledText[]) {
-    this._texts = texts
+    this._chars = texts.map((i) => i.toChars()).flat()
+    this.buildRawRows()
+  }
+
+  append(char: string, option?: { at?: number; style?: ITerminalStyle }): this {
+    const textChar: ITextChar = {
+      char,
+      width: wcwidth(char),
+      style: option?.style ?? defaultStyle,
+    }
+    if (typeof option?.at !== "number") {
+      if (char === "/n") {
+        this._rawRows.push([])
+      } else {
+        this._chars.push(textChar)
+        if (!this._rawRows.length) this._rawRows.push([])
+        this._rawRows.at(-1)!.push(textChar)
+      }
+    } else if (option?.at <= 0) {
+      if (char === "\n") this._rawRows.unshift([])
+      else {
+        if (!this._rawRows.length) this._rawRows.push([])
+        this._rawRows[0].unshift(textChar)
+        this._chars.unshift(textChar)
+      }
+    } else {
+      const pre = this._chars.slice(0, option?.at)
+      const after = this._chars.slice(option?.at)
+      this._chars = [...pre, textChar, ...after]
+      this._rawRowsDirty = true
+    }
+    return this
+  }
+
+  buildRawRows() {
+    this._rawRows.length = 0
+    let row: ITextChar[] = []
+    for (let char of this._chars) {
+      if (char.char === "\n") {
+        this._rawRows.push(row)
+        row = []
+      } else {
+        row.push(char)
+      }
+    }
+    if (row.length) this._rawRows.push(row)
   }
 
   getDimension() {
@@ -119,31 +168,23 @@ export class TextView implements ITextView {
   update(force?: boolean): this {
     if (!this._dirty && !force) return this
     this._dirty = false
-    if (!this._texts.length) {
+    if (!this._chars.length) {
       this._rows.length = 0
       return this
     }
-    let row: ITextChar[] = []
-    const rows: ITextChar[][] = [row]
-    for (let text of this._texts) {
-      const arr = text.split("\n")
-      if (!arr.at(-1)?.getValue()) arr.pop()
-      if (arr.length === 0) continue
-      row.push(...arr[0].toChars())
-      for (let i = 1; i < arr.length; i++) {
-        row = arr[i].toChars().slice()
-        rows.push(row)
-      }
+    if (this._rawRowsDirty) {
+      this._rawRowsDirty = false
+      this.buildRawRows()
     }
     if (this._maxWidth <= 0) {
       this._rows.length = 0
-      const allChars = rows.flat()
+      const allChars = this._chars.slice()
       this._rows.push({
         chars: allChars,
         width: allChars.reduce((acc, cur) => acc + cur.width, 0),
       })
     } else if (this._maxWidth === 1) {
-      const allChars = rows.flat()
+      const allChars = this._chars.slice()
       for (let char of allChars) {
         this._rows.push({
           chars: [char],
@@ -156,7 +197,7 @@ export class TextView implements ITextView {
         row = { chars: [], width: 0 }
       }
       let row: ITextRow = { chars: [], width: 0 }
-      for (let charRow of rows) {
+      for (let charRow of this._rawRows) {
         for (let char of charRow) {
           const accWidth = row.width + char.width
           if (accWidth <= this._maxWidth) {

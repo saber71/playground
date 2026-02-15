@@ -6,6 +6,28 @@ export class TerminalComponent extends ScreenBufferView implements ITerminalComp
   private _isFocused = false
   private readonly _focusListener: Array<(stop: StopListener) => void> = []
   private readonly _blurListener: Array<(stop: StopListener) => void> = []
+  private readonly _keypressListener: Array<(char: string, stop: StopListener) => void> = []
+
+  onKeyPress(listener: (char: string, stop: StopListener) => void): StopListener {
+    const stop: StopListener = () => {
+      const index = this._keypressListener.indexOf(listener)
+      if (index >= 0) this._keypressListener.splice(index, 1)
+    }
+    this._keypressListener.push(listener)
+    return stop
+  }
+
+  keypress(char: string): this {
+    if (this._isFocused) {
+      for (let listener of this._keypressListener) {
+        listener(char, () => {
+          const index = this._keypressListener.indexOf(listener)
+          if (index >= 0) this._keypressListener.splice(index, 1)
+        })
+      }
+    }
+    return this
+  }
 
   onFocus(listener: (stop: StopListener) => void): StopListener {
     const stop: StopListener = () => {
@@ -77,5 +99,10 @@ export class TerminalComponentManager implements ITerminalComponentManager {
 
   getFocused(): ITerminalComponent | undefined {
     return this._focused
+  }
+
+  keypress(char: string): this {
+    this._focused?.keypress(char)
+    return this
   }
 }

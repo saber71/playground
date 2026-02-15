@@ -11,6 +11,10 @@ export interface ITerminalComponent extends IScreenBufferView {
   blur(): this
 
   isFocused(): boolean
+
+  onKeyPress(listener: (char: string, stop: StopListener) => void): StopListener
+
+  keypress(char: string): this
 }
 
 export interface ITerminalComponentManager {
@@ -19,8 +23,12 @@ export interface ITerminalComponentManager {
   blur(): this
 
   getFocused(): ITerminalComponent | undefined
+
+  keypress(char: string): this
 }
 
 export interface ITerminalComponentManagerProvider {
   getTerminalComponentManager(): ITerminalComponentManager
 }
+
+export interface IInputBox extends ITerminalComponent {}
