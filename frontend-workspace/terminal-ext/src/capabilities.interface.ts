@@ -10,8 +10,6 @@ export interface IDimension {
   getCols(): number
 }
 
-export interface ICellPosition extends IDimension {}
-
 export interface IRect extends IDimension {
   getStartPosition(): Readonly<CursorPosition>
 

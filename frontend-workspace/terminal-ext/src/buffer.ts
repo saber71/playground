@@ -16,7 +16,7 @@ import type {
 import { TerminalStyle } from "./capabilities.ts"
 import type { ITextViewport } from "./text.interface.ts"
 import { type CursorPosition } from "./types.ts"
-import { assertValidCursorPosition, equal } from "./utils.ts"
+import { assertValidCursorPosition, equal, isCursorPosition } from "./utils.ts"
 
 export class ScreenBufferCell implements IScreenBufferCell {
   private _width = 0
@@ -82,11 +82,11 @@ export class ScreenBufferCell implements IScreenBufferCell {
     return this
   }
 
-  getCols(): number {
+  getCol(): number {
     return this._col
   }
 
-  getRows(): number {
+  getRow(): number {
     return this._row
   }
 }
@@ -95,6 +95,8 @@ export class ScreenBuffer implements IScreenBuffer {
   private _matrix: Array<IScreenBufferCell[]> = []
   private _oldStrings: string[][] = []
   private readonly _backupMap = new Map<any, IScreenBufferCell[]>()
+  private _cursorOn: IScreenBufferCell
+  private _cursorPosUpdated = true
 
   constructor(
     private _rows: number,
@@ -109,6 +111,21 @@ export class ScreenBuffer implements IScreenBuffer {
         return _rows
       },
     })
+    this._cursorOn = this.getCell(1, 1)
+  }
+
+  cursorOn(pos: IScreenBufferCell | CursorPosition): this {
+    if (isCursorPosition(pos)) {
+      this._cursorOn = this.getCell(pos.row, pos.col)
+    } else {
+      this._cursorOn = pos
+    }
+    this._cursorPosUpdated = true
+    return this
+  }
+
+  getCursorOn(): IScreenBufferCell {
+    return this._cursorOn
   }
 
   save(key: any, range: IRect): this {
@@ -124,7 +141,7 @@ export class ScreenBuffer implements IScreenBuffer {
     if (cells) {
       for (let cell of cells) {
         try {
-          this.getCell(cell.getRows(), cell.getCols()).copyFrom(cell)
+          this.getCell(cell.getRow(), cell.getCol()).copyFrom(cell)
         } catch (e) {
           console.error(e)
         }
@@ -181,6 +198,9 @@ export class ScreenBuffer implements IScreenBuffer {
 
   outputDiff(): string {
     let array: string[] = []
+    const cursorOn = this._cursorPosUpdated
+      ? AnsiCursor.SET_POSITION(this._cursorOn.getRow(), this._cursorOn.getCol())
+      : ""
     for (let r = 0; r < this._matrix.length; r++) {
       const cells = this._matrix[r]
       for (let c = 0; c < cells.length; ) {
@@ -194,7 +214,8 @@ export class ScreenBuffer implements IScreenBuffer {
         c += step
       }
     }
-    return array.join("")
+    this._cursorPosUpdated = false
+    return array.join("") + cursorOn
   }
 
   resize(dimension: IDimension): this {

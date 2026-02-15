@@ -5,8 +5,14 @@ import { FitAddon } from "@xterm/addon-fit"
 import { ImageAddon } from "@xterm/addon-image"
 import { Unicode11Addon } from "@xterm/addon-unicode11"
 import { Terminal as XTerm } from "@xterm/xterm"
-import { type ITerminal, type StopListener, StyledText, TerminalExt, TextView } from "./src"
-import { createRect } from "./src/utils"
+import {
+  createRect,
+  type ITerminal,
+  type StopListener,
+  StyledText,
+  TerminalExt,
+  TextView,
+} from "./src"
 
 class Terminal implements ITerminal {
   readonly xterm = new XTerm({

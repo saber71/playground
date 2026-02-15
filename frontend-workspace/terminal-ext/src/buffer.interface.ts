@@ -1,5 +1,4 @@
 import type {
-  ICellPosition,
   IDimension,
   IRect,
   IStyleProvider,
@@ -7,6 +6,13 @@ import type {
   IWriteOption,
 } from "./capabilities.interface.ts"
 import type { ITextViewport } from "./text.interface.ts"
+import type { CursorPosition } from "./types.ts"
+
+export interface ICellPosition {
+  getRow(): number
+
+  getCol(): number
+}
 
 export interface IScreenBuffer extends IDimension, IScreenBufferViewProvider {
   // 1-based
@@ -23,6 +29,10 @@ export interface IScreenBuffer extends IDimension, IScreenBufferViewProvider {
   save(key: any, range: IRect): this
 
   restore(key: any): this
+
+  cursorOn(pos: IScreenBufferCell | CursorPosition): this
+
+  getCursorOn(): IScreenBufferCell
 }
 
 export interface IScreenBufferCell extends IStyleProvider, ICellPosition {
