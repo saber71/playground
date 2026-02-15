@@ -16,7 +16,7 @@ import type {
 import { TerminalStyle } from "./capabilities.ts"
 import type { ITextViewport } from "./text.interface.ts"
 import { type CursorPosition } from "./types.ts"
-import { assertValidCursorPosition } from "./utils.ts"
+import { assertValidCursorPosition, equal } from "./utils.ts"
 
 export class ScreenBufferCell implements IScreenBufferCell {
   private _width = 0
@@ -30,6 +30,22 @@ export class ScreenBufferCell implements IScreenBufferCell {
     private _value: string = " ",
   ) {
     this._width = this._value[0] ? wcwidth(this._value[0]) : 0
+  }
+
+  copyFrom(other: ScreenBufferCell): this {
+    this._value = other.getValue()
+    this._width = other._width
+    this._textStyle.copyFrom(other._textStyle)
+    this._styles.length = 0
+    this._styles.push(...other._styles.map((i) => new TerminalStyle(i)))
+    return this
+  }
+
+  clone() {
+    const result = new ScreenBufferCell(this._row, this._col, this._value)
+    result._styles.push(...this._styles.map((i) => new TerminalStyle(i)))
+    result._textStyle.copyFrom(this._textStyle)
+    return result
   }
 
   appendStyle(style: ITerminalStyle): this {
@@ -78,6 +94,7 @@ export class ScreenBufferCell implements IScreenBufferCell {
 export class ScreenBuffer implements IScreenBuffer {
   private _matrix: Array<IScreenBufferCell[]> = []
   private _oldStrings: string[][] = []
+  private readonly _backupMap = new Map<any, IScreenBufferCell[]>()
 
   constructor(
     private _rows: number,
@@ -92,6 +109,29 @@ export class ScreenBuffer implements IScreenBuffer {
         return _rows
       },
     })
+  }
+
+  save(key: any, range: IRect): this {
+    this._backupMap.set(
+      key,
+      this.getCells(range).map((i) => i.clone()),
+    )
+    return this
+  }
+
+  restore(key: any): this {
+    const cells = this._backupMap.get(key)
+    if (cells) {
+      for (let cell of cells) {
+        try {
+          this.getCell(cell.getRows(), cell.getCols()).copyFrom(cell)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      this._backupMap.delete(key)
+    }
+    return this
   }
 
   getCells(range?: IRect): IScreenBufferCell[] {
@@ -190,7 +230,9 @@ export class ScreenBuffer implements IScreenBuffer {
     if (row <= 0 || col <= 0) throw new Error("Invalid row or col")
     row -= 1
     col -= 1
-    return this._matrix[row][col]
+    const result = this._matrix[row]?.[col]
+    if (!result) throw new Error("Invalid row or col")
+    return result
   }
 
   getCols(): number {
@@ -204,20 +246,36 @@ export class ScreenBuffer implements IScreenBuffer {
 
 export class ScreenBufferView implements IScreenBufferView {
   constructor(
-    private readonly _range: IRect,
+    private _range: IRect,
     private readonly _buffer: IScreenBuffer,
     private readonly _style: ITerminalStyle = new TerminalStyle(),
   ) {
-    for (let cell of _buffer.getCells(_range)) {
-      cell.appendStyle(_style)
-    }
+    this.setupCellStyle()
   }
 
-  dispose(): this {
+  setRange(range: IRect): this {
+    if (equal(range, this.getRange())) return this
+    this.resetCellStyle()
+    this._range = range
+    return this.setupCellStyle()
+  }
+
+  setupCellStyle() {
+    for (let cell of this._buffer.getCells(this._range)) {
+      cell.appendStyle(this._style)
+    }
+    return this
+  }
+
+  resetCellStyle() {
     for (let cell of this._buffer.getCells(this._range)) {
       cell.removeStyle(this._style)
     }
     return this
+  }
+
+  dispose(): this {
+    return this.resetCellStyle()
   }
 
   getStyle(): ITerminalStyle {

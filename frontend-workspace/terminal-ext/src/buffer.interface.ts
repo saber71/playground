@@ -19,6 +19,10 @@ export interface IScreenBuffer extends IDimension, IScreenBufferViewProvider {
   markFullUpdate(): this
 
   getCells(range?: IRect): IScreenBufferCell[]
+
+  save(key: any, range: IRect): this
+
+  restore(key: any): this
 }
 
 export interface IScreenBufferCell extends IStyleProvider, ICellPosition {
@@ -33,6 +37,10 @@ export interface IScreenBufferCell extends IStyleProvider, ICellPosition {
   removeStyle(style: ITerminalStyle): this
 
   setTextStyle(style: ITerminalStyle): this
+
+  clone(): IScreenBufferCell
+
+  copyFrom(other: IScreenBufferCell): this
 }
 
 export interface IScreenBufferProvider {
@@ -41,6 +49,8 @@ export interface IScreenBufferProvider {
 
 export interface IScreenBufferView extends IScreenBufferProvider, IScreenBufferViewProvider {
   getRange(): Readonly<IRect>
+
+  setRange(range: IRect): this
 
   write(text: ITextViewport, option?: IWriteOption): this
 

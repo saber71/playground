@@ -23,3 +23,29 @@ export function createRect(start: CursorPosition, end: CursorPosition): IRect {
     },
   }
 }
+
+export function isRect(arg: any): arg is IRect {
+  return typeof arg?.getStartPosition === "function" && typeof arg?.getEndPosition === "function"
+}
+
+export function isCursorPosition(arg: any): arg is CursorPosition {
+  return typeof arg?.row === "number" && typeof arg?.col === "number"
+}
+
+export function equal(arg1: CursorPosition | IRect, arg2: CursorPosition | IRect): boolean {
+  if (isRect(arg1)) {
+    if (isRect(arg2)) {
+      return (
+        equal(arg1.getStartPosition(), arg2.getStartPosition()) &&
+        equal(arg1.getEndPosition(), arg2.getEndPosition())
+      )
+    }
+    return false
+  } else if (isCursorPosition(arg1)) {
+    if (isCursorPosition(arg2)) {
+      return arg1.row === arg2.row && arg1.col === arg2.col
+    }
+    return false
+  }
+  return false
+}
