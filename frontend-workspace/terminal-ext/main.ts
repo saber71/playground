@@ -88,4 +88,7 @@ view.getStyle().backcolor = "yellow"
 view.getStyle().bold = true
 view.getStyle().forecolor = "red"
 view.write(textView.getViewport({ startRow: 0, endRow: 4 }), { align: "right" })
+termExt
+  .getTerminalLines()
+  .writeRect(createRect({ row: 10, col: 20 }, { row: 15, col: 40 }), { mode: "heavy" })
 termExt.flushBuffer().then(() => {})

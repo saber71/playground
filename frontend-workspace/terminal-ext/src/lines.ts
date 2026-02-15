@@ -1,5 +1,7 @@
 import type { IScreenBufferProvider } from "./buffer.interface.ts"
-import type { ILineOption, ITerminalLines } from "./lines.interface.ts"
+import type { IRect } from "./capabilities.interface.ts"
+import type { ILineMode, ILineOption, ITerminalLines } from "./lines.interface.ts"
+import type { CursorPosition } from "./types.ts"
 
 const charMap = {
   // left right top bottom
@@ -22,6 +24,30 @@ const charMap = {
 
 export class TerminalLines implements ITerminalLines {
   constructor(private readonly _bufferProvider: IScreenBufferProvider) {}
+
+  writeRect(rect: IRect, option?: ILineMode): this {
+    const leftTop = rect.getStartPosition()
+    const rightBottom = rect.getEndPosition()
+    const lefBottom: CursorPosition = { row: rightBottom.row, col: leftTop.col }
+    const rightTop: CursorPosition = { row: leftTop.row, col: rightBottom.col }
+    this.write({ ...leftTop, right: true, bottom: true, mode: option?.mode })
+    this.write({ ...rightTop, left: true, bottom: true, mode: option?.mode })
+    this.write({ ...rightBottom, left: true, top: true, mode: option?.mode })
+    this.write({ ...lefBottom, right: true, top: true, mode: option?.mode })
+    for (let i = leftTop.col + 1; i < rightTop.col; i++) {
+      this.write({ row: leftTop.row, col: i, left: true, right: true, mode: option?.mode })
+    }
+    for (let i = lefBottom.col + 1; i < rightBottom.col; i++) {
+      this.write({ row: lefBottom.row, col: i, left: true, right: true, mode: option?.mode })
+    }
+    for (let i = leftTop.row + 1; i < lefBottom.row; i++) {
+      this.write({ row: i, col: leftTop.col, top: true, bottom: true, mode: option?.mode })
+    }
+    for (let i = rightTop.row + 1; i < rightBottom.row; i++) {
+      this.write({ row: i, col: rightTop.col, top: true, bottom: true, mode: option?.mode })
+    }
+    return this
+  }
 
   write(option: ILineOption) {
     const buffer = this._bufferProvider.getScreenBuffer()
