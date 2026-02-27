@@ -1,3 +1,4 @@
+import { clamp } from "@xterm/xterm/src/vs/base/common/numbers.ts"
 import type { IRect } from "./capabilities.interface.ts"
 import type { CursorPosition } from "./types.ts"
 
@@ -48,4 +49,12 @@ export function equal(arg1: CursorPosition | IRect, arg2: CursorPosition | IRect
     return false
   }
   return false
+}
+
+export function clampPos(
+  value: Readonly<CursorPosition>,
+  min: Readonly<CursorPosition>,
+  max: Readonly<CursorPosition>,
+): CursorPosition {
+  return { row: clamp(value.row, min.row, max.row), col: clamp(value.col, min.col, max.col) }
 }

@@ -2,6 +2,8 @@ import type { IScreenBufferView } from "./buffer.interface.ts"
 import type { StopListener } from "./types.ts"
 
 export interface ITerminalComponent extends IScreenBufferView {
+  init(): this
+
   onFocus(listener: (stop: StopListener) => void): StopListener
 
   focus(): this

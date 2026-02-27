@@ -14,8 +14,21 @@ export interface ICellPosition {
   getCol(): number
 }
 
+export interface IBufferCursorController extends IScreenBufferProvider {
+  getScreenBufferView(): IScreenBufferView
+
+  up(): this
+
+  down(): this
+
+  left(wrap?: boolean): this
+
+  right(wrap?: boolean): this
+
+  byChar(char: string): this
+}
+
 export interface IScreenBuffer extends IDimension, IScreenBufferViewProvider {
-  // 1-based
   getCell(row: number, col: number): IScreenBufferCell
 
   outputDiff(): string
@@ -33,6 +46,8 @@ export interface IScreenBuffer extends IDimension, IScreenBufferViewProvider {
   cursorOn(pos: IScreenBufferCell | CursorPosition): this
 
   getCursorOn(): IScreenBufferCell
+
+  getCursorController(): IBufferCursorController
 }
 
 export interface IScreenBufferCell extends IStyleProvider, ICellPosition {

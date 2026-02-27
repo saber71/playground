@@ -111,7 +111,7 @@ export class ScreenBuffer implements IScreenBuffer {
         return _rows
       },
     })
-    this._cursorOn = this.getCell(1, 1)
+    this._cursorOn = this.getCell(0, 0)
   }
 
   cursorOn(pos: IScreenBufferCell | CursorPosition): this {
@@ -239,7 +239,7 @@ export class ScreenBuffer implements IScreenBuffer {
         cells.push(...old.slice(0, this._cols))
       }
       while (cells.length < this._cols) {
-        const cell = new ScreenBufferCell(row + 1, cells.length + 1)
+        const cell = new ScreenBufferCell(row, cells.length)
         cell.appendStyle(this.styleProvider.getTerminalStyle())
         cells.push(cell)
       }
@@ -248,9 +248,7 @@ export class ScreenBuffer implements IScreenBuffer {
   }
 
   getCell(row: number, col: number): IScreenBufferCell {
-    if (row <= 0 || col <= 0) throw new Error("Invalid row or col")
-    row -= 1
-    col -= 1
+    if (row < 0 || col < 0) throw new Error("Invalid row or col")
     const result = this._matrix[row]?.[col]
     if (!result) throw new Error("Invalid row or col")
     return result

@@ -1,12 +1,31 @@
 import { ScreenBufferView } from "./buffer.ts"
-import type { ITerminalComponent, ITerminalComponentManager } from "./component.interface.ts"
+import type {
+  IInputBox,
+  ITerminalComponent,
+  ITerminalComponentManager,
+} from "./component.interface.ts"
+import type { ITextView } from "./text.interface.ts"
+import { TextView } from "./text.ts"
 import type { StopListener } from "./types.ts"
 
-export class TerminalComponent extends ScreenBufferView implements ITerminalComponent {
+export abstract class TerminalComponent extends ScreenBufferView implements ITerminalComponent {
   private _isFocused = false
   private readonly _focusListener: Array<(stop: StopListener) => void> = []
   private readonly _blurListener: Array<(stop: StopListener) => void> = []
   private readonly _keypressListener: Array<(char: string, stop: StopListener) => void> = []
+  protected readonly _stopListeners: StopListener[] = []
+
+  init(): this {
+    return this
+  }
+
+  dispose(): this {
+    for (let stopListener of this._stopListeners) {
+      stopListener()
+    }
+    this._stopListeners.length = 0
+    return super.dispose()
+  }
 
   onKeyPress(listener: (char: string, stop: StopListener) => void): StopListener {
     const stop: StopListener = () => {
@@ -103,6 +122,21 @@ export class TerminalComponentManager implements ITerminalComponentManager {
 
   keypress(char: string): this {
     this._focused?.keypress(char)
+    return this
+  }
+}
+
+export class InputBox extends TerminalComponent implements IInputBox {
+  private readonly _text: ITextView = new TextView([])
+
+  init(): this {
+    this._stopListeners.push(
+      this.onKeyPress((char) => {
+        if (!this.isFocused()) return
+        this._text.append(char)
+        const curCell = this.getScreenBuffer().getCursorOn()
+      }),
+    )
     return this
   }
 }
