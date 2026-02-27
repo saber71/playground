@@ -1,0 +1,6 @@
+支持：read uncommitted读未提交、read committed读已提交、repeatable read重复读、serializable序列化
+
+其中read uncommitted的实现等价于read committed，因为pg的MVCC机制避免了脏读问题
+repeatable read在标准上允许幻读，但是pg的实现由基于事务开始时的快照提供一致视图防止了幻读
+
+默认隔离级别是read committed
