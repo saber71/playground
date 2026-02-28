@@ -8,6 +8,7 @@ import { Terminal as XTerm } from "@xterm/xterm"
 import {
   createRect,
   type ITerminal,
+  parseKey,
   type StopListener,
   StyledText,
   TerminalExt,
@@ -92,3 +93,6 @@ termExt
   .getTerminalLines()
   .writeRect(createRect({ row: 10, col: 20 }, { row: 15, col: 40 }), { mode: "heavy" })
 termExt.flushBuffer().then(() => {})
+termExt.getTerminal().onData((str) => {
+  console.log(parseKey(str))
+})

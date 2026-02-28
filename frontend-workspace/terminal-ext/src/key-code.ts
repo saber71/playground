@@ -45,6 +45,17 @@ for (let i = 2; i <= 8; i++) {
   }
 }
 
+for (let i = 1; i <= 26; i++) {
+  seqMap[String.fromCharCode(i)] = {
+    ctrl: true,
+    char: String.fromCharCode(65 + i - 1),
+  }
+  seqMap["\x1b" + String.fromCharCode(97 + i - 1)] = {
+    alt: true,
+    char: String.fromCharCode(65 + i - 1),
+  }
+}
+
 export function parseKey(seq: string): IKey {
   if (seq in seqMap) return Object.assign({}, seqMap[seq])
   for (let i = 1; i <= 26; i++) {

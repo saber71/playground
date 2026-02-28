@@ -1,6 +1,7 @@
 import wcwidth from "wcwidth"
 import { AnsiCursor } from "./ansi-code.ts"
 import type {
+  IBufferCursorController,
   IScreenBuffer,
   IScreenBufferCell,
   IScreenBufferManager,
@@ -112,6 +113,10 @@ export class ScreenBuffer implements IScreenBuffer {
       },
     })
     this._cursorOn = this.getCell(0, 0)
+  }
+
+  getCursorController(): IBufferCursorController {
+    return null as any
   }
 
   cursorOn(pos: IScreenBufferCell | CursorPosition): this {
