@@ -1,8 +1,8 @@
 import "reflect-metadata"
 import "@shoelace-style/shoelace/dist/themes/light.css"
 import "@shoelace-style/shoelace/dist/shoelace.js"
+import { Instance } from "@saber71/shared"
 import { setBasePath } from "@shoelace-style/shoelace"
-import { Instance } from "shared"
 import "./src/components"
 
 setBasePath("/")

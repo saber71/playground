@@ -28,16 +28,19 @@ export interface IBufferCursorController extends IScreenBufferProvider {
   byChar(char: string): this
 }
 
-export interface IScreenBuffer extends IDimension, IScreenBufferViewProvider {
+export interface IScreenBufferCellProvider {
   getCell(row: number, col: number): IScreenBufferCell
 
+  getCells(range?: IRect): IScreenBufferCell[]
+}
+
+export interface IScreenBuffer
+  extends IDimension, IScreenBufferViewProvider, IScreenBufferCellProvider {
   outputDiff(): string
 
   resize(dimension: IDimension): this
 
   markFullUpdate(): this
-
-  getCells(range?: IRect): IScreenBufferCell[]
 
   save(key: any, range: IRect): this
 
@@ -72,7 +75,8 @@ export interface IScreenBufferProvider {
   getScreenBuffer(): IScreenBuffer
 }
 
-export interface IScreenBufferView extends IScreenBufferProvider, IScreenBufferViewProvider {
+export interface IScreenBufferView
+  extends IScreenBufferProvider, IScreenBufferViewProvider, IScreenBufferCellProvider {
   getRange(): Readonly<IRect>
 
   setRange(range: IRect): this

@@ -1,3 +1,4 @@
+import { clamp } from "@xterm/xterm/src/vs/base/common/numbers.ts"
 import wcwidth from "wcwidth"
 import { AnsiCursor } from "./ansi-code.ts"
 import type {
@@ -17,7 +18,7 @@ import type {
 import { TerminalStyle } from "./capabilities.ts"
 import type { ITextViewport } from "./text.interface.ts"
 import { type CursorPosition } from "./types.ts"
-import { assertValidCursorPosition, equal, isCursorPosition } from "./utils.ts"
+import { assertValidCursorPosition, clipRect, equal, isCursorPosition } from "./utils.ts"
 
 export class ScreenBufferCell implements IScreenBufferCell {
   private _width = 0
@@ -79,7 +80,7 @@ export class ScreenBufferCell implements IScreenBufferCell {
 
   setValue(val: string): this {
     this._value = val[0] || " "
-    this._width = val[0] ? wcwidth(val[0]) : 0
+    this._width = wcwidth(this._value) || 1
     return this
   }
 
@@ -275,6 +276,18 @@ export class ScreenBufferView implements IScreenBufferView {
     private readonly _style: ITerminalStyle = new TerminalStyle(),
   ) {
     this.setupCellStyle()
+  }
+
+  getCells(range?: IRect): IScreenBufferCell[] {
+    const rect = range ? clipRect(this._range, range) : this._range
+    return this._buffer.getCells(rect)
+  }
+
+  getCell(row: number, col: number): IScreenBufferCell {
+    row = clamp(row, 0, this._range.getRows() - 1)
+    col = clamp(col, 0, this._range.getCols() - 1)
+    const startPos = this._range.getStartPosition()
+    return this._buffer.getCell(row + startPos.row, col + startPos.col)
   }
 
   setRange(range: IRect): this {

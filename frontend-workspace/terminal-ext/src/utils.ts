@@ -8,6 +8,20 @@ export function assertValidCursorPosition(...args: CursorPosition[]) {
   }
 }
 
+export function clipRect(rect: IRect, sub: IRect) {
+  const startPosition = clampPos(
+    posAdd(rect.getStartPosition(), sub.getStartPosition()),
+    rect.getStartPosition(),
+    rect.getEndPosition(),
+  )
+  const endPosition = clampPos(
+    posAdd(rect.getEndPosition(), sub.getEndPosition()),
+    rect.getStartPosition(),
+    rect.getEndPosition(),
+  )
+  return createRect(startPosition, endPosition)
+}
+
 export function createRect(start: CursorPosition, end: CursorPosition): IRect {
   return {
     getCols(): number {
@@ -57,4 +71,8 @@ export function clampPos(
   max: Readonly<CursorPosition>,
 ): CursorPosition {
   return { row: clamp(value.row, min.row, max.row), col: clamp(value.col, min.col, max.col) }
+}
+
+export function posAdd(pos1: CursorPosition, pos2: CursorPosition): CursorPosition {
+  return { row: pos1.row + pos2.row, col: pos1.col + pos2.col }
 }
