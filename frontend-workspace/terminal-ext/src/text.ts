@@ -1,5 +1,5 @@
 import wcwidth from "wcwidth"
-import { hasAnsiCode } from "./ansi-code.ts"
+import { hasAnsiCode } from "./ansi-code"
 import type { ITerminalStyle } from "./capabilities.interface.ts"
 import { TerminalStyle } from "./capabilities.ts"
 import type {

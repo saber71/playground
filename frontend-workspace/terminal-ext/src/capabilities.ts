@@ -1,6 +1,6 @@
 import { type Color, isNil, parseColor } from "@saber71/shared"
 import deepEqual from "deep-equal"
-import { AnsiBack, AnsiFore, AnsiReset, AnsiStyle } from "./ansi-code.ts"
+import { AnsiBack, AnsiFore, AnsiReset, AnsiStyle } from "./ansi-code"
 import type { IRect, ITerminalStyle } from "./capabilities.interface.ts"
 import type { CursorPosition } from "./types.ts"
 import { clampPos, posAdd } from "./utils.ts"

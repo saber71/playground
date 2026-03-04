@@ -1,4 +1,28 @@
-import { AnsiKey } from "./ansi-code.ts"
+export enum AnsiKey {
+  UP = "\x1b[A",
+  DOWN = "\x1b[B",
+  RIGHT = "\x1b[C",
+  LEFT = "\x1b[D",
+  HOME = "\x1b[H",
+  END = "\x1b[F",
+  INSERT = "\x1b[2~",
+  DELETE = "\x1b[3~",
+  PAGE_UP = "\x1b[5~",
+  PAGE_DOWN = "\x1b[6~",
+  ESC = "\x1b",
+  F1 = "\x1b[P",
+  F2 = "\x1b[Q",
+  F3 = "\x1b[R",
+  F4 = "\x1bOS",
+  F5 = "\x1b[15~",
+  F6 = "\x1b[17~",
+  F7 = "\x1b[18~",
+  F8 = "\x1b[19~",
+  F9 = "\x1b[20~",
+  F10 = "\x1b[21~",
+  F11 = "\x1b[23~",
+  F12 = "\x1b[24~",
+}
 
 export interface IKey {
   char: string

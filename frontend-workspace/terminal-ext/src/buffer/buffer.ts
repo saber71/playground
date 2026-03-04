@@ -1,4 +1,4 @@
-import { AnsiCursor } from "../ansi-code.ts"
+import { AnsiCursor } from "../ansi-code"
 import type { IDimension, IRect, IStyleProvider } from "../capabilities.interface.ts"
 import { type CursorPosition } from "../types.ts"
 import { assertValidCursorPosition, isCursorPosition } from "../utils.ts"
