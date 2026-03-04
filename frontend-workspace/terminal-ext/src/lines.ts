@@ -1,4 +1,4 @@
-import type { IScreenBufferProvider } from "./buffer.interface.ts"
+import type { IScreenBufferProvider } from "./buffer"
 import type { IRect } from "./capabilities.interface.ts"
 import type { ILineMode, ILineOption, ITerminalLines } from "./lines.interface.ts"
 import type { CursorPosition } from "./types.ts"
