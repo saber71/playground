@@ -3,21 +3,18 @@ import type {
   IScreenBufferManager,
   IScreenBufferManagerProvider,
   IScreenBufferProvider,
-} from "./buffer.interface.ts"
-import { ScreenBuffer, ScreenBufferManager } from "./buffer.ts"
+} from "./buffer"
+import { ScreenBuffer, ScreenBufferManager } from "./buffer"
 import type { IStyleProvider, ITerminal, ITerminalStyle } from "./capabilities.interface.ts"
 import { TerminalStyle } from "./capabilities.ts"
 import type { ITerminalLines, ITerminalLinesProvider } from "./lines.interface.ts"
 import { TerminalLines } from "./lines.ts"
 
 export * from "./ansi-code"
-export * from "./buffer.interface.ts"
-export * from "./buffer.ts"
+export * from "./buffer"
 export * from "./capabilities.interface.ts"
 export * from "./capabilities.ts"
 export * from "./key-code.ts"
-export * from "./buffer.interface.ts"
-export * from "./buffer.ts"
 export * from "./lines.interface.ts"
 export * from "./lines.ts"
 export * from "./text.interface.ts"
