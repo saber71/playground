@@ -15,10 +15,10 @@ import type {
   ITerminalStyle,
   IWriteOption,
 } from "./capabilities.interface.ts"
-import { TerminalStyle } from "./capabilities.ts"
+import { clipRect, TerminalStyle } from "./capabilities.ts"
 import type { ITextViewport } from "./text.interface.ts"
 import { type CursorPosition } from "./types.ts"
-import { assertValidCursorPosition, clipRect, equal, isCursorPosition } from "./utils.ts"
+import { assertValidCursorPosition, equal, isCursorPosition } from "./utils.ts"
 
 export class ScreenBufferCell implements IScreenBufferCell {
   private _width = 0

@@ -5,13 +5,8 @@ import type {
   IScreenBufferProvider,
 } from "./buffer.interface.ts"
 import { ScreenBuffer, ScreenBufferManager } from "./buffer.ts"
-import type { IBox, IStyleProvider, ITerminal, ITerminalStyle } from "./capabilities.interface.ts"
-import { AbstractCursorPositionable, Box, TerminalStyle } from "./capabilities.ts"
-import type {
-  ITerminalComponentManager,
-  ITerminalComponentManagerProvider,
-} from "./component.interface.ts"
-import { TerminalComponentManager } from "./component.ts"
+import type { IStyleProvider, ITerminal, ITerminalStyle } from "./capabilities.interface.ts"
+import { TerminalStyle } from "./capabilities.ts"
 import type { ITerminalLines, ITerminalLinesProvider } from "./lines.interface.ts"
 import { TerminalLines } from "./lines.ts"
 
@@ -20,8 +15,6 @@ export * from "./buffer.interface.ts"
 export * from "./buffer.ts"
 export * from "./capabilities.interface.ts"
 export * from "./capabilities.ts"
-export * from "./component.interface.ts"
-export * from "./component.ts"
 export * from "./key-code.ts"
 export * from "./buffer.interface.ts"
 export * from "./buffer.ts"
@@ -33,36 +26,22 @@ export * from "./types.ts"
 export * from "./utils.ts"
 
 export class TerminalExt
-  extends AbstractCursorPositionable
   implements
     IStyleProvider,
     IScreenBufferProvider,
     IScreenBufferManagerProvider,
-    ITerminalComponentManagerProvider,
     ITerminalLinesProvider
 {
-  readonly screen: IBox
   private readonly _screenBufferManager: IScreenBufferManager
-  private readonly _terminalComponentManager: ITerminalComponentManager
   private readonly _terminalLines: ITerminalLines
 
   constructor(
     readonly term: ITerminal,
     readonly style: ITerminalStyle = new TerminalStyle(),
   ) {
-    super()
-    this.screen = new Box(term, style).setStartPosition({ row: 1, col: 1 }).setEndPosition({
-      get row() {
-        return term.getRows()
-      },
-      get col() {
-        return term.getCols()
-      },
-    })
     this._screenBufferManager = new ScreenBufferManager(
       new ScreenBuffer(term.getRows(), term.getCols(), this),
     )
-    this._terminalComponentManager = new TerminalComponentManager()
     this._terminalLines = new TerminalLines(this)
   }
 
@@ -86,10 +65,6 @@ export class TerminalExt
     const output = this.getScreenBuffer().outputDiff()
     if (!output) return
     return this.term.write(output)
-  }
-
-  getTerminalComponentManager(): ITerminalComponentManager {
-    return this._terminalComponentManager
   }
 
   getTerminalLines(): ITerminalLines {

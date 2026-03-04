@@ -1,98 +1,43 @@
-import { Apply, type Color, isNil, parseColor } from "@saber71/shared"
+import { type Color, isNil, parseColor } from "@saber71/shared"
 import deepEqual from "deep-equal"
-import {
-  AnsiBack,
-  AnsiCursor,
-  AnsiFore,
-  AnsiReset,
-  AnsiStyle,
-  parseAnsiCursorPosition,
-} from "./ansi-code.ts"
-import type {
-  IBox,
-  ICursorControl,
-  ICursorPositionable,
-  IDimension,
-  IEraser,
-  IRect,
-  IStyleProvider,
-  ITerminal,
-  ITerminalProvider,
-  ITerminalStyle,
-  IViewport,
-  IWriteOption,
-  IWriter,
-} from "./capabilities.interface.ts"
-import type { ITextChar, ITextViewport } from "./text.interface.ts"
+import { AnsiBack, AnsiFore, AnsiReset, AnsiStyle } from "./ansi-code.ts"
+import type { IRect, ITerminalStyle } from "./capabilities.interface.ts"
 import type { CursorPosition } from "./types.ts"
+import { clampPos, posAdd } from "./utils.ts"
 
-export abstract class AbstractDimension implements IDimension {
-  abstract getRows(): number
-
-  abstract getCols(): number
+export function clipRect(rect: IRect, sub: IRect) {
+  const startPosition = clampPos(
+    posAdd(rect.getStartPosition(), sub.getStartPosition()),
+    rect.getStartPosition(),
+    rect.getEndPosition(),
+  )
+  const endPosition = clampPos(
+    posAdd(rect.getEndPosition(), sub.getEndPosition()),
+    rect.getStartPosition(),
+    rect.getEndPosition(),
+  )
+  return createRect(startPosition, endPosition)
 }
 
-export abstract class AbstractRect extends AbstractDimension implements IRect {
-  abstract getEndPosition(): Readonly<CursorPosition>
-
-  abstract getStartPosition(): Readonly<CursorPosition>
-
-  getRows(): number {
-    return this.getEndPosition().row - this.getStartPosition().row + 1
-  }
-
-  getCols(): number {
-    return this.getEndPosition().col - this.getStartPosition().col + 1
+export function createRect(start: CursorPosition, end: CursorPosition): IRect {
+  return {
+    getCols(): number {
+      return end.col - start.col + 1
+    },
+    getRows(): number {
+      return end.row - start.row + 1
+    },
+    getStartPosition(): Readonly<CursorPosition> {
+      return start
+    },
+    getEndPosition(): Readonly<CursorPosition> {
+      return end
+    },
   }
 }
 
-export class Viewport extends AbstractRect implements IViewport {
-  private _startPosition?: CursorPosition
-  private _endPosition?: CursorPosition
-  private _parent?: IViewport | null
-
-  setParent(val?: IViewport) {
-    this._parent = val
-    return this
-  }
-
-  getParent() {
-    return this._parent
-  }
-
-  getStartPosition() {
-    if (!this._startPosition) throw new Error("startPosition is not set")
-    if (this._parent) {
-      const parentStart = this._parent.getStartPosition()
-      return {
-        row: parentStart.row + this._startPosition.row,
-        col: parentStart.col + this._startPosition.col,
-      }
-    }
-    return this._startPosition
-  }
-
-  getEndPosition() {
-    if (!this._endPosition) throw new Error("endPosition is not set")
-    if (this._parent) {
-      const parentStart = this._parent.getStartPosition()
-      return {
-        row: this._endPosition.row + parentStart.row,
-        col: this._endPosition.col + parentStart.col,
-      }
-    }
-    return this._endPosition
-  }
-
-  setStartPosition(value: CursorPosition): this {
-    this._startPosition = value
-    return this
-  }
-
-  setEndPosition(value: CursorPosition): this {
-    this._endPosition = value
-    return this
-  }
+export function isRect(arg: any): arg is IRect {
+  return typeof arg?.getStartPosition === "function" && typeof arg?.getEndPosition === "function"
 }
 
 export class TerminalStyle implements ITerminalStyle {
@@ -183,171 +128,5 @@ export class TerminalStyle implements ITerminalStyle {
       }
     }
     return this
-  }
-}
-
-export abstract class AbstractTerminalProvider implements ITerminalProvider {
-  abstract getTerminal(): ITerminal
-}
-
-export abstract class AbstractStyleProvider implements IStyleProvider {
-  abstract getTerminalStyle(): ITerminalStyle
-}
-
-export abstract class AbstractEraser extends AbstractTerminalProvider implements IEraser {
-  async erase(view: IRect, style: IStyleProvider) {
-    const end = view.getEndPosition()
-    const start = view.getStartPosition()
-    const term = this.getTerminal()
-    for (let i = start.row; i <= end.row; i++) {
-      await term.write(
-        AnsiCursor.SET_POSITION(i, start.col) +
-          style.getTerminalStyle().toString(" ".repeat(view.getCols())),
-      )
-    }
-  }
-}
-
-export abstract class AbstractWriter extends AbstractTerminalProvider implements IWriter {
-  async write(data: ITextViewport, view: IRect, style: IStyleProvider, options?: IWriteOption) {
-    const start = view.getStartPosition()
-    const term = this.getTerminal()
-    const array: string[] = []
-    const rows = data.getRegion().endRow - data.getRegion().startRow + 1
-    for (let i = 0; i < rows && i < view.getRows(); i++) {
-      let chars = data.getChars(i)
-      if (chars.length === 0) continue
-      let endIndex = 0
-      let accWidth = 0
-      for (; endIndex < chars.length; endIndex++) {
-        const char = chars[endIndex]
-        if (accWidth + char.width < view.getCols()) {
-          accWidth += char.width
-        } else break
-      }
-      chars = chars.slice(0, endIndex)
-      let group: Readonly<ITextChar>[] = []
-      const groups: Readonly<ITextChar>[][] = [group]
-      for (let char of chars) {
-        if (group.length) {
-          const last = group.at(-1)!
-          if (last.style.equals(char.style)) group.push(char)
-          else {
-            group = [char]
-            groups.push(group)
-          }
-        } else {
-          group.push(char)
-        }
-      }
-      const strWithWidths = groups.map((group) => {
-        const str = group.map((i) => i.char).join("")
-        const width = group.reduce((acc, char) => acc + char.width, 0)
-        return { str, width, style: group[0].style }
-      })
-      const strings = strWithWidths.map((i) => i.style.toString(i.str))
-      const width = strWithWidths.reduce((pre, cur) => pre + cur.width, 0)
-      let bias = view.getCols() - width
-      if (options?.align === "center") bias = Math.floor(bias / 2)
-      else if (options?.align === "left" || !options?.align) bias = 0
-      array.push(
-        style
-          .getTerminalStyle()
-          .toString(AnsiCursor.SET_POSITION(i + start.row, start.col + bias) + strings.join("")),
-      )
-    }
-    await term.write(array.join(""))
-  }
-}
-
-export abstract class AbstractCursorControl
-  extends AbstractTerminalProvider
-  implements ICursorControl
-{
-  showCursor() {
-    return this.getTerminal().write(AnsiCursor.SHOW)
-  }
-
-  hideCursor() {
-    return this.getTerminal().write(AnsiCursor.HIDE)
-  }
-
-  saveCursorPosition() {
-    return this.getTerminal().write(AnsiCursor.SAVE_POSITION)
-  }
-
-  restoreCursorPosition() {
-    return this.getTerminal().write(AnsiCursor.RESTORE_POSITION)
-  }
-}
-
-export abstract class AbstractCursorPositionable
-  extends AbstractTerminalProvider
-  implements ICursorPositionable
-{
-  async getCursorPosition(view?: IRect) {
-    const term = this.getTerminal()
-    return new Promise<CursorPosition>((resolve) => {
-      term.onData((str, stop) => {
-        const pos = parseAnsiCursorPosition(str)
-        if (!pos) return
-        stop()
-        if (view) {
-          const start = view.getStartPosition()
-          pos.row -= start.row
-          pos.col -= start.col
-        }
-        resolve(pos)
-      })
-      term.write(AnsiCursor.REQUEST_POSITION)
-    })
-  }
-
-  setCursorPosition(pos: CursorPosition, view?: IRect) {
-    if (view) {
-      pos = Object.assign({}, pos)
-      const start = view.getStartPosition()
-      pos.row += start.row
-      pos.col += start.col
-    }
-    return this.getTerminal().write(AnsiCursor.SET_POSITION(pos.row, pos.col))
-  }
-}
-
-export class Box
-  extends Apply<
-    IEraser & Viewport & IStyleProvider & ICursorControl & ICursorPositionable & IWriter
-  >(
-    AbstractEraser,
-    Viewport,
-    AbstractStyleProvider,
-    AbstractCursorControl,
-    AbstractCursorPositionable,
-    AbstractWriter,
-  )
-  implements IBox
-{
-  constructor(
-    readonly term: ITerminal,
-    readonly style: ITerminalStyle,
-    parent?: IBox,
-  ) {
-    super()
-    this.setParent(parent)
-  }
-
-  create(style?: Partial<ITerminalStyle>) {
-    return new Box(
-      this.term,
-      new TerminalStyle(Object.assign({}, style, { parent: this.style })),
-    ).setParent(this)
-  }
-
-  getTerminalStyle(): ITerminalStyle {
-    return this.style
-  }
-
-  getTerminal(): ITerminal {
-    return this.term
   }
 }

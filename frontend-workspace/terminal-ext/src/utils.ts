@@ -1,46 +1,12 @@
-import { clamp } from "@xterm/xterm/src/vs/base/common/numbers.ts"
+import { clamp } from "@saber71/shared"
 import type { IRect } from "./capabilities.interface.ts"
+import { isRect } from "./capabilities.ts"
 import type { CursorPosition } from "./types.ts"
 
 export function assertValidCursorPosition(...args: CursorPosition[]) {
   for (let arg of args) {
     if (arg.col <= 0 || arg.row <= 0) throw new Error("Invalid cursor position")
   }
-}
-
-export function clipRect(rect: IRect, sub: IRect) {
-  const startPosition = clampPos(
-    posAdd(rect.getStartPosition(), sub.getStartPosition()),
-    rect.getStartPosition(),
-    rect.getEndPosition(),
-  )
-  const endPosition = clampPos(
-    posAdd(rect.getEndPosition(), sub.getEndPosition()),
-    rect.getStartPosition(),
-    rect.getEndPosition(),
-  )
-  return createRect(startPosition, endPosition)
-}
-
-export function createRect(start: CursorPosition, end: CursorPosition): IRect {
-  return {
-    getCols(): number {
-      return end.col - start.col + 1
-    },
-    getRows(): number {
-      return end.row - start.row + 1
-    },
-    getStartPosition(): Readonly<CursorPosition> {
-      return start
-    },
-    getEndPosition(): Readonly<CursorPosition> {
-      return end
-    },
-  }
-}
-
-export function isRect(arg: any): arg is IRect {
-  return typeof arg?.getStartPosition === "function" && typeof arg?.getEndPosition === "function"
 }
 
 export function isCursorPosition(arg: any): arg is CursorPosition {
