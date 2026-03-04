@@ -14,6 +14,7 @@ import {
   TerminalExt,
   TextView,
 } from "./src"
+import { ScreenBufferWriter } from "./src/buffer"
 
 class Terminal implements ITerminal {
   readonly xterm = new XTerm({
@@ -88,7 +89,8 @@ const view = termExt.getScreenBuffer().getScreenBufferView(
 view.getStyle().backcolor = "yellow"
 view.getStyle().bold = true
 view.getStyle().forecolor = "red"
-view.write(textView.getViewport({ startRow: 0, endRow: 4 }), { align: "right" })
+const writer = new ScreenBufferWriter(view)
+writer.write(textView.getViewport({ startRow: 0, endRow: 4 }), { align: "right" })
 termExt
   .getTerminalLines()
   .writeRect(createRect({ row: 10, col: 20 }, { row: 15, col: 40 }), { mode: "heavy" })

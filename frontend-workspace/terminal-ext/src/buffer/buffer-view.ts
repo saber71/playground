@@ -1,7 +1,6 @@
 import { clamp } from "@saber71/shared"
-import type { IRect, ITerminalStyle, IWriteOption } from "../capabilities.interface.ts"
+import type { IRect, ITerminalStyle } from "../capabilities.interface.ts"
 import { clipRect, TerminalStyle } from "../capabilities.ts"
-import type { ITextViewport } from "../text.interface.ts"
 import type { CursorPosition } from "../types.ts"
 import { assertValidCursorPosition, equal } from "../utils.ts"
 import type { IScreenBufferCell } from "./buffer-cell.interface.ts"
@@ -65,45 +64,8 @@ export class ScreenBufferView implements IScreenBufferView {
     return this
   }
 
-  write(text: ITextViewport, option?: IWriteOption): this {
-    const region = text.getRegion()
-    for (
-      let r = 0;
-      r < region.endRow - region.startRow + 1 &&
-      r + this._range.getStartPosition().row <= this._range.getEndPosition().row;
-      r++
-    ) {
-      const chars = text.getChars(r + region.startRow)
-      const accWidth = chars.reduce((pre, cur) => pre + cur.width, 0)
-      let c = 0,
-        i = 0
-      if (option?.align === "center") {
-        const bias = Math.floor((this._range.getCols() - accWidth) / 2)
-        if (bias >= 0) c = bias
-      } else if (option?.align === "right") {
-        const bias = this._range.getCols() - accWidth
-        if (bias >= 0) {
-          c = bias
-        }
-      }
-      for (; i < chars.length; i++) {
-        const char = chars[i]
-        if (c + char.width <= this._range.getCols()) {
-          const cell = this._buffer.getCell(
-            r + this._range.getStartPosition().row,
-            c + this._range.getStartPosition().col,
-          )
-          cell.setValue(char.char).setTextStyle(char.style)
-          c += char.width || 1
-        } else {
-          break
-        }
-      }
-    }
-    return this
-  }
-
-  getScreenBufferView(range: IRect): IScreenBufferView {
+  getScreenBufferView(range?: IRect): IScreenBufferView {
+    if (!range) return this
     assertValidCursorPosition(range.getStartPosition(), range.getEndPosition())
     const startPosition: CursorPosition = {
       row: range.getStartPosition().row + this._range.getStartPosition().row,
