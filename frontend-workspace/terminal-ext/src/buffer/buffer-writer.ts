@@ -1,4 +1,4 @@
-import type { ITerminalStyle } from "../capabilities.interface.ts"
+import type { IRect, ITerminalStyle } from "../capabilities.interface.ts"
 import { TerminalStyle } from "../capabilities.ts"
 import type { ITextViewport } from "../text.interface.ts"
 import type { IScreenBufferView } from "./buffer-view.interface.ts"
@@ -35,6 +35,10 @@ export class ScreenBufferWriter implements IScreenBufferWriter {
 
   getTerminalStyle(): ITerminalStyle {
     return this.style
+  }
+
+  getScreenBufferView(range?: IRect): IScreenBufferView {
+    return this.view.getScreenBufferView(range)
   }
 
   getCells(text: ITextViewport, option?: IWriteOption): ReadonlyArray<Readonly<ITextCharCell>> {
