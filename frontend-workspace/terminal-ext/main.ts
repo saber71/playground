@@ -86,10 +86,11 @@ const view = termExt.getScreenBuffer().getScreenBufferView(
     },
   ),
 )
-view.getStyle().backcolor = "yellow"
-view.getStyle().bold = true
-view.getStyle().forecolor = "red"
 const writer = new ScreenBufferWriter(view)
+writer.getTerminalStyle().backcolor = "yellow"
+// writer.getTerminalStyle().bold = true
+writer.getTerminalStyle().italic = true
+writer.getTerminalStyle().forecolor = "red"
 writer.write(textView.getViewport({ startRow: 0, endRow: 4 }), { align: "right" })
 termExt
   .getTerminalLines()

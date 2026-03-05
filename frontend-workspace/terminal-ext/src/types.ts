@@ -9,3 +9,7 @@ export interface TerminalDimension {
 }
 
 export type StopListener = () => void
+
+export interface IDisposable {
+  dispose(): this
+}

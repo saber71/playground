@@ -1,5 +1,7 @@
+import type { ITerminalStyle } from "../capabilities.interface.ts"
+import { TerminalStyle } from "../capabilities.ts"
 import type { ITextViewport } from "../text.interface.ts"
-import type { IScreenBufferViewProvider } from "./buffer-view.interface.ts"
+import type { IScreenBufferView } from "./buffer-view.interface.ts"
 import type {
   IScreenBufferWriter,
   ITextCharCell,
@@ -8,11 +10,36 @@ import type {
 } from "./buffer-writer.interface.ts"
 
 export class ScreenBufferWriter implements IScreenBufferWriter {
-  constructor(readonly viewProvider: IScreenBufferViewProvider) {}
+  constructor(
+    readonly view: IScreenBufferView,
+    readonly style: ITerminalStyle = new TerminalStyle(),
+  ) {
+    for (let cell of this.view.getCells()) {
+      cell.appendStyle(style)
+    }
+  }
+
+  dispose(): this {
+    for (let cell of this.view.getCells()) {
+      cell.removeStyle(this.style)
+    }
+    return this
+  }
+
+  erase(): this {
+    for (let cell of this.view.getCells()) {
+      cell.setValue("")
+    }
+    return this
+  }
+
+  getTerminalStyle(): ITerminalStyle {
+    return this.style
+  }
 
   getCells(text: ITextViewport, option?: IWriteOption): ReadonlyArray<Readonly<ITextCharCell>> {
     const cells: ITextCharCell[] = []
-    const view = this.viewProvider.getScreenBufferView()
+    const view = this.view
     const region = text.getRegion()
     const range = view.getRange()
     for (
