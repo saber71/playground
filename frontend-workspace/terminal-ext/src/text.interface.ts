@@ -12,7 +12,7 @@ export interface IStyledText extends ITerminalStyle {
 export interface ITextChar {
   char: string
   width: number
-  style: ITerminalStyle
+  style?: ITerminalStyle
 }
 
 export interface ITextRow {

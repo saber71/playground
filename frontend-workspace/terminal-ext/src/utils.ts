@@ -1,7 +1,7 @@
 import { clamp } from "@saber71/shared"
 import type { IRect } from "./capabilities.interface.ts"
 import { isRect } from "./capabilities.ts"
-import type { CursorPosition } from "./types.ts"
+import type { CursorPosition, IDisposable } from "./types.ts"
 
 export function assertValidCursorPosition(...args: CursorPosition[]) {
   for (let arg of args) {
@@ -41,4 +41,9 @@ export function clampPos(
 
 export function posAdd(pos1: CursorPosition, pos2: CursorPosition): CursorPosition {
   return { row: pos1.row + pos2.row, col: pos1.col + pos2.col }
+}
+
+export function disposable<T extends () => any>(arg: T): T & IDisposable {
+  ;(arg as any).dispose = () => arg()
+  return arg as any
 }

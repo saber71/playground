@@ -3,10 +3,12 @@ import type { ITerminalStyle } from "../capabilities.interface.ts"
 import { TerminalStyle } from "../capabilities.ts"
 import type { IScreenBufferCell } from "./buffer-cell.interface.ts"
 
+const defaultTerminalStyle: ITerminalStyle = new TerminalStyle()
+
 export class ScreenBufferCell implements IScreenBufferCell {
   private _width = 0
   private readonly _styles: ITerminalStyle[] = []
-  private _textStyle: ITerminalStyle = new TerminalStyle()
+  private _textStyle: ITerminalStyle = defaultTerminalStyle
   private readonly _style = new TerminalStyle()
 
   constructor(
@@ -44,7 +46,7 @@ export class ScreenBufferCell implements IScreenBufferCell {
     return this
   }
 
-  setTextStyle(style: ITerminalStyle): this {
+  setTextStyle(style: ITerminalStyle = defaultTerminalStyle): this {
     this._textStyle = style
     return this
   }

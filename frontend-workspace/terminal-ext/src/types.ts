@@ -1,3 +1,5 @@
+import type { IDisposable as XTermDisposable } from "@xterm/xterm"
+
 export interface CursorPosition {
   row: number
   col: number
@@ -8,8 +10,6 @@ export interface TerminalDimension {
   cols: number
 }
 
-export type StopListener = () => void
+export type IDisposable = XTermDisposable
 
-export interface IDisposable {
-  dispose(): this
-}
+export type StopListener = (() => void) & IDisposable

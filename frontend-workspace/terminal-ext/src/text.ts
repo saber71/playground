@@ -63,8 +63,6 @@ export class TextViewport implements ITextViewport {
   }
 }
 
-const defaultStyle = new TerminalStyle()
-
 export class TextView implements ITextView {
   private readonly _dimension: TerminalDimension = { rows: 0, cols: 0 }
   private readonly _rows: ITextRow[] = []
@@ -83,7 +81,7 @@ export class TextView implements ITextView {
     const textChar: ITextChar = {
       char,
       width: wcwidth(char),
-      style: option?.style ?? defaultStyle,
+      style: option?.style,
     }
     if (typeof option?.at !== "number") {
       if (char === "/n") {

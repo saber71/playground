@@ -7,6 +7,8 @@ import { Unicode11Addon } from "@xterm/addon-unicode11"
 import { Terminal as XTerm } from "@xterm/xterm"
 import {
   createRect,
+  disposable,
+  IDisposable,
   type ITerminal,
   parseKey,
   type StopListener,
@@ -35,16 +37,24 @@ class Terminal implements ITerminal {
   }
 
   onData(listener: (str: string, stop: StopListener) => void, once?: boolean) {
+    let disposableObj: IDisposable
     if (once) {
-      const disposable = this.xterm.onData((str) => {
-        listener(str, () => disposable.dispose())
-        disposable.dispose()
+      disposableObj = this.xterm.onData((str) => {
+        listener(
+          str,
+          disposable(() => disposableObj.dispose()),
+        )
+        disposableObj.dispose()
       })
     } else {
-      const disposable = this.xterm.onData((str) => {
-        listener(str, () => disposable.dispose())
+      disposableObj = this.xterm.onData((str) => {
+        listener(
+          str,
+          disposable(() => disposableObj.dispose()),
+        )
       })
     }
+    return disposableObj
   }
 
   write(data: any): Promise<void> {

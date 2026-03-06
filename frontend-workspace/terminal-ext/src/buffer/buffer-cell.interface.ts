@@ -17,7 +17,7 @@ export interface IScreenBufferCell extends IStyleProvider, ICellPosition {
 
   removeStyle(style: ITerminalStyle): this
 
-  setTextStyle(style: ITerminalStyle): this
+  setTextStyle(style?: ITerminalStyle): this
 
   clone(): IScreenBufferCell
 
