@@ -1,13 +1,10 @@
 import type { IRect, ITerminalStyle } from "../capabilities.interface.ts"
 import { TerminalStyle } from "../capabilities.ts"
-import type { ITextViewport } from "../text.interface.ts"
+import type { ITextChar } from "../text"
+import type { IScreenBufferCell } from "./buffer-cell.interface.ts"
+import type { ITextCellMatrixRow } from "./buffer-text-matrix.interface.ts"
 import type { IScreenBufferView } from "./buffer-view.interface.ts"
-import type {
-  IScreenBufferWriter,
-  ITextCharCell,
-  ITextCharCellArray,
-  IWriteOption,
-} from "./buffer-writer.interface.ts"
+import type { IScreenBufferWriter, IWriteOption } from "./buffer-writer.interface.ts"
 
 export class ScreenBufferWriter implements IScreenBufferWriter {
   constructor(
@@ -41,49 +38,44 @@ export class ScreenBufferWriter implements IScreenBufferWriter {
     return this.view.getScreenBufferView(range)
   }
 
-  getCells(text: ITextViewport, option?: IWriteOption): ReadonlyArray<Readonly<ITextCharCell>> {
-    const cells: ITextCharCell[] = []
-    const view = this.view
-    const region = text.getRegion()
-    const range = view.getRange()
-    for (
-      let r = 0;
-      r < region.endRow - region.startRow + 1 &&
-      r + range.getStartPosition().row <= range.getEndPosition().row;
-      r++
-    ) {
-      const chars = text.getChars(r + region.startRow)
-      const accWidth = chars.reduce((pre, cur) => pre + cur.width, 0)
-      let c = 0,
-        i = 0
-      if (option?.align === "center") {
-        const bias = Math.floor((range.getCols() - accWidth) / 2)
-        if (bias >= 0) c = bias
-      } else if (option?.align === "right") {
-        const bias = range.getCols() - accWidth
-        if (bias >= 0) {
-          c = bias
-        }
+  write(textRows: ITextCellMatrixRow[], option?: IWriteOption): this {
+    const clear = option?.clear ?? true
+    const cells: Array<ITextChar & { cell: IScreenBufferCell }> = []
+    if (clear) {
+      textRows = textRows.slice()
+      const cols = this.view.getRange().getCols()
+      const rows = this.view.getRange().getRows()
+      const toCells = (args: IScreenBufferCell[] | number) => {
+        if (typeof args === "number") args = this.view.getCellsByRow(args)
+        cells.push(...args.map((cell) => ({ cell, char: " ", width: 1 })))
       }
-      for (; i < chars.length; i++) {
-        const char = chars[i]
-        if (c + char.width <= range.getCols()) {
-          const cell = view.getCell(r, c)
-          cells.push({ ...char, cell })
-          c += char.width || 1
-        } else {
-          break
-        }
+      for (let i = 0; i < rows; i++) {
+        if (textRows.length) {
+          const textRow = textRows[0]
+          if (textRow.cells.length) {
+            const cell = textRow.cells[0]
+            const cellRow = cell.getRow() - this.view.getRange().getStartPosition().row
+            if (cellRow === i) {
+              textRows.shift()
+              const cellCol = cell.getCol() - this.view.getRange().getStartPosition().col
+              const rowCells = this.view.getCellsByRow(i)
+              const prevCells = rowCells.slice(0, cellCol)
+              const afterCells = rowCells.slice(cellCol + textRow.width)
+              toCells(prevCells)
+              toCells(afterCells)
+              cells.push(...textRow.cells.map((cell, i) => ({ cell, ...textRow.data[i] })))
+            }
+          } else toCells(i)
+        } else toCells(i)
+      }
+    } else {
+      for (let textRow of textRows) {
+        cells.push(...textRow.cells.map((cell, i) => ({ cell, ...textRow.data[i] })))
       }
     }
-    return cells
-  }
-
-  write(text: ITextViewport, option?: IWriteOption): ITextCharCellArray {
-    const cells = this.getCells(text, option)
     for (let cell of cells) {
       cell.cell.setValue(cell.char).setTextStyle(cell.style)
     }
-    return cells
+    return this
   }
 }

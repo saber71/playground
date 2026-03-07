@@ -1,8 +1,8 @@
 import wcwidth from "wcwidth"
+import { AnsiKey } from "../ansi-code"
 import type { ITerminalStyle } from "../capabilities.interface.ts"
 import type { IKeyHandler, IKeySubscription } from "../key-handler.interface.ts"
-import type { ITextChar, ITextView } from "../text.interface.ts"
-import { TextView } from "../text.ts"
+import type { ITextChar } from "../text"
 import type { InputMode, IScreenBufferEditor } from "./buffer-editor.interface.ts"
 import type { IScreenBufferWriter } from "./buffer-writer.interface.ts"
 import type { IScreenBuffer } from "./buffer.interface.ts"
@@ -11,7 +11,6 @@ export class ScreenBufferEditor implements IScreenBufferEditor {
   private _cursorPos = 0
   private _inputMode: InputMode = "normal"
   private readonly _chars: ITextChar[] = []
-  private readonly _textView: ITextView = new TextView([])
   private readonly _keySubscription: IKeySubscription
 
   constructor(
@@ -19,6 +18,15 @@ export class ScreenBufferEditor implements IScreenBufferEditor {
     readonly keyHandler: IKeyHandler,
   ) {
     this._keySubscription = keyHandler.onData((key) => {
+      if (key.char === AnsiKey.INSERT) {
+        if (this._inputMode === "normal") this._inputMode = "insert"
+        else this._inputMode = "normal"
+        return
+      }
+      if (key.char === AnsiKey.DELETE) {
+        if (this._chars[this._cursorPos]) this._chars.splice(this._cursorPos, 1)
+        return
+      }
       if (key.char === "\b") {
         if (this._cursorPos >= 1) {
           this._chars.splice(this._cursorPos - 1, 1)

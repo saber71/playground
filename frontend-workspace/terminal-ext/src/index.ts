@@ -11,12 +11,12 @@ import type { ITerminalLines, ITerminalLinesProvider } from "./lines.interface.t
 import { TerminalLines } from "./lines.ts"
 
 export * from "./ansi-code"
+export * from "./buffer"
+export * from "./text"
 export * from "./capabilities.interface.ts"
 export * from "./capabilities.ts"
 export * from "./lines.interface.ts"
 export * from "./lines.ts"
-export * from "./text.interface.ts"
-export * from "./text.ts"
 export * from "./types.ts"
 export * from "./utils.ts"
 

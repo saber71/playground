@@ -12,6 +12,18 @@ export class ScreenBufferView implements IScreenBufferView {
     private readonly _buffer: IScreenBuffer,
   ) {}
 
+  getCellsByRow(rowIndex: number): IScreenBufferCell[] {
+    return this.getCells(
+      createRect({ row: rowIndex, col: 0 }, { row: rowIndex, col: this._range.getCols() - 1 }),
+    )
+  }
+
+  getCellsByCol(colIndex: number): IScreenBufferCell[] {
+    return this.getCells(
+      createRect({ row: 0, col: colIndex }, { row: this._range.getRows() - 1, col: colIndex }),
+    )
+  }
+
   getCells(range?: IRect): IScreenBufferCell[] {
     const rect = range ? clipRect(this._range, range) : this._range
     return this._buffer.getCells(rect)
