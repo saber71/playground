@@ -7,11 +7,13 @@ import type {
 import { ScreenBuffer, ScreenBufferManager } from "./buffer"
 import type { IStyleProvider, ITerminal, ITerminalStyle } from "./capabilities.interface.ts"
 import { TerminalStyle } from "./capabilities.ts"
+import { type IKeyBindingFactory, KeyBindingFactory } from "./key"
 import type { ITerminalLines, ITerminalLinesProvider } from "./lines.interface.ts"
 import { TerminalLines } from "./lines.ts"
 
 export * from "./ansi-code"
 export * from "./buffer"
+export * from "./key"
 export * from "./text"
 export * from "./capabilities.interface.ts"
 export * from "./capabilities.ts"
@@ -29,6 +31,7 @@ export class TerminalExt
 {
   private readonly _screenBufferManager: IScreenBufferManager
   private readonly _terminalLines: ITerminalLines
+  private readonly _keyBindingFactory: IKeyBindingFactory
 
   constructor(
     readonly term: ITerminal,
@@ -38,6 +41,7 @@ export class TerminalExt
       new ScreenBuffer(term.getRows(), term.getCols(), this),
     )
     this._terminalLines = new TerminalLines(this)
+    this._keyBindingFactory = new KeyBindingFactory(term)
   }
 
   getScreenBuffer(): IScreenBuffer {
@@ -46,6 +50,10 @@ export class TerminalExt
 
   getScreenBufferManager(): IScreenBufferManager {
     return this._screenBufferManager
+  }
+
+  getKeyBindingFactory(): IKeyBindingFactory {
+    return this._keyBindingFactory
   }
 
   getTerminal(): ITerminal {

@@ -1,5 +1,6 @@
 export * from "./dependency-injection/service.decorator.ts"
 export * from "./dependency-injection/Instance.ts"
+export * from "./ActionChain.ts"
 export * from "./waitTime.ts"
 export * from "./StyledString.ts"
 export * from "./toKebabCase.ts"

@@ -1,5 +1,5 @@
-import type { Color } from "@saber71/shared"
-import type { CursorPosition, IDisposable, StopListener } from "./types.ts"
+import type { ActionChain, Color } from "@saber71/shared"
+import type { CursorPosition } from "./types.ts"
 
 // ============通用基础接口=============
 
@@ -42,10 +42,10 @@ export interface IStyleProvider {
   getTerminalStyle(): ITerminalStyle
 }
 
-export interface IInputSource {
-  onData(listener: (str: string, stop: StopListener) => void, once?: boolean): IDisposable
+export interface IInputSource<Arg> {
+  onData(): ActionChain<Arg>
 }
 
-export interface ITerminal extends IDimension, IInputSource {
+export interface ITerminal extends IDimension, IInputSource<string> {
   write(data: any): Promise<void>
 }

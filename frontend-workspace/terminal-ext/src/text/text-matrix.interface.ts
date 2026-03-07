@@ -23,10 +23,18 @@ export interface ITextMatrixRemoveOption {
   flush?: boolean
 }
 
+export interface ITextMatrixReplaceOption {
+  flush?: boolean
+}
+
 export interface ITextMatrix {
   append(char: ITextChar, option?: ITextMatrixAppendOption): this
 
   remove(index?: number, option?: ITextMatrixRemoveOption): this
+
+  replace(index: number, char: ITextChar, option?: ITextMatrixReplaceOption): this
+
+  getChars(): ITextChar[]
 
   getRows(): number
 

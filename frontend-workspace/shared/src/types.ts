@@ -1,3 +1,19 @@
+export interface IDisposable {
+  dispose(): void
+}
+
+export interface IClearable {
+  clear(): void
+}
+
+export interface IEnabled {
+  enable(): this
+
+  disable(): this
+
+  isEnabled(): boolean
+}
+
 export type Class<T> = new (...args: any[]) => T
 export type AbstractClass<T> = abstract new (...args: any[]) => T
 

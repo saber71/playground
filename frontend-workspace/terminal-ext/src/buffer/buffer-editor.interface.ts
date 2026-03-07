@@ -1,5 +1,6 @@
+import type { IDisposable } from "@saber71/shared"
 import type { IStyleProvider } from "../capabilities.interface.ts"
-import type { IDisposable } from "../types.ts"
+import type { ITextMatrix } from "../text"
 import type { IScreenBufferProvider } from "./buffer.interface.ts"
 
 export type InputMode = "normal" | "insert"
@@ -8,4 +9,10 @@ export interface IScreenBufferEditor extends IStyleProvider, IScreenBufferProvid
   getContent(): string
 
   getInputMode(): InputMode
+
+  getTextMatrix(): ITextMatrix
+
+  getCursorPos(): number
+
+  setCursorPos(charIndex: number): this
 }

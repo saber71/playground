@@ -4,6 +4,7 @@ import type {
   ITextMatrix,
   ITextMatrixAppendOption,
   ITextMatrixRemoveOption,
+  ITextMatrixReplaceOption,
   ITextMatrixRow,
 } from "./text-matrix.interface.ts"
 
@@ -36,6 +37,10 @@ export class TextMatrix implements ITextMatrix {
         }
       }
     }
+  }
+
+  getChars(): ITextChar[] {
+    return this._chars
   }
 
   getRows(): number {
@@ -109,6 +114,33 @@ export class TextMatrix implements ITextMatrix {
         return this.remove()
       }
     }
+  }
+
+  replace(index: number, char: ITextChar, option?: ITextMatrixReplaceOption): this {
+    const oldChar = this._chars[index]
+    if (oldChar.char !== char.char) {
+      if (oldChar.width === char.width) {
+        this._chars[index] = char
+        const flush = option?.flush ?? true
+        if (!flush) {
+          this._updated = true
+          return this
+        }
+        if (this._updated) this._update(0)
+        else {
+          const targetRow = this.findTargetRow(index)
+          if (targetRow) {
+            targetRow.row.data[targetRow.charIndex] = char
+          } else throw new Error("未找到字符")
+        }
+      } else {
+        return this.remove(index, { flush: false }).append(char, {
+          at: index,
+          flush: option?.flush,
+        })
+      }
+    }
+    return this
   }
 
   setWrapWidth(...widths: number[]): this {

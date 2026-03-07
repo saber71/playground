@@ -1,5 +1,6 @@
 import "./style.css"
 import "@xterm/xterm/css/xterm.css"
+import { ActionChain } from "@saber71/shared"
 import { ClipboardAddon } from "@xterm/addon-clipboard"
 import { FitAddon } from "@xterm/addon-fit"
 import { ImageAddon } from "@xterm/addon-image"
@@ -8,13 +9,10 @@ import { Terminal as XTerm } from "@xterm/xterm"
 import {
   createRect,
   createTextChar,
-  disposable,
-  type IDisposable,
   type ITerminal,
   parseKey,
   ScreenBufferTextMatrix,
   ScreenBufferWriter,
-  type StopListener,
   StyledText,
   TerminalExt,
   TextMatrix,
@@ -26,6 +24,7 @@ class Terminal implements ITerminal {
     allowTransparency: true,
     fontFamily: "monospace",
   })
+  private readonly _dataActionChain = new ActionChain<string>()
 
   constructor(el: HTMLElement) {
     const fitAddon = new FitAddon()
@@ -36,27 +35,11 @@ class Terminal implements ITerminal {
     this.xterm.unicode.activeVersion = "11"
     this.xterm.open(el)
     fitAddon.fit()
+    this.xterm.onData((seq) => this._dataActionChain.invoke(seq))
   }
 
-  onData(listener: (str: string, stop: StopListener) => void, once?: boolean) {
-    let disposableObj: IDisposable
-    if (once) {
-      disposableObj = this.xterm.onData((str) => {
-        listener(
-          str,
-          disposable(() => disposableObj.dispose()),
-        )
-        disposableObj.dispose()
-      })
-    } else {
-      disposableObj = this.xterm.onData((str) => {
-        listener(
-          str,
-          disposable(() => disposableObj.dispose()),
-        )
-      })
-    }
-    return disposableObj
+  onData() {
+    return this._dataActionChain
   }
 
   write(data: any): Promise<void> {
@@ -100,6 +83,7 @@ const textMatrix = new TextMatrix(
   .remove(undefined, { flush: false })
   .append(createTextChar("可"), { flush: false })
   .append([createTextChar("柯"), createTextChar("科")], { at: 4 })
+  .replace(2, createTextChar("哈"))
 console.log(textMatrix)
 
 const writer = new ScreenBufferWriter(view)
@@ -112,6 +96,9 @@ termExt
   .getTerminalLines()
   .writeRect(createRect({ row: 10, col: 20 }, { row: 15, col: 40 }), { mode: "heavy" })
 termExt.flushBuffer().then(() => {})
-termExt.getTerminal().onData((str) => {
-  console.log(parseKey(str))
-})
+termExt
+  .getTerminal()
+  .onData()
+  .bind((str) => {
+    console.log(parseKey(str))
+  })

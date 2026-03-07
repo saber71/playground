@@ -1,3 +1,5 @@
+import type { IClearable, IDisposable } from "./types.ts"
+
 export type EmitterListener<Arg> = (arg: Arg) => void
 
 export interface EmitterOnOption {
@@ -5,7 +7,7 @@ export interface EmitterOnOption {
   key?: any
 }
 
-export class Emitter<Arg> {
+export class Emitter<Arg> implements IClearable, IDisposable {
   private readonly _listeners = new Map<any, EmitterListener<Arg>[]>()
   private readonly _onceListeners = new Map<any, EmitterListener<Arg>[]>()
 
@@ -51,6 +53,10 @@ export class Emitter<Arg> {
   clear() {
     this._onceListeners.clear()
     this._listeners.clear()
-    return this
+    return
+  }
+
+  dispose() {
+    this.clear()
   }
 }

@@ -1,7 +1,7 @@
-import { clamp } from "@saber71/shared"
+import { clamp, type IDisposable } from "@saber71/shared"
 import type { IRect } from "./capabilities.interface.ts"
 import { isRect } from "./capabilities.ts"
-import type { CursorPosition, IDisposable } from "./types.ts"
+import type { CursorPosition } from "./types.ts"
 
 export function assertValidCursorPosition(...args: CursorPosition[]) {
   for (let arg of args) {
