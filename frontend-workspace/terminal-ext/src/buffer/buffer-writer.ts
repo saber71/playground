@@ -43,8 +43,7 @@ export class ScreenBufferWriter implements IScreenBufferWriter {
     const cells: Array<ITextChar & { cell: IScreenBufferCell }> = []
     if (clear) {
       textRows = textRows.slice()
-      const cols = this.view.getRange().getCols()
-      const rows = this.view.getRange().getRows()
+      const rows = this.view.getRows()
       const toCells = (args: IScreenBufferCell[] | number) => {
         if (typeof args === "number") args = this.view.getCellsByRow(args)
         cells.push(...args.map((cell) => ({ cell, char: " ", width: 1 })))
@@ -54,10 +53,10 @@ export class ScreenBufferWriter implements IScreenBufferWriter {
           const textRow = textRows[0]
           if (textRow.cells.length) {
             const cell = textRow.cells[0]
-            const cellRow = cell.getRow() - this.view.getRange().getStartPosition().row
+            const cellRow = cell.getRow() - this.view.getStartPosition().row
             if (cellRow === i) {
               textRows.shift()
-              const cellCol = cell.getCol() - this.view.getRange().getStartPosition().col
+              const cellCol = cell.getCol() - this.view.getStartPosition().col
               const rowCells = this.view.getCellsByRow(i)
               const prevCells = rowCells.slice(0, cellCol)
               const afterCells = rowCells.slice(cellCol + textRow.width)

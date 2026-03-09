@@ -1,6 +1,7 @@
 import { clamp } from "@saber71/shared"
 import type { IRect } from "../capabilities.interface.ts"
 import { clipRect, createRect } from "../capabilities.ts"
+import type { CursorPosition } from "../types.ts"
 import { assertValidCursorPosition, posAdd } from "../utils.ts"
 import type { IScreenBufferCell } from "./buffer-cell.interface.ts"
 import type { IScreenBufferView } from "./buffer-view.interface.ts"
@@ -50,5 +51,21 @@ export class ScreenBufferView implements IScreenBufferView {
 
   getRange(): Readonly<IRect> {
     return this._range
+  }
+
+  getRows(): number {
+    return this.getRange().getRows()
+  }
+
+  getCols(): number {
+    return this.getRange().getCols()
+  }
+
+  getStartPosition(): Readonly<CursorPosition> {
+    return this.getRange().getStartPosition()
+  }
+
+  getEndPosition(): Readonly<CursorPosition> {
+    return this.getRange().getEndPosition()
   }
 }

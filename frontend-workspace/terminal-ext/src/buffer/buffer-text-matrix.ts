@@ -13,6 +13,7 @@ export class ScreenBufferTextMatrix implements IScreenBufferTextMatrix {
   constructor(
     private readonly _textMatrix: ITextMatrix,
     private readonly _view: IScreenBufferView,
+    private readonly _textRowOffset: number = 0,
   ) {}
 
   setAlign(align: TextAlign): this {
@@ -22,13 +23,14 @@ export class ScreenBufferTextMatrix implements IScreenBufferTextMatrix {
 
   getRows(): ITextCellMatrixRow[] {
     const rows: ITextCellMatrixRow[] = []
-    for (let r = 0; r < this._textMatrix.getRows(); r++) {
+    for (let r = this._textRowOffset; r < this._textMatrix.getRows(); r++) {
       rows.push(this.getRow(r))
     }
     return rows
   }
 
   getRow(rowIndex: number): ITextCellMatrixRow {
+    rowIndex += this._textRowOffset
     const charRow = this._textMatrix.getRow(rowIndex)
     const row: ITextCellMatrixRow = {
       data: charRow.data.slice(),
@@ -48,7 +50,8 @@ export class ScreenBufferTextMatrix implements IScreenBufferTextMatrix {
     if (targetCharRow) {
       let col = this._getOffset(targetCharRow.row.width)
       for (let i = 0; i < targetCharRow.row.data.length; i++) {
-        if (i === targetCharRow.charIndex) return this._view.getCell(targetCharRow.rowIndex, col)
+        if (i === targetCharRow.charIndex)
+          return this._view.getCell(targetCharRow.rowIndex + this._textRowOffset, col)
         col += targetCharRow.row.data[i].width
       }
     }
@@ -56,8 +59,7 @@ export class ScreenBufferTextMatrix implements IScreenBufferTextMatrix {
 
   private _getOffset(rowWidth: number): number {
     if (this._align === "left") return 0
-    if (this._align === "center")
-      return Math.floor((this._view.getRange().getCols() - rowWidth) / 2)
-    return this._view.getRange().getCols() - rowWidth
+    if (this._align === "center") return Math.floor((this._view.getCols() - rowWidth) / 2)
+    return this._view.getCols() - rowWidth
   }
 }

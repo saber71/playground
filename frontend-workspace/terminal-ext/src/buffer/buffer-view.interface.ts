@@ -3,7 +3,7 @@ import type { IScreenBufferCell, IScreenBufferCellProvider } from "./buffer-cell
 import type { IScreenBufferProvider } from "./buffer.interface.ts"
 
 export interface IScreenBufferView
-  extends IScreenBufferProvider, IScreenBufferViewProvider, IScreenBufferCellProvider {
+  extends IScreenBufferProvider, IScreenBufferViewProvider, IScreenBufferCellProvider, IRect {
   getRange(): Readonly<IRect>
 
   getCellsByRow(rowIndex: number): IScreenBufferCell[]
