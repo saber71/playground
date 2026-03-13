@@ -1,7 +1,10 @@
+import type { CursorPosition } from "../types.ts"
 import type { ITextChar } from "./text-char.interface.ts"
 
+export interface ITextMatrixRowCell extends ITextChar, CursorPosition {}
+
 export interface ITextMatrixRow {
-  data: ITextChar[]
+  data: ITextMatrixRowCell[]
   width: number
 }
 
@@ -11,6 +14,7 @@ export interface IFoundTargetRow {
   charIndex: number
   // 计算从第一行到目标行的所有字符数量，包括目标行
   accLength: number
+  accWidth: number
 }
 
 export interface ITextMatrixAppendOption {
@@ -34,7 +38,7 @@ export interface ITextMatrix {
 
   replace(index: number, char: ITextChar, option?: ITextMatrixReplaceOption): this
 
-  getChars(): ITextChar[]
+  getChars(): ITextMatrixRowCell[]
 
   getRows(): number
 

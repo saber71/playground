@@ -1,10 +1,11 @@
-import type {
-  IScreenBuffer,
-  IScreenBufferManager,
-  IScreenBufferManagerProvider,
-  IScreenBufferProvider,
+import {
+  type IScreenBuffer,
+  type IScreenBufferManager,
+  type IScreenBufferManagerProvider,
+  type IScreenBufferProvider,
+  ScreenBuffer,
+  ScreenBufferManager,
 } from "./buffer"
-import { ScreenBuffer, ScreenBufferManager } from "./buffer"
 import type { IStyleProvider, ITerminal, ITerminalStyle } from "./capabilities.interface.ts"
 import { TerminalStyle } from "./capabilities.ts"
 import { type IKeyBindingFactory, KeyBindingFactory } from "./key"
@@ -32,6 +33,8 @@ export class TerminalExt
   private readonly _screenBufferManager: IScreenBufferManager
   private readonly _terminalLines: ITerminalLines
   private readonly _keyBindingFactory: IKeyBindingFactory
+  private _autoFlushBuffer = false
+  private _intervalHandler: any
 
   constructor(
     readonly term: ITerminal,
@@ -42,6 +45,22 @@ export class TerminalExt
     )
     this._terminalLines = new TerminalLines(this)
     this._keyBindingFactory = new KeyBindingFactory(term)
+  }
+
+  get autoFlushBuffer(): boolean {
+    return this._autoFlushBuffer
+  }
+
+  set autoFlushBuffer(value: boolean) {
+    this._autoFlushBuffer = value
+    if (this._autoFlushBuffer) {
+      if (!this._intervalHandler) this._intervalHandler = setInterval(() => this.flushBuffer(), 16)
+    } else {
+      if (this._intervalHandler) {
+        clearInterval(this._intervalHandler)
+        this._intervalHandler = false
+      }
+    }
   }
 
   getScreenBuffer(): IScreenBuffer {

@@ -6,40 +6,44 @@ import type {
   ITextMatrixRemoveOption,
   ITextMatrixReplaceOption,
   ITextMatrixRow,
+  ITextMatrixRowCell,
 } from "./text-matrix.interface.ts"
 
 export class TextMatrix implements ITextMatrix {
   private _wrapWidth: number[] = [0]
-  private readonly _chars: ITextChar[]
+  private readonly _chars: ITextMatrixRowCell[]
   private _data: ITextMatrixRow[] = []
   private _updated = false
 
   constructor(chars: ITextChar[], ...widths: number[]) {
-    this._chars = chars.slice()
+    this._chars = chars.slice().map((i) => ({ ...i, row: 0, col: 0 }))
     this.setWrapWidth(...widths)
   }
 
   findTargetRow(charIndex: number): IFoundTargetRow | undefined {
     if (charIndex >= this._chars.length) return undefined
     let i = 0,
-      accLength = 0
+      accLength = 0,
+      accWidth = 0
     for (let row of this._data) {
       accLength += row.data.length
       if (charIndex >= row.data.length) {
         charIndex -= row.data.length
         i++
       } else {
+        row.data.slice(0, charIndex + 1).forEach((c) => (accWidth += c.width))
         return {
           row,
           rowIndex: i,
           charIndex,
           accLength,
+          accWidth,
         }
       }
     }
   }
 
-  getChars(): ITextChar[] {
+  getChars(): ITextMatrixRowCell[] {
     return this._chars
   }
 
@@ -56,12 +60,12 @@ export class TextMatrix implements ITextMatrix {
     const at = option?.at
     const flush = option?.flush ?? true
     if (typeof at !== "number") {
-      this._chars.push(...chars)
+      this._chars.push(...this._getTextMatrixRowCells(chars))
       if (flush) this._update(this._chars.length - 1)
       else this._updated = true
       return this
     } else {
-      this._chars.splice(at, 0, ...chars)
+      this._chars.splice(at, 0, ...this._getTextMatrixRowCells(chars))
       if (!flush) {
         this._updated = true
         return this
@@ -70,7 +74,7 @@ export class TextMatrix implements ITextMatrix {
       if (targetRow) {
         targetRow.row.data.splice(targetRow.charIndex, targetRow.row.data.length)
         targetRow.row.width = 0
-        targetRow.row.data.forEach((c) => (targetRow.row.width += c.width))
+        this._updateRowCells(targetRow.row)
         if (targetRow.row.data.length) targetRow.rowIndex++
         this._data.splice(targetRow.rowIndex, this._data.length)
         return this._update(at)
@@ -105,8 +109,8 @@ export class TextMatrix implements ITextMatrix {
       }
       const targetRow = this.findTargetRow(index)
       if (targetRow) {
-        const deleted = targetRow.row.data.splice(targetRow.charIndex, deleteCount)
-        deleted.forEach((c) => (targetRow.row.width -= c.width))
+        targetRow.row.data.splice(targetRow.charIndex, deleteCount)
+        this._updateRowCells(targetRow.row)
         if (targetRow.row.width) targetRow.rowIndex++
         this._data.splice(targetRow.rowIndex, this._data.length)
         return this._update(targetRow.accLength - 1)
@@ -120,7 +124,7 @@ export class TextMatrix implements ITextMatrix {
     const oldChar = this._chars[index]
     if (oldChar.char !== char.char) {
       if (oldChar.width === char.width) {
-        this._chars[index] = char
+        this._chars[index] = this._getTextMatrixRowCells([char])[0]
         const flush = option?.flush ?? true
         if (!flush) {
           this._updated = true
@@ -130,7 +134,9 @@ export class TextMatrix implements ITextMatrix {
         else {
           const targetRow = this.findTargetRow(index)
           if (targetRow) {
-            targetRow.row.data[targetRow.charIndex] = char
+            this._chars[index].row = targetRow.rowIndex
+            this._chars[index].col = targetRow.accWidth - char.width
+            targetRow.row.data[targetRow.charIndex] = this._chars[index]
           } else throw new Error("未找到字符")
         }
       } else {
@@ -180,9 +186,26 @@ export class TextMatrix implements ITextMatrix {
       } else if (wrapWidth >= 2 && row.width + char.width > wrapWidth) {
         row = newRow()
       }
+      char.row = this._data.length - 1
+      char.col = row.width
       row.data.push(char)
       row.width += char.width
     }
     return this
+  }
+
+  private _updateRowCells(row: ITextMatrixRow) {
+    const rowIndex = this._data.indexOf(row)
+    let acc = 0
+    for (let item of row.data) {
+      item.col = acc
+      item.row = rowIndex
+      acc += item.width
+    }
+    row.width = acc
+  }
+
+  private _getTextMatrixRowCells(chars: ITextChar[]): ITextMatrixRowCell[] {
+    return chars.map((i) => ({ ...i, row: 0, col: 0 }))
   }
 }

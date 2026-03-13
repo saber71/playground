@@ -60,6 +60,7 @@ class Terminal implements ITerminal {
 }
 
 const termExt = new TerminalExt(new Terminal(document.body))
+termExt.autoFlushBuffer = true
 termExt.style.backcolor = "white"
 termExt.style.forecolor = "blue"
 const view = termExt.getScreenBuffer().getScreenBufferView(
@@ -95,7 +96,6 @@ writer.write(new ScreenBufferTextMatrix(textMatrix, view).setAlign("center").get
 termExt
   .getTerminalLines()
   .writeRect(createRect({ row: 10, col: 20 }, { row: 15, col: 40 }), { mode: "heavy" })
-termExt.flushBuffer().then(() => {})
 termExt
   .getTerminal()
   .onData()
