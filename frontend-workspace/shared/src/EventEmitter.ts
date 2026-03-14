@@ -1,6 +1,9 @@
 import { Emitter } from "./Emitter.ts"
+import type { IClearable, IDisposable } from "./types.ts"
 
-export class EventEmitter<EventMap extends { [key: string | symbol]: any }> {
+export class EventEmitter<EventMap extends { [key: string | symbol]: any }>
+  implements IClearable, IDisposable
+{
   private readonly _alias = new Map<any, any[]>()
   private readonly _emitters = new Map<any, Emitter<any>>()
 
@@ -48,6 +51,10 @@ export class EventEmitter<EventMap extends { [key: string | symbol]: any }> {
   clear() {
     this._alias.clear()
     this._emitters.clear()
-    return this
+    return
+  }
+
+  dispose() {
+    this.clear()
   }
 }

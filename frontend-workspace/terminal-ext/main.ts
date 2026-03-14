@@ -1,5 +1,6 @@
 import "./style.css"
 import "@xterm/xterm/css/xterm.css"
+import { ActionChain } from "@saber71/shared"
 import { ClipboardAddon } from "@xterm/addon-clipboard"
 import { FitAddon } from "@xterm/addon-fit"
 import { ImageAddon } from "@xterm/addon-image"
@@ -7,14 +8,15 @@ import { Unicode11Addon } from "@xterm/addon-unicode11"
 import { Terminal as XTerm } from "@xterm/xterm"
 import {
   createRect,
+  createTextChar,
   type ITerminal,
   parseKey,
-  type StopListener,
+  ScreenBufferTextMatrix,
+  ScreenBufferWriter,
   StyledText,
   TerminalExt,
-  TextView,
+  TextMatrix,
 } from "./src"
-import { ScreenBufferWriter } from "./src/buffer"
 
 class Terminal implements ITerminal {
   readonly xterm = new XTerm({
@@ -22,6 +24,7 @@ class Terminal implements ITerminal {
     allowTransparency: true,
     fontFamily: "monospace",
   })
+  private readonly _dataActionChain = new ActionChain<string>()
 
   constructor(el: HTMLElement) {
     const fitAddon = new FitAddon()
@@ -32,19 +35,11 @@ class Terminal implements ITerminal {
     this.xterm.unicode.activeVersion = "11"
     this.xterm.open(el)
     fitAddon.fit()
+    this.xterm.onData((seq) => this._dataActionChain.invoke(seq))
   }
 
-  onData(listener: (str: string, stop: StopListener) => void, once?: boolean) {
-    if (once) {
-      const disposable = this.xterm.onData((str) => {
-        listener(str, () => disposable.dispose())
-        disposable.dispose()
-      })
-    } else {
-      const disposable = this.xterm.onData((str) => {
-        listener(str, () => disposable.dispose())
-      })
-    }
+  onData() {
+    return this._dataActionChain
   }
 
   write(data: any): Promise<void> {
@@ -65,15 +60,9 @@ class Terminal implements ITerminal {
 }
 
 const termExt = new TerminalExt(new Terminal(document.body))
+termExt.autoFlushBuffer = true
 termExt.style.backcolor = "white"
 termExt.style.forecolor = "blue"
-const textView = new TextView([
-  new StyledText("的雾气大窘12撒大家撒都期待无期132\n1321"),
-  new StyledText("\n"),
-  new StyledText("123ada", { bold: true, strikeThrough: true }),
-])
-  .setMaxWidth(12)
-  .update()
 const view = termExt.getScreenBuffer().getScreenBufferView(
   createRect(
     {
@@ -82,20 +71,34 @@ const view = termExt.getScreenBuffer().getScreenBufferView(
     },
     {
       row: 5,
-      col: 11,
+      col: 7,
     },
   ),
 )
+
+const textMatrix = new TextMatrix(
+  new StyledText("的雾气大窘123撒大家撒都期待无期1321321大大撒").toChars(),
+  7,
+)
+  .remove(1, { deleteCount: 2, flush: false })
+  .remove(undefined, { flush: false })
+  .append(createTextChar("可"), { flush: false })
+  .append([createTextChar("柯"), createTextChar("科")], { at: 4 })
+  .replace(2, createTextChar("哈"))
+console.log(textMatrix)
+
 const writer = new ScreenBufferWriter(view)
 writer.getTerminalStyle().backcolor = "yellow"
 // writer.getTerminalStyle().bold = true
 writer.getTerminalStyle().italic = true
 writer.getTerminalStyle().forecolor = "red"
-writer.write(textView.getViewport({ startRow: 0, endRow: 4 }), { align: "right" })
+writer.write(new ScreenBufferTextMatrix(textMatrix, view).setAlign("center").getRows())
 termExt
   .getTerminalLines()
   .writeRect(createRect({ row: 10, col: 20 }, { row: 15, col: 40 }), { mode: "heavy" })
-termExt.flushBuffer().then(() => {})
-termExt.getTerminal().onData((str) => {
-  console.log(parseKey(str))
-})
+termExt
+  .getTerminal()
+  .onData()
+  .bind((str) => {
+    console.log(parseKey(str))
+  })

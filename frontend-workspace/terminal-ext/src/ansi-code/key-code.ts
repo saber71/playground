@@ -79,17 +79,12 @@ for (let i = 1; i <= 26; i++) {
     char: String.fromCharCode(65 + i - 1),
   }
 }
+for (let i = 1; i <= 26; i++) {
+  seqMap[String.fromCharCode(i)] = { ctrl: true, char: String.fromCharCode(65 + i - 1) }
+}
 
 export function parseKey(seq: string): IKey {
   if (seq in seqMap) return Object.assign({}, seqMap[seq])
-  for (let i = 1; i <= 26; i++) {
-    if (String.fromCharCode(i) === seq) {
-      return {
-        ctrl: true,
-        char: String.fromCharCode(65 + i - 1),
-      }
-    }
-  }
   let shift = false,
     alt = false,
     ctrl = false,
