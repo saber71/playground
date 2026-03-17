@@ -19,6 +19,9 @@ class Array(Generic[_T]):
     def length(self):
         return len(self._list)
 
+    def join(self,separate:str)->str:
+        return separate.join(map(lambda x:str(x),self._list))
+
     def push(self, *elements: _T):
         for element in elements:
             self._list.append(element)

@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from alias import true
-from custom_array import Array
+from array_class import Array
 
 DATABASE_URL = "postgresql+asyncpg://postgres:123456@192.168.206.128/postgres"
 engine = create_async_engine(DATABASE_URL)
@@ -16,16 +16,24 @@ Base = declarative_base()
 
 
 class Document(Base):
-    __tablename__ = 'document'
+    __tablename__ = "document"
 
-    id = Column(UUID, primary_key=true, index=true, server_default=text("gen_random_uuid()"))
+    id = Column(
+        UUID, primary_key=true, index=true, server_default=text("gen_random_uuid()")
+    )
     data = Column(JSONB)
+
+
+@dataclasses.dataclass
+class DocumentData:
+    id: str
 
 
 async def create_document(data: Dict[Any, Any] | object):
     if not isinstance(data, Dict):
         data = data.__dict__
     async_session = sessionmaker(engine, class_=AsyncSession)
+    # noinspection PyTypeChecker
     async with async_session() as session:
         new_document = Document(data=data)
         session.add(new_document)
@@ -36,10 +44,10 @@ async def create_document(data: Dict[Any, Any] | object):
 
 def _unwrapper(data: Dict[Any, Any] | object):
     if isinstance(data, Dict):
-        doc_id = data.get('id')
+        doc_id = data.get("id")
         doc_data = data
     else:
-        doc_id = getattr(data, 'id', None)
+        doc_id = getattr(data, "id", None)
         doc_data = data.__dict__
     return [doc_id, doc_data]
 
@@ -51,6 +59,7 @@ async def update_document(data: Dict[Any, Any] | object):
         raise ValueError("Document must have an id field")
 
     async_session = sessionmaker(engine, class_=AsyncSession)
+    # noinspection PyTypeChecker
     async with async_session() as session:
         document = await session.get(Document, doc_id)
 
@@ -66,16 +75,17 @@ async def update_document(data: Dict[Any, Any] | object):
 
 async def save_document(data: Dict[Any, Any] | object):
     if isinstance(data, Dict):
-        doc_id = data.get('id')
+        doc_id = data.get("id")
         doc_data = data
     else:
-        doc_id = getattr(data, 'id', None)
+        doc_id = getattr(data, "id", None)
         doc_data = data.__dict__
 
     if doc_id is None:
         raise ValueError("Document must have an id field")
 
     async_session = sessionmaker(engine, class_=AsyncSession)
+    # noinspection PyTypeChecker
     async with async_session() as session:
         document = await session.get(Document, doc_id)
 
@@ -99,12 +109,13 @@ class QuerySelectPagination:
 
 
 async def query_select_pagination(
-        filters: Optional[Dict[str, Any]] = None,
-        page: int = 1,
-        page_size: int = 10,
-        stmt: Select[Any] = None
+    filters: Optional[Dict[str, Any]] = None,
+    page: int = 1,
+    page_size: int = 10,
+    stmt: Select[Any] = None,
 ):
     async_session = sessionmaker(engine, class_=AsyncSession)
+    # noinspection PyTypeChecker
     async with async_session() as session:
         base_query = stmt if stmt else select(Document)
 
@@ -113,9 +124,11 @@ async def query_select_pagination(
                 condition = Document.data[key].astext == str(value)
                 base_query = base_query.filter(condition)
 
-        total = (await session.execute(
-            select(func.count()).select_from(base_query.subquery())
-        )).scalar()
+        total = (
+            await session.execute(
+                select(func.count()).select_from(base_query.subquery())
+            )
+        ).scalar()
 
         offset = (page - 1) * page_size
         query = base_query.offset(offset).limit(page_size)
@@ -125,10 +138,10 @@ async def query_select_pagination(
 
 
 async def query_select(
-        filters: Optional[Dict[str, Any]] = None,
-        stmt: Select[Any] = None
+    filters: Optional[Dict[str, Any]] = None, stmt: Select[Any] = None
 ) -> Array[Document]:
     async_session = sessionmaker(engine, class_=AsyncSession)
+    # noinspection PyTypeChecker
     async with async_session() as session:
         base_query = stmt if stmt else select(Document)
 
