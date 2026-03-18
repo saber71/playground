@@ -1,10 +1,10 @@
 // 1. 声明构建脚本依赖（插件本身）
 buildscript {
     repositories {
-        maven {
-            url "${mavenUrl}"
-            allowInsecureProtocol = true
-        }
+//        maven {
+//            url "${mavenUrl}"
+//            allowInsecureProtocol = true
+//        }
         mavenCentral()
     }
     dependencies {
@@ -18,10 +18,10 @@ allprojects {
     group = 'saber71'
     version = '1.0.0'
     repositories {
-        maven {
-            url "${mavenUrl}"
-            allowInsecureProtocol = true
-        }
+//        maven {
+//            url "${mavenUrl}"
+//            allowInsecureProtocol = true
+//        }
         mavenCentral()
     }
 }
