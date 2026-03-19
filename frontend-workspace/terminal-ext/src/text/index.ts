@@ -1,6 +1,0 @@
-export * from "./styled-text.interface.ts"
-export * from "./styled-text.ts"
-export * from "./text-char.interface.ts"
-export * from "./text-char.ts"
-export * from "./text-matrix.interface.ts"
-export * from "./text-matrix.ts"
