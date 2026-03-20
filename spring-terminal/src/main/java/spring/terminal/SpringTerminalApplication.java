@@ -8,5 +8,9 @@ public class SpringTerminalApplication {
 
   static void main(String[] args) {
     SpringApplication.run(SpringTerminalApplication.class, args);
+    var commandController = CommandController.create();
+    var beans = SpringContext.getBeans(Command.class);
+    commandController.setCommands(beans);
+    commandController.run();
   }
 }

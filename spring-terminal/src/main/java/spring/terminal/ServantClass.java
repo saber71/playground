@@ -13,6 +13,7 @@ public class ServantClass extends BaseEntity {
   /* 从者职介英文名 */
   private String enName;
 
+  /* 唯一标识符 */
   @Id @GeneratedValue private Long id;
 
   /* 从者职介中文名 */

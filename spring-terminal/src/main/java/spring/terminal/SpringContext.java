@@ -1,5 +1,7 @@
 package spring.terminal;
 
+import java.lang.annotation.Annotation;
+import java.util.Map;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -23,6 +25,16 @@ public class SpringContext implements ApplicationContextAware {
    */
   public static <T> T getBean(Class<T> clazz) {
     return context.getBean(clazz);
+  }
+
+  /**
+   * 获取所有被指定注解标注的 Bean 实例
+   *
+   * @param annotationType 注解类型，用于筛选带有该注解的所有 Bean
+   * @return Map<String, Object>，key 为 Bean 名称，value 为 Bean 实例，不会为 null
+   */
+  public static @NonNull Map<String, Object> getBeans(Class<? extends Annotation> annotationType) {
+    return context.getBeansWithAnnotation(annotationType);
   }
 
   /**
