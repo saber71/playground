@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class Console {
   private final Scanner inputScanner = new Scanner(System.in);
 
-  public Console error(Object arg) {
+  public Console errorAndWait(Object arg) {
     System.err.print(arg);
     return this.waitInput();
   }
@@ -33,6 +33,20 @@ public class Console {
   public String readLine(@NonNull String prompt) {
     if (!prompt.isEmpty()) System.out.print(prompt);
     return inputScanner.nextLine();
+  }
+
+  public String readLine(String prompt, String defaultValue, String separate) {
+    if (defaultValue == null || defaultValue.isEmpty()) return readLine(prompt + separate);
+    return readLine(
+        prompt
+            + "("
+            + defaultValue.substring(0, Math.min(7, defaultValue.length()))
+            + ")"
+            + separate);
+  }
+
+  public String readLine(String prompt, String defaultValue) {
+    return readLine(prompt, defaultValue, "：");
   }
 
   private Console waitInput() {

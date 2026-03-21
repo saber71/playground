@@ -108,7 +108,7 @@ public class CommandController {
           commands.add(new Data(cmdMap.get(cmdString), args.subList(i + 1, args.size())));
         } else if (found) break;
       }
-      if (!found) console.error("找不到命令：" + input);
+      if (!found) console.errorAndWait("找不到命令：" + input);
       else {
         var data = commands.removeLast();
         data.cmd.execute(data.args);
