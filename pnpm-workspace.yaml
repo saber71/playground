@@ -1,10 +1,10 @@
+packages:
+  - vue-frontend
+
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@parcel/watcher'
+  - core-js
   - esbuild
   - unrs-resolver
   - vue-demi
-
-packages:
-  - 'node-workspace/*'
-  - 'frontend-workspace/*'
