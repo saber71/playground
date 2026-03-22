@@ -7,6 +7,7 @@ import java.util.Map;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
+import spring.terminal.console.Console;
 
 @Service
 public class CommandController {
@@ -119,10 +120,10 @@ public class CommandController {
   /**
    * 运行交互式命令行循环，使用默认提示符
    *
-   * <p>调用带自定义提示符的 run 方法，提示符为"请输入命令> "
+   * <p>调用带自定义提示符的 run 方法，提示符为"shell>> "
    */
   public void run() {
-    run("请输入命令> ");
+    run("shell>> ");
   }
 
   /**

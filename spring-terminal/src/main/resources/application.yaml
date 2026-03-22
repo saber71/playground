@@ -1,14 +1,8 @@
 spring:
   application:
     name: spring-terminal
-  data:
-    redis:
-      host: 192.168.206.128
-      port: 6379
-      password: 123456
-      database: 0
   datasource:
-    url: jdbc:postgresql://192.168.206.128:5432/spring_terminal
+    url: jdbc:postgresql://192.168.206.128:5432/jsondb
     username: postgres
     password: 123456
     driver-class-name: org.postgresql.Driver

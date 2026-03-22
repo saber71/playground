@@ -2,6 +2,7 @@ package spring.terminal;
 
 import java.util.List;
 import org.jspecify.annotations.NonNull;
+import spring.terminal.console.Console;
 
 @Command("servant-class")
 public class ServantClassCommand implements ICommand {
@@ -21,7 +22,7 @@ public class ServantClassCommand implements ICommand {
       servantClass.setName(console.readLine("职介名", servantClass.getName()));
       servantClass.setEnName(console.readLine("职介英文名", servantClass.getEnName()));
       servantClassRepository.save(servantClass);
-      console.writeAndWait("创建ServantClass成功！");
+      console.write("✅创建ServantClass成功").waitEnter();
     } else if (args.getFirst().equalsIgnoreCase("edit")) {
       var servantClassOption = servantClassRepository.findById(Long.valueOf(args.getFirst()));
       if (servantClassOption.isPresent()) {
@@ -29,8 +30,8 @@ public class ServantClassCommand implements ICommand {
         servantClass.setName(console.readLine("职介名", servantClass.getName()));
         servantClass.setEnName(console.readLine("职介英文名", servantClass.getEnName()));
         servantClassRepository.save(servantClass);
-        console.writeAndWait("修改ServantClass成功！");
-      } else console.errorAndWait("找不到数据");
+        console.write("✅修改ServantClass成功！").waitEnter();
+      } else console.error("❌找不到数据");
     }
   }
 }

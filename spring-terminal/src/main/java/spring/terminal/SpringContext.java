@@ -6,8 +6,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.env.Environment;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /** Spring上下文工具类，实现ApplicationContextAware接口以获取Spring应用上下文 提供静态方法访问Spring容器中的Bean */
@@ -35,24 +33,6 @@ public class SpringContext implements ApplicationContextAware {
    */
   public static @NonNull Map<String, Object> getBeans(Class<? extends Annotation> annotationType) {
     return context.getBeansWithAnnotation(annotationType);
-  }
-
-  /**
-   * 获取环境配置对象
-   *
-   * @return 返回Environment类型的环境配置对象
-   */
-  public static Environment getEnvironment() {
-    return getBean(Environment.class);
-  }
-
-  /**
-   * 获取RedisTemplate实例 从Spring容器中获取RedisTemplate类型的Bean
-   *
-   * @return RedisTemplate实例，键类型为String，值类型为Object
-   */
-  public static RedisTemplate<String, Object> getRedisTemplate() {
-    return context.getBean("redisTemplate", RedisTemplate.class);
   }
 
   /**
