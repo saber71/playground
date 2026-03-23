@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import spring.terminal.console.Console;
 
@@ -19,7 +19,7 @@ public class CommandController {
   }
 
   @Contract(" -> new")
-  public static @NonNull CommandController create() {
+  public static CommandController create() {
     return new CommandController(SpringContext.getBean(Console.class));
   }
 
@@ -29,7 +29,7 @@ public class CommandController {
    * @param input 输入的命令行字符串
    * @return 解析后的参数数组
    */
-  private @NonNull List<String> parseCommandLine(@NonNull String input) {
+  private List<String> parseCommandLine(String input) {
     List<String> args = new ArrayList<>();
     StringBuilder currentArg = new StringBuilder();
     boolean inQuotes = false;
@@ -133,7 +133,7 @@ public class CommandController {
    *
    * @param cmdMap 命令映射表，key 为 Bean 名称，value 为 Bean 实例（必须实现 ICommand 接口）
    */
-  public void setCommands(@NonNull Map<String, Object> cmdMap) {
+  public void setCommands(@NotNull Map<String, Object> cmdMap) {
     cmdMap.forEach(
         (name, bean) -> {
           this.cmdMap.put(name, (ICommand) bean);

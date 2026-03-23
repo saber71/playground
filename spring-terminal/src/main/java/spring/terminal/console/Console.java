@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import spring.terminal.SpringContext;
 
@@ -12,7 +12,7 @@ import spring.terminal.SpringContext;
 public class Console {
   private final Scanner inputScanner = new Scanner(System.in);
 
-  private @NonNull String _join(@NonNull Stream<Object> stream) {
+  private @NotNull String _join(@NotNull Stream<Object> stream) {
     var strings = stream.map(Object::toString).toArray(String[]::new);
     return String.join(" ", strings);
   }
@@ -87,7 +87,7 @@ public class Console {
     }
   }
 
-  public String readLine(@NonNull String prompt) {
+  public String readLine(@NotNull String prompt) {
     if (!prompt.isEmpty()) System.out.print(prompt);
     return inputScanner.nextLine();
   }
@@ -118,7 +118,7 @@ public class Console {
     return this;
   }
 
-  public Console write(@NonNull List<Object> args) {
+  public Console write(@NotNull List<Object> args) {
     System.out.print(_join(args.stream()));
     return this;
   }
