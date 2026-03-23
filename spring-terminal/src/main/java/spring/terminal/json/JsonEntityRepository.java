@@ -1,4 +1,4 @@
-package spring.terminal;
+package spring.terminal.json;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

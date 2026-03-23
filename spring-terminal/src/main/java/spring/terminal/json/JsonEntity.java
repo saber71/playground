@@ -1,10 +1,11 @@
-package spring.terminal;
+package spring.terminal.json;
 
 import jakarta.persistence.*;
 import java.util.Map;
 import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import spring.terminal.SpringContext;
 
 /** JSON实体类，用于存储JSON格式的数据 支持通过Map访问和操作JSON数据，并提供保存和删除的便捷方法 */
 @Entity

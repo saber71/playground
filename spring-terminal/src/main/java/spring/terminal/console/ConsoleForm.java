@@ -1,7 +1,7 @@
 package spring.terminal.console;
 
 import org.jetbrains.annotations.NotNull;
-import spring.terminal.JsonEntity;
+import spring.terminal.json.JsonEntity;
 
 public interface ConsoleForm {
   ConsoleFormImpl inputBoolean(JsonEntity.@NotNull Attribute<Boolean> attribute);

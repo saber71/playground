@@ -1,4 +1,4 @@
-package spring.terminal;
+package spring.terminal.json;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

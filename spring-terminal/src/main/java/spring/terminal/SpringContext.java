@@ -21,7 +21,7 @@ public class SpringContext implements ApplicationContextAware {
    * @param <T> Bean的泛型类型
    * @return 指定类型的Bean实例
    */
-  public static <T> T getBean(Class<T> clazz) {
+  public static <T> @NotNull T getBean(Class<T> clazz) {
     return context.getBean(clazz);
   }
 

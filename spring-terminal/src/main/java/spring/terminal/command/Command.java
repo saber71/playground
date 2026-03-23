@@ -1,4 +1,4 @@
-package spring.terminal;
+package spring.terminal.command;
 
 import java.lang.annotation.*;
 import org.springframework.stereotype.Component;

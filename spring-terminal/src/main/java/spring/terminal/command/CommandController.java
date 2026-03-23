@@ -1,4 +1,4 @@
-package spring.terminal;
+package spring.terminal.command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import spring.terminal.SpringContext;
 import spring.terminal.console.Console;
 
 @Service

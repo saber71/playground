@@ -1,4 +1,4 @@
-package spring.terminal;
+package spring.terminal.json;
 
 public class JsonEntityAttribute<T> implements JsonEntity.Attribute<T> {
   private final JsonEntity jsonEntity;

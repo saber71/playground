@@ -2,6 +2,8 @@ package spring.terminal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import spring.terminal.command.Command;
+import spring.terminal.command.CommandController;
 
 @SpringBootApplication
 public class SpringTerminalApplication {
