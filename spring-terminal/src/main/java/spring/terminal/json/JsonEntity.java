@@ -3,14 +3,17 @@ package spring.terminal.json;
 import jakarta.persistence.*;
 import java.util.Map;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import spring.terminal.SpringContext;
+import spring.terminal.entity.BaseEntity;
 
 /** JSON实体类，用于存储JSON格式的数据 支持通过Map访问和操作JSON数据，并提供保存和删除的便捷方法 */
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-public class JsonEntity {
+public class JsonEntity extends BaseEntity {
   /** 存储JSON数据的Map，映射到数据库的jsonb类型字段 支持存储任意结构的JSON数据 */
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb")
