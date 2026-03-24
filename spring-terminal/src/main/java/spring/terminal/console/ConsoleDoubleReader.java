@@ -5,14 +5,13 @@ import java.util.Scanner;
 class ConsoleDoubleReader implements ConsoleReader<Double> {
   @Override
   public Double read(String prompt) {
-    try (Scanner scanner = new Scanner(System.in)) {
-      while (true) {
-        System.out.print(prompt);
-        var result = scanner.nextLine();
-        try {
-          return Double.valueOf(result);
-        } catch (RuntimeException _) {
-        }
+    Scanner scanner = new Scanner(System.in);
+    while (true) {
+      System.out.print(prompt);
+      var result = scanner.nextLine();
+      try {
+        return Double.valueOf(result);
+      } catch (RuntimeException _) {
       }
     }
   }
@@ -25,14 +24,13 @@ class ConsoleDoubleReader implements ConsoleReader<Double> {
   @Override
   public Double read(String prompt, Double defaultValue, String separator) {
     if (defaultValue == null) return read(prompt + separator);
-    try (Scanner scanner = new Scanner(System.in)) {
-      System.out.print(prompt);
-      var result = scanner.nextLine();
-      try {
-        return Double.valueOf(result);
-      } catch (RuntimeException _) {
-        return defaultValue;
-      }
+    Scanner scanner = new Scanner(System.in);
+    System.out.print(prompt);
+    var result = scanner.nextLine();
+    try {
+      return Double.valueOf(result);
+    } catch (RuntimeException _) {
+      return defaultValue;
     }
   }
 }

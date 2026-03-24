@@ -1,9 +1,6 @@
 package spring.terminal.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.Data;
 import org.hibernate.annotations.SQLRestriction;
@@ -17,7 +14,7 @@ public class BaseEntity {
   private LocalDateTime createAt;
 
   @Column(updatable = false)
-  private Long createBy = UserContext.getUID();
+  private Long createBy;
 
   @Column(insertable = false)
   private LocalDateTime deleteAt;
@@ -27,6 +24,10 @@ public class BaseEntity {
 
   @Column private Boolean deleted = false;
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
   @Column(nullable = false)
   private LocalDateTime updateAt;
 
@@ -34,6 +35,7 @@ public class BaseEntity {
   protected void onCreate() {
     createAt = LocalDateTime.now();
     updateAt = LocalDateTime.now();
+    if (createBy == null) createBy = UserContext.getUID();
   }
 
   @PreUpdate

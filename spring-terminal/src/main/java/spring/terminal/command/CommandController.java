@@ -94,7 +94,7 @@ public class CommandController {
    */
   public void run(String prompt) {
     while (true) {
-      var input = console.readLine(prompt);
+      var input = console.stringReader().read(prompt);
       if (input.equalsIgnoreCase("q")) break;
       if (input.equalsIgnoreCase("quit")) break;
       var args = parseCommandLine(input);
@@ -110,7 +110,7 @@ public class CommandController {
           commands.add(new Data(cmdMap.get(cmdString), args.subList(i + 1, args.size())));
         } else if (found) break;
       }
-      if (!found) console.errorAndWait("找不到命令：" + input);
+      if (!found) console.error().write("找不到命令：" + input);
       else {
         var data = commands.removeLast();
         data.cmd.execute(data.args);
