@@ -5,15 +5,15 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.dao.DataIntegrityViolationException;
 import spring.terminal.entity.ServantClass;
-import spring.terminal.repository.ServantClassRepository;
+import spring.terminal.service.ServantClassService;
 
 @Skill
 public class ServantClassSkill {
 
-  private final ServantClassRepository servantClassRepository;
+  private final ServantClassService servantClassService;
 
-  public ServantClassSkill(ServantClassRepository servantClassRepository) {
-    this.servantClassRepository = servantClassRepository;
+  public ServantClassSkill(ServantClassService servantClassService) {
+    this.servantClassService = servantClassService;
   }
 
   @Tool(description = "创建新的从者职介。在调用前必须先调用 getAllServantClass 检查是否已存在同名职介。需要提供中文名、英文名、介绍文本和是否为基础七职介")
@@ -31,7 +31,7 @@ public class ServantClassSkill {
       entity.setEnName(enName);
       entity.setIsBasicClass(isBasicClass);
       entity.setDescription(description);
-      servantClassRepository.save(entity);
+      servantClassService.save(entity);
       return "成功创建从者职介：" + name + " (" + enName + ")";
     } catch (DataIntegrityViolationException e) {
       return "创建失败：已存在名为'" + name + "'的职介，请创建不同的职介";
@@ -42,6 +42,6 @@ public class ServantClassSkill {
 
   @Tool(description = "查询所有已创建的从者职介列表。在创建新职介前必须调用此工具检查是否已存在同名职介，也可用于回答用户关于职介的查询问题")
   public List<ServantClass> getAllServantClass() {
-    return servantClassRepository.findAll();
+    return servantClassService.findAll();
   }
 }

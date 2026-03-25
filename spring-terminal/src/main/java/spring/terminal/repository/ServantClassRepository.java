@@ -2,4 +2,4 @@ package spring.terminal.repository;
 
 import spring.terminal.entity.ServantClass;
 
-public interface ServantClassRepository extends BaseEntityRepository<ServantClass, String> {}
+public interface ServantClassRepository extends BaseEntityRepository<ServantClass, Long> {}

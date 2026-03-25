@@ -11,8 +11,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class ServantClass extends BaseEntity {
   /* 职介说明描述 */
-  @Column
-  private String description;
+  @Column private String description;
 
   /* 从者职介英文名 */
   private String enName;
@@ -21,5 +20,6 @@ public class ServantClass extends BaseEntity {
   private Boolean isBasicClass = false;
 
   /* 从者职介中文名 */
+  @Column(unique = true)
   private String name;
 }
