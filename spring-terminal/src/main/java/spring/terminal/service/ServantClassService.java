@@ -1,5 +1,6 @@
 package spring.terminal.service;
 
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import spring.terminal.entity.ServantClass;
 import spring.terminal.repository.ServantClassRepository;
@@ -12,5 +13,9 @@ public class ServantClassService extends BaseEntityService<ServantClass, Long> {
   public ServantClassService(ServantClassRepository servantClassRepository) {
     super(servantClassRepository);
     this.servantClassRepository = servantClassRepository;
+  }
+
+  public @Nullable ServantClass findByName(String name) {
+    return servantClassRepository.findFirst(b -> b.eq("name", name));
   }
 }

@@ -19,7 +19,8 @@ public class ChatCommand implements ICommand {
     while (true) {
       var input = console.stringReader().read("char>>");
       if (input.equalsIgnoreCase("q") || input.equalsIgnoreCase("quit")) break;
-      console.writer().writeln(chatController.chat(input));
+      chatController.streamChat(input).doOnNext(console.writer()::write).blockLast();
+      console.writer().writeln();
     }
   }
 }

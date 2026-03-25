@@ -13,9 +13,6 @@ public class ServantClass extends BaseEntity {
   /* 职介说明描述 */
   @Column private String description;
 
-  /* 从者职介英文名 */
-  private String enName;
-
   /* 是否为基础七职介 */
   private Boolean isBasicClass = false;
 

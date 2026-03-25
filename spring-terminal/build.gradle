@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-starter-dashscope:1.1.2.2'
     implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-agent-framework:1.1.2.2'
+    implementation 'org.springframework.ai:spring-ai-starter-model-chat-memory:1.1.2'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.jetbrains:annotations:26.1.0'
     compileOnly 'org.projectlombok:lombok'

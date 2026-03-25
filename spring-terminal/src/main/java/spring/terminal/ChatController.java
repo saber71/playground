@@ -1,7 +1,11 @@
 package spring.terminal;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import spring.terminal.skill.Skill;
 
 @Service
@@ -9,6 +13,7 @@ public class ChatController {
 
   private final ChatClient.Builder builder;
   private ChatClient chatClient;
+  private final ChatMemory chatMemory = MessageWindowChatMemory.builder().maxMessages(10).build();
 
   public ChatController(ChatClient.Builder builder) {
     this.builder = builder;
@@ -16,30 +21,7 @@ public class ChatController {
 
   public String chat(String message) {
     // 调用模型
-    return getChatClient()
-        .prompt()
-        .system(
-            """
-            你是 FGO（Fate/Grand Order）从者职介管理助手，帮助用户查询和管理职介数据。
-
-            【重要工作流程】
-            创建新职介时必须遵循的顺序：
-            1. 先调用 getAllServantClass 检查是否已存在同名职介
-            2. 确认名称不重复后再调用 createServantClass
-
-            【业务知识】
-            - 基础七职介：Saber、Archer、Lancer、Rider、Caster、Assassin、Berserker（isBasicClass=true）
-            - 特殊职介：Ruler、Avenger、Alter Ego、Pretender 等（isBasicClass=false）
-            - 职介中文名必须唯一，不能重复
-
-            【回答要求】
-            - 简洁明了，适合终端显示
-            - 优先展示实际查询到的数据，不要编造信息
-            - 创建操作要确认成功或清楚说明失败原因
-            """)
-        .user(message)
-        .call()
-        .content();
+    return getChatClient().prompt().user(message).call().content();
   }
 
   private ChatClient getChatClient() {
@@ -47,7 +29,20 @@ public class ChatController {
       chatClient =
           builder
               .defaultTools(SpringContext.getBeans(Skill.class).values().toArray(Object[]::new))
+              .defaultSystem(
+                  """
+        【回答要求】
+        - 简洁明了，适合终端显示
+        - 优先展示实际查询到的数据，不要编造信息
+        - 收到指令进行操作时马上执行不需要再进行确认
+        - 操作后反馈结果，如果失败了请清楚说明失败原因
+        """)
+              .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
               .build();
     return chatClient;
+  }
+
+  public Flux<String> streamChat(String message) {
+    return getChatClient().prompt().user(message).stream().content();
   }
 }

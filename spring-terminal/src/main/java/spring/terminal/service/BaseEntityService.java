@@ -21,6 +21,10 @@ public class BaseEntityService<Entity extends BaseEntity, ID> {
     entityRepository.saveAll(Arrays.asList(entities));
   }
 
+  public boolean existById(ID id) {
+    return entityRepository.existsById(id);
+  }
+
   public List<Entity> findAll() {
     return entityRepository.findAll();
   }
