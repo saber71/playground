@@ -4,7 +4,7 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import spring.terminal.entity.ServantClassDamageRatio;
-import spring.terminal.repository.ServantClassDamageRatioRepository;
+import spring.terminal.entity.repository.ServantClassDamageRatioRepository;
 
 @Service
 public class ServantClassDamageRatioService
@@ -23,7 +23,8 @@ public class ServantClassDamageRatioService
         builder -> builder.eq("attackerName", attackerName));
   }
 
-  public @Nullable ServantClassDamageRatio findByAttackerIdAndDefenderId(Long attackerId, Long defenderId) {
+  public @Nullable ServantClassDamageRatio findByAttackerIdAndDefenderId(
+      Long attackerId, Long defenderId) {
     return servantClassDamageRatioRepository.findFirst(
         b -> b.eq("attackerId", attackerId).eq("defenderId", defenderId));
   }

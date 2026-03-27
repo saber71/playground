@@ -1,4 +1,4 @@
-package spring.terminal.repository;
+package spring.terminal.entity.repository;
 
 import spring.terminal.entity.ServantClassDamageRatio;
 

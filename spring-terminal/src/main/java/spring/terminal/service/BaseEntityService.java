@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import spring.terminal.entity.BaseEntity;
-import spring.terminal.repository.BaseEntityRepository;
+import spring.terminal.entity.repository.BaseEntityRepository;
 
 public class BaseEntityService<Entity extends BaseEntity, ID> {
 

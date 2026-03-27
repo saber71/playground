@@ -3,7 +3,7 @@ package spring.terminal.service;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import spring.terminal.entity.ServantClass;
-import spring.terminal.repository.ServantClassRepository;
+import spring.terminal.entity.repository.ServantClassRepository;
 
 @Service
 public class ServantClassService extends BaseEntityService<ServantClass, Long> {

@@ -19,11 +19,6 @@ public class JsonEntity extends BaseEntity {
   @Column(columnDefinition = "jsonb")
   private Map<String, Object> data;
 
-  /** 实体的唯一标识ID，主键字段 自动生成策略为AUTO */
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
-
   /** 标记实体是否已更新的临时字段（不持久化到数据库） 用于优化保存操作，避免不必要的数据库写入 */
   @Transient private boolean updated = false;
 
@@ -38,7 +33,7 @@ public class JsonEntity extends BaseEntity {
    * @return 保存后的实体实例
    */
   public JsonEntity save() {
-    if (id == null) updated = true;
+    if (getId() == null) updated = true;
     if (updated) {
       updated = false;
       return SpringContext.getBean(JsonEntityRepository.class).save(this);
