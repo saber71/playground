@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public interface ConsoleWriter {
-  ConsoleWriter waitEnter();
-
   ConsoleWriter write(List<Object> args);
 
   ConsoleWriter write(Stream<Object> stream);

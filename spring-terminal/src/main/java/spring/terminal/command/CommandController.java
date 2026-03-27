@@ -24,13 +24,34 @@ public class CommandController {
     return new CommandController(SpringContext.getBean(Console.class));
   }
 
+  public void execute(String input){
+    var args = parseCommandLine(input);
+    List<Data> commands = new ArrayList<>();
+    StringBuilder command = new StringBuilder();
+    boolean found = false;
+    for (int i = 0; i < args.size(); i++) {
+      command.append(" ").append(args.get(i));
+      var cmdString = command.toString().trim();
+      if (cmdMap.containsKey(cmdString)) {
+        found = true;
+        cmdMap.get(command.toString());
+        commands.add(new Data(cmdMap.get(cmdString), args.subList(i + 1, args.size())));
+      } else if (found) break;
+    }
+    if (!found) console.error().write("找不到命令：" + input);
+    else {
+      var data = commands.removeLast();
+      data.cmd.execute(data.args);
+    }
+  }
+
   /**
    * 解析命令行字符串，支持引号、转义字符等复杂情况
    *
    * @param input 输入的命令行字符串
    * @return 解析后的参数数组
    */
-  private List<String> parseCommandLine(String input) {
+  public List<String> parseCommandLine(String input) {
     List<String> args = new ArrayList<>();
     StringBuilder currentArg = new StringBuilder();
     boolean inQuotes = false;
@@ -97,24 +118,7 @@ public class CommandController {
       var input = console.stringReader().read(prompt);
       if (input.equalsIgnoreCase("q")) break;
       if (input.equalsIgnoreCase("quit")) break;
-      var args = parseCommandLine(input);
-      List<Data> commands = new ArrayList<>();
-      StringBuilder command = new StringBuilder();
-      boolean found = false;
-      for (int i = 0; i < args.size(); i++) {
-        command.append(" ").append(args.get(i));
-        var cmdString = command.toString().trim();
-        if (cmdMap.containsKey(cmdString)) {
-          found = true;
-          cmdMap.get(command.toString());
-          commands.add(new Data(cmdMap.get(cmdString), args.subList(i + 1, args.size())));
-        } else if (found) break;
-      }
-      if (!found) console.error().write("找不到命令：" + input);
-      else {
-        var data = commands.removeLast();
-        data.cmd.execute(data.args);
-      }
+      execute(input);
     }
   }
 

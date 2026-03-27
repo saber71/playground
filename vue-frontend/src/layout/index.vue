@@ -8,11 +8,11 @@
         </div>
 
         <a-menu
+          :key="route.fullPath"
           v-model:selectedKeys="selectedKeys"
           :items="menuItems"
           mode="horizontal"
           theme="dark"
-          @click="handleMenuClick"
         />
       </div>
     </a-layout-header>
@@ -25,33 +25,52 @@
 </template>
 
 <script setup>
-import { computed } from "vue"
+import { computed, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 
 const router = useRouter()
 const route = useRoute()
 
 // 当前选中的菜单项
-const selectedKeys = computed(() => [route.path])
+const selectedKeys = ref([route.path])
+
+// 监听选中状态变化，自动跳转路由
+watch(selectedKeys, (newKeys) => {
+  if (newKeys && newKeys.length > 0) {
+    const newPath = newKeys[0]
+    if (newPath !== route.path) {
+      router.push(newPath)
+    }
+  }
+})
 
 // 从路由配置生成菜单项
+
 const menuItems = computed(() => {
   const routes = router.options.routes || []
 
-  // 过滤出需要显示在菜单中的路由
-  return routes
-    .filter((route) => route.meta?.showInMenu !== false)
-    .map((route) => ({
-      key: route.path,
-      label: route.meta?.title || route.name || "",
-      icon: route.meta?.icon,
-    }))
-})
+  // 递归处理所有层级的路由
+  const processRoutes = (routes) => {
+    return routes
+      .filter((route) => route.meta?.hidden !== true && route.path)
+      .map((route) => {
+        const menuItem = {
+          key: route.path,
+          label: route.meta?.title || route.name || "",
+          icon: route.meta?.icon,
+        }
 
-// 处理菜单点击事件
-const handleMenuClick = ({ key }) => {
-  router.push(key)
-}
+        // 如果存在子路由，递归处理
+        if (route.children && route.children.length > 0) {
+          menuItem.children = processRoutes(route.children)
+        }
+
+        return menuItem
+      })
+  }
+
+  return processRoutes(routes)
+})
 </script>
 
 <style lang="scss" scoped>

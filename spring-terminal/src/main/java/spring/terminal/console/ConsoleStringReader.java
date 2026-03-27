@@ -1,32 +1,67 @@
 package spring.terminal.console;
 
+import spring.terminal.websocket.TerminalWebSocketHandler;
+
 import java.util.Scanner;
 
-class ConsoleStringReader implements ConsoleReader<String> {
+public class ConsoleStringReader implements ConsoleReader<String> {
+
+  private final TerminalWebSocketHandler.SessionContext webSocketContext;
+
+  public ConsoleStringReader() {
+    this.webSocketContext = null;
+  }
+
+  public ConsoleStringReader(TerminalWebSocketHandler.SessionContext webSocketContext) {
+    this.webSocketContext = webSocketContext;
+  }
+
   @Override
   public String read(String prompt) {
-    Scanner scanner = new Scanner(System.in);
+    if (webSocketContext != null) {
+      webSocketContext.sendOutput(prompt);
+      return webSocketContext.readLine();
+    }
+
     while (true) {
       System.out.print(prompt);
-      var result = scanner.nextLine();
-      if (result.isEmpty()) continue;
-      return result;
+      System.out.flush();
+      try (Scanner scanner = new Scanner(System.in)) {
+        String result = scanner.nextLine();
+        if (!result.isEmpty()) {
+          return result;
+        }
+      }
     }
   }
 
   @Override
   public String read(String prompt, String defaultValue) {
-    return read(prompt, defaultValue, "：");
+    return read(prompt, defaultValue, ": ");
   }
 
   @Override
   public String read(String prompt, String defaultValue, String separator) {
-    if (defaultValue == null) return read(prompt + separator);
-    if (defaultValue.length() >= 7) defaultValue = defaultValue.substring(0, 7) + "…";
-    Scanner scanner = new Scanner(System.in);
-    System.out.print(prompt + "(" + defaultValue + ")" + separator);
-    var input = scanner.nextLine();
-    if (input.isEmpty()) return defaultValue;
-    return input;
+    if (defaultValue == null) {
+      return read(prompt + separator);
+    }
+
+    String displayDefault =
+        defaultValue.length() >= 7 ? defaultValue.substring(0, 7) + "…" : defaultValue;
+
+    String fullPrompt = prompt + "(" + displayDefault + ")" + separator;
+
+    if (webSocketContext != null) {
+      webSocketContext.sendOutput(fullPrompt);
+      String input = webSocketContext.readLine();
+      return (input == null || input.isEmpty()) ? defaultValue : input;
+    }
+
+    System.out.print(fullPrompt);
+    System.out.flush();
+    try (Scanner scanner = new Scanner(System.in)) {
+      String input = scanner.nextLine();
+      return (input == null || input.isEmpty()) ? defaultValue : input;
+    }
   }
 }

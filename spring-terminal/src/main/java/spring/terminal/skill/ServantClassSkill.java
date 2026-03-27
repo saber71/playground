@@ -35,9 +35,9 @@ public class ServantClassSkill {
     return servantClassDamageRatioService.findAllByAttackerName(attackerName);
   }
 
-  @Tool(description = "保存从者职介数据。需要提供中文名、介绍文本和是否为基础七职介")
+  @Tool(description = "保存从者职介数据。需要提供名字、介绍文本和是否为基础七职介")
   public String saveServantClass(
-      @ToolParam(description = "从者职介中文名，必须唯一，不能与已有职介重复") String name,
+      @ToolParam(description = "从者职介名，必须唯一，不能与已有职介重复") String name,
       @ToolParam(description = "从者职介的介绍文本，说明该职介的特点") String description,
       @ToolParam(
               description =
@@ -52,9 +52,9 @@ public class ServantClassSkill {
       servantClassService.save(entity);
       return "成功保存从者职介：" + name;
     } catch (DataIntegrityViolationException e) {
-      return "创建失败：已存在名为'" + name + "'的职介，请创建不同的职介";
+      return "保存失败：已存在名为'" + name + "'的职介，请创建不同的职介";
     } catch (Exception e) {
-      return "创建失败：" + e.getMessage();
+      return "保存失败：" + e.getMessage();
     }
   }
 

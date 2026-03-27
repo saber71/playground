@@ -13,6 +13,5 @@ public class SpringTerminalApplication {
     var commandController = CommandController.create();
     var beans = SpringContext.getBeans(Command.class);
     commandController.setCommands(beans);
-    commandController.run();
   }
 }
