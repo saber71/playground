@@ -35,7 +35,7 @@ public class BaseEntity {
   protected void onCreate() {
     createAt = LocalDateTime.now();
     updateAt = LocalDateTime.now();
-    if (createBy == null) createBy = UserContext.getUID();
+    if (createBy == null) createBy = UserContext.getState().getUid();
   }
 
   @PreUpdate
@@ -46,6 +46,6 @@ public class BaseEntity {
   public void setSoftDelete() {
     deleteAt = LocalDateTime.now();
     deleted = true;
-    deleteBy = UserContext.getUID();
+    deleteBy = UserContext.getState().getUid();
   }
 }

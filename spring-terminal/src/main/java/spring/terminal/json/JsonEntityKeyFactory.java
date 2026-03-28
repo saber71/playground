@@ -109,10 +109,6 @@ public class JsonEntityKeyFactory {
       return JsonEntityAttribute.integer(entity, "金钱");
     }
 
-    public JsonEntity.@NotNull Attribute<Double> oil() {
-      return JsonEntityAttribute.doubles(entity, "石油");
-    }
-
     public JsonEntity.@NotNull Attribute<Double> spices() {
       return JsonEntityAttribute.doubles(entity, "香料");
     }
@@ -148,10 +144,6 @@ public class JsonEntityKeyFactory {
 
     public JsonEntity.@NotNull Attribute<Double> ironIncome() {
       return JsonEntityAttribute.doubles(entity, "铁矿收入");
-    }
-
-    public JsonEntity.@NotNull Attribute<Double> oilIncome() {
-      return JsonEntityAttribute.doubles(entity, "石油收入");
     }
 
     public JsonEntity.@NotNull Attribute<Double> stoneIncome() {

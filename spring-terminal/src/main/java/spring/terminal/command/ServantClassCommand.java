@@ -1,9 +1,7 @@
-package spring.terminal;
+package spring.terminal.command;
 
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
-import spring.terminal.command.Command;
-import spring.terminal.command.ICommand;
 import spring.terminal.console.Console;
 
 @Command("servant-class")

@@ -20,11 +20,8 @@ public class Terrain extends JsonEntityWrapper {
   public final JsonEntity.Attribute<Double> iron;
   public final JsonEntity.Attribute<Double> ironIncome;
   public final JsonEntity.Attribute<Long> liegeId;
-  public final JsonEntity.Attribute<Integer> money;
   public final JsonEntity.Attribute<Integer> moveCost;
   public final JsonEntity.Attribute<String> name;
-  public final JsonEntity.Attribute<Double> oil;
-  public final JsonEntity.Attribute<Double> oilIncome;
   public final JsonEntity.Attribute<Integer> population;
   public final JsonEntity.Attribute<String> resource;
   public final JsonEntity.Attribute<Double> spices;
@@ -46,8 +43,6 @@ public class Terrain extends JsonEntityWrapper {
     farm = resourceFactory.farm();
     tradeIncome = resourceIncomeFactory.tradeIncome();
     trade = resourceFactory.trade();
-    oilIncome = resourceIncomeFactory.oilIncome();
-    oil = resourceFactory.oil();
     stoneIncome = resourceIncomeFactory.stoneIncome();
     stone = resourceFactory.stone();
     timberIncome = resourceIncomeFactory.timberIncome();
@@ -69,7 +64,6 @@ public class Terrain extends JsonEntityWrapper {
     defenseBonus = factory.defenseBonus();
     fertility = factory.fertility();
     population = factory.population();
-    money = resourceFactory.money();
   }
 
   @Getter

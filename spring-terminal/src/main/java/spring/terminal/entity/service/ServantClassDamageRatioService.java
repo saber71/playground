@@ -1,4 +1,4 @@
-package spring.terminal.service;
+package spring.terminal.entity.service;
 
 import java.util.List;
 import org.jetbrains.annotations.Nullable;

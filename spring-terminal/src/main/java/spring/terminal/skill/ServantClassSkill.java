@@ -6,8 +6,8 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.dao.DataIntegrityViolationException;
 import spring.terminal.entity.ServantClass;
 import spring.terminal.entity.ServantClassDamageRatio;
-import spring.terminal.service.ServantClassDamageRatioService;
-import spring.terminal.service.ServantClassService;
+import spring.terminal.entity.service.ServantClassDamageRatioService;
+import spring.terminal.entity.service.ServantClassService;
 
 @Skill
 public class ServantClassSkill {

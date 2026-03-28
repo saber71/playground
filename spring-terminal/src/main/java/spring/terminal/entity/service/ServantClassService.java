@@ -1,4 +1,4 @@
-package spring.terminal.service;
+package spring.terminal.entity.service;
 
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
