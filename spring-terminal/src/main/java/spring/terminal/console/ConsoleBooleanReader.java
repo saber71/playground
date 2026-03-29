@@ -1,14 +1,19 @@
 package spring.terminal.console;
 
-import java.util.Scanner;
+import org.jline.reader.LineReader;
 
 class ConsoleBooleanReader implements ConsoleReader<Boolean> {
+
+  private final LineReader reader;
+
+  public ConsoleBooleanReader(LineReader reader) {
+    this.reader = reader;
+  }
+
   @Override
   public Boolean read(String prompt) {
-    Scanner scanner = new Scanner(System.in);
     while (true) {
-      System.out.print(prompt);
-      var result = scanner.nextLine();
+      var result = reader.readLine(prompt);
       if (result.equalsIgnoreCase("y") || result.equalsIgnoreCase("yes")) return true;
       if (result.equalsIgnoreCase("n") || result.equalsIgnoreCase("no")) return true;
     }
@@ -22,9 +27,7 @@ class ConsoleBooleanReader implements ConsoleReader<Boolean> {
   @Override
   public Boolean read(String prompt, Boolean defaultValue, String separator) {
     if (defaultValue == null) return read(prompt + separator);
-    Scanner scanner = new Scanner(System.in);
-    System.out.print(prompt + "(" + (defaultValue ? "Y/n" : "y/N") + ")" + separator);
-    var result = scanner.nextLine();
+    var result = reader.readLine(prompt + "(" + (defaultValue ? "Y/n" : "y/N") + ")" + separator);
     if (result.equalsIgnoreCase("y") || result.equalsIgnoreCase("yes")) return true;
     if (result.equalsIgnoreCase("n") || result.equalsIgnoreCase("no")) return true;
     return defaultValue;

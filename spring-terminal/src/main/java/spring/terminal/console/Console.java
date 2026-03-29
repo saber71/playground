@@ -1,73 +1,39 @@
 package spring.terminal.console;
 
+import java.io.IOException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.DefaultParser;
+import org.jline.terminal.TerminalBuilder;
 import org.springframework.stereotype.Service;
-import spring.terminal.SpringContext;
-import spring.terminal.websocket.TerminalWebSocketHandler;
 
 @Service
 public class Console {
+  private final LineReader reader;
 
-  private static final ThreadLocal<TerminalWebSocketHandler.SessionContext> WEBSOCKET_CONTEXT =
-      new ThreadLocal<>();
-
-  public ConsoleReader<Boolean> booleanReader() {
-    TerminalWebSocketHandler.SessionContext context = WEBSOCKET_CONTEXT.get();
-    return context != null ? new ConsoleBooleanReader(context) : new ConsoleBooleanReader();
-  }
-
-  /** 清屏（仅在本地模式有效） */
-  public void clearScreen() {
-    if (!isWebSocketMode()) {
-      System.out.print("\033[H\033[2J");
-      System.out.flush();
+  public Console() {
+    try {
+      var terminal = TerminalBuilder.builder().system(true).build();
+      reader = LineReaderBuilder.builder().terminal(terminal).parser(new DefaultParser()).build();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
-  /** 清除当前线程的 WebSocket 上下文 */
-  public void clearWebSocketContext() {
-    WEBSOCKET_CONTEXT.remove();
+  public ConsoleReader<Boolean> booleanReader() {
+    return new ConsoleBooleanReader(reader);
   }
 
   public ConsoleReader<Double> doubleReader() {
-    TerminalWebSocketHandler.SessionContext context = WEBSOCKET_CONTEXT.get();
-    return context != null ? new ConsoleDoubleReader(context) : new ConsoleDoubleReader();
+    return new ConsoleDoubleReader(reader);
   }
 
   public ConsoleWriter error() {
-    TerminalWebSocketHandler.SessionContext context = WEBSOCKET_CONTEXT.get();
-    return context != null ? new ConsoleWriterImpl(context) : new ConsoleWriterImpl(System.err);
-  }
-
-  public ConsoleForm form() {
-    return SpringContext.getBean(ConsoleForm.class);
-  }
-
-  /** 获取终端高度 */
-  public int getHeight() {
-    TerminalWebSocketHandler.SessionContext context = WEBSOCKET_CONTEXT.get();
-    if (context != null) {
-      return context.getRows();
-    }
-    return 24;
-  }
-
-  /** 获取终端宽度 */
-  public int getWidth() {
-    TerminalWebSocketHandler.SessionContext context = WEBSOCKET_CONTEXT.get();
-    if (context != null) {
-      return context.getCols();
-    }
-    return 80;
+    return new ConsoleWriterImpl(System.err);
   }
 
   public ConsoleReader<Integer> integerReader() {
-    TerminalWebSocketHandler.SessionContext context = WEBSOCKET_CONTEXT.get();
-    return context != null ? new ConsoleIntegerReader(context) : new ConsoleIntegerReader();
-  }
-
-  /** 检查当前是否在 WebSocket 环境中 */
-  public boolean isWebSocketMode() {
-    return WEBSOCKET_CONTEXT.get() != null;
+    return new ConsoleIntegerReader(reader);
   }
 
   /** 输出错误信息 */
@@ -90,22 +56,11 @@ public class Console {
     writer().writeln(Colors.yellow(text));
   }
 
-  /** 设置当前线程的 WebSocket 上下文 */
-  public void setWebSocketContext(TerminalWebSocketHandler.SessionContext context) {
-    if (context == null) {
-      WEBSOCKET_CONTEXT.remove();
-    } else {
-      WEBSOCKET_CONTEXT.set(context);
-    }
-  }
-
   public ConsoleReader<String> stringReader() {
-    TerminalWebSocketHandler.SessionContext context = WEBSOCKET_CONTEXT.get();
-    return context != null ? new ConsoleStringReader(context) : new ConsoleStringReader();
+    return new ConsoleStringReader(reader);
   }
 
   public ConsoleWriter writer() {
-    TerminalWebSocketHandler.SessionContext context = WEBSOCKET_CONTEXT.get();
-    return context != null ? new ConsoleWriterImpl(context) : new ConsoleWriterImpl(System.out);
+    return new ConsoleWriterImpl(System.out);
   }
 }

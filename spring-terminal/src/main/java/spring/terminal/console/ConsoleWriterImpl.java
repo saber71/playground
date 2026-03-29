@@ -6,31 +6,19 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import spring.terminal.websocket.TerminalWebSocketHandler;
 
 @Slf4j
 class ConsoleWriterImpl implements ConsoleWriter {
 
   private final PrintStream printStream;
-  private final TerminalWebSocketHandler.SessionContext webSocketContext;
 
   public ConsoleWriterImpl(PrintStream printStream) {
     this.printStream = printStream;
-    this.webSocketContext = null;
-  }
-
-  public ConsoleWriterImpl(TerminalWebSocketHandler.SessionContext webSocketContext) {
-    this.printStream = null;
-    this.webSocketContext = webSocketContext;
   }
 
   private void doWrite(String text) {
-    if (webSocketContext != null) {
-      webSocketContext.sendOutput(text);
-    } else if (printStream != null) {
-      printStream.print(text);
-      printStream.flush();
-    }
+    printStream.print(text);
+    printStream.flush();
   }
 
   @Override
@@ -53,7 +41,7 @@ class ConsoleWriterImpl implements ConsoleWriter {
   @Override
   public ConsoleWriter writeln(@NotNull Stream<Object> stream) {
     String text = String.join(" ", stream.map(Object::toString).toArray(String[]::new));
-    doWrite(text + "\r\n");
+    doWrite(text + "\n\r");
     return this;
   }
 

@@ -1,36 +1,21 @@
 package spring.terminal.console;
 
-import spring.terminal.websocket.TerminalWebSocketHandler;
-
-import java.util.Scanner;
+import org.jline.reader.LineReader;
 
 public class ConsoleStringReader implements ConsoleReader<String> {
 
-  private final TerminalWebSocketHandler.SessionContext webSocketContext;
+  private final LineReader reader;
 
-  public ConsoleStringReader() {
-    this.webSocketContext = null;
-  }
-
-  public ConsoleStringReader(TerminalWebSocketHandler.SessionContext webSocketContext) {
-    this.webSocketContext = webSocketContext;
+  public ConsoleStringReader(LineReader reader) {
+    this.reader = reader;
   }
 
   @Override
   public String read(String prompt) {
-    if (webSocketContext != null) {
-      webSocketContext.sendOutput(prompt);
-      return webSocketContext.readLine();
-    }
-
     while (true) {
-      System.out.print(prompt);
-      System.out.flush();
-      try (Scanner scanner = new Scanner(System.in)) {
-        String result = scanner.nextLine();
-        if (!result.isEmpty()) {
-          return result;
-        }
+      String result = reader.readLine(prompt);
+      if (!result.isEmpty()) {
+        return result;
       }
     }
   }
@@ -50,18 +35,7 @@ public class ConsoleStringReader implements ConsoleReader<String> {
         defaultValue.length() >= 7 ? defaultValue.substring(0, 7) + "…" : defaultValue;
 
     String fullPrompt = prompt + "(" + displayDefault + ")" + separator;
-
-    if (webSocketContext != null) {
-      webSocketContext.sendOutput(fullPrompt);
-      String input = webSocketContext.readLine();
-      return (input == null || input.isEmpty()) ? defaultValue : input;
-    }
-
-    System.out.print(fullPrompt);
-    System.out.flush();
-    try (Scanner scanner = new Scanner(System.in)) {
-      String input = scanner.nextLine();
-      return (input == null || input.isEmpty()) ? defaultValue : input;
-    }
+    String input = reader.readLine(fullPrompt);
+    return (input == null || input.isEmpty()) ? defaultValue : input;
   }
 }

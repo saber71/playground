@@ -1,14 +1,19 @@
 package spring.terminal.console;
 
-import java.util.Scanner;
+import org.jline.reader.LineReader;
 
 class ConsoleDoubleReader implements ConsoleReader<Double> {
+
+  private final LineReader reader;
+
+  public ConsoleDoubleReader(LineReader reader) {
+    this.reader = reader;
+  }
+
   @Override
   public Double read(String prompt) {
-    Scanner scanner = new Scanner(System.in);
     while (true) {
-      System.out.print(prompt);
-      var result = scanner.nextLine();
+      var result = reader.readLine(prompt);
       try {
         return Double.valueOf(result);
       } catch (RuntimeException _) {
@@ -24,9 +29,7 @@ class ConsoleDoubleReader implements ConsoleReader<Double> {
   @Override
   public Double read(String prompt, Double defaultValue, String separator) {
     if (defaultValue == null) return read(prompt + separator);
-    Scanner scanner = new Scanner(System.in);
-    System.out.print(prompt);
-    var result = scanner.nextLine();
+    var result = reader.readLine(prompt + "(" + defaultValue + ")" + separator);
     try {
       return Double.valueOf(result);
     } catch (RuntimeException _) {
